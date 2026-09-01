@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 const SAND = { color: '#d8c5a3', roughness: 0.8 }
@@ -386,6 +387,80 @@ function Pool({ glow }) {
   )
 }
 
+/* ------------------------------------------------------------------
+   Photogrammetry slot: put a real scan of the resort at
+   public/models/stardom.glb and it replaces the stylized block —
+   auto-scaled to targetWidth, grounded, facing the walkway.
+------------------------------------------------------------------- */
+const SCAN = {
+  url: '/models/stardom.glb',
+  targetWidth: 26, // world units across the front
+  position: [0, 0, -16],
+  rotationY: 0, // adjust if the scan faces the wrong way
+}
+
+function ScannedBuilding() {
+  const { scene } = useGLTF(SCAN.url)
+  const fit = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(scene)
+    const size = box.getSize(new THREE.Vector3())
+    const center = box.getCenter(new THREE.Vector3())
+    const scale = SCAN.targetWidth / Math.max(size.x, size.z, 0.001)
+    return {
+      scale,
+      // center on x/z, sit the lowest point on the lawn
+      offset: [-center.x * scale, -box.min.y * scale, -center.z * scale],
+    }
+  }, [scene])
+  return (
+    <group position={SCAN.position} rotation-y={SCAN.rotationY}>
+      <group position={fit.offset} scale={fit.scale}>
+        <primitive object={scene} />
+      </group>
+    </group>
+  )
+}
+
+/** Uses the real scan when the file exists; stylized block otherwise. */
+function ResortBuilding({ windowGlow, night }) {
+  const [hasScan, setHasScan] = useState(false)
+  useEffect(() => {
+    fetch(SCAN.url, { method: 'HEAD' })
+      .then((r) => {
+        const type = r.headers.get('content-type') || ''
+        // Pages serves index.html for missing assets — treat that as absent
+        setHasScan(r.ok && !type.includes('text/html'))
+      })
+      .catch(() => setHasScan(false))
+  }, [])
+  if (!hasScan) return <Building windowGlow={windowGlow} night={night} />
+  return (
+    <Suspense fallback={<Building windowGlow={windowGlow} night={night} />}>
+      <ScannedBuilding />
+      <ScanName night={night} />
+    </Suspense>
+  )
+}
+
+/** Glowing venue name floating above the scanned building. */
+function ScanName({ night }) {
+  const tex = useCanvasTexture(1024, 128, (ctx, w, h) => {
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '600 74px Cinzel, serif'
+    ctx.fillStyle = '#f0d98c'
+    ctx.shadowColor = 'rgba(240, 217, 140, 0.6)'
+    ctx.shadowBlur = 18
+    ctx.fillText('STARDOM RESORT', w / 2, h / 2 + 4)
+  })
+  return (
+    <mesh position={[0, 11.5, -15.8]}>
+      <planeGeometry args={[6, 0.75]} />
+      <meshBasicMaterial map={tex} transparent color={night ? '#ffe9b0' : '#8a6f3a'} />
+    </mesh>
+  )
+}
+
 /** Palace block at the end of the walkway, windows lit at night. */
 function Building({ windowGlow, night }) {
   const nameTex = useCanvasTexture(1024, 128, (ctx, w, h) => {
@@ -575,7 +650,7 @@ export default function Resort({ mode = 'night' }) {
       <RoadPetals count={isTouch ? 280 : 420} />
       <LanternPosts glow={night ? 2.4 : 0.6} />
       <Pool glow={night ? 0.55 : 0.15} />
-      <Building windowGlow={night ? 1.7 : 0.12} night={night} />
+      <ResortBuilding windowGlow={night ? 1.7 : 0.12} night={night} />
       <Turf />
       <Grass count={isTouch ? 2400 : 6500} />
       {PALMS.map(([p, s, l], i) => (
