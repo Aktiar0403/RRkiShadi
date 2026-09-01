@@ -175,14 +175,20 @@ function WelcomeBoard() {
     ctx.font = '500 52px Cinzel, serif'
     ctx.fillText('✦  Welcome  ✦', w / 2, 130)
     ctx.fillStyle = '#f4ead8'
-    ctx.font = '96px "Great Vibes", cursive'
+    // shrink-to-fit so the script name never clips the border
+    let size = 92
+    ctx.font = `${size}px "Great Vibes", cursive`
+    while (size > 40 && ctx.measureText('Ruchi Weds Rahul').width > w - 90) {
+      size -= 4
+      ctx.font = `${size}px "Great Vibes", cursive`
+    }
     ctx.fillText('Ruchi Weds Rahul', w / 2, 268)
     ctx.fillStyle = '#d9c48c'
     ctx.font = '500 26px Cinzel, serif'
     ctx.fillText('16 · 17 DECEMBER 2026', w / 2, 348)
   })
   return (
-    <group position={[3.1, 0, 26]} rotation-y={-0.35} scale={1.1}>
+    <group position={[3.4, 0, 25]} rotation-y={-0.35} scale={0.9}>
       {[-1.15, 1.15].map((x) => (
         <mesh key={x} position={[x, 0.95, -0.06]}>
           <cylinderGeometry args={[0.05, 0.06, 1.9, 8]} />

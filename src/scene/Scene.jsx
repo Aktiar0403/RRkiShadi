@@ -298,7 +298,7 @@ function ScrollCamera({ scrollRef }) {
   const buildCurves = (camera) => {
     const vHalf = Math.tan((camera.fov * Math.PI) / 360)
     const pos = [v(0, 2.1, isTouch ? 40 : 33)] // eye level at the gates
-    const look = [v(0, 3.4, 0)]
+    const look = [v(0, 3.8, 0)] // tilted up enough to keep the gate's name in frame
     PANELS.forEach((p, i) => {
       const m = panelWorld[i]
       let d = p.dist * (isTouch ? 1.15 : 1)

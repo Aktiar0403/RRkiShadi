@@ -55,6 +55,7 @@
 :root[data-mode="day"] .info-card h4 { color: var(--gold-2); }
 :root[data-mode="day"] .info-card p { color: var(--cream-soft); }
 :root[data-mode="day"] footer { color: var(--mist); }
+:root[data-mode="day"] .hero-meta { color: var(--cream-soft); text-shadow: 0 1px 8px rgba(255, 255, 255, 0.5); }
 :root[data-mode="day"] .band .lede, :root[data-mode="day"] .marquee-track { color: var(--gold-2); }
 :root[data-mode="day"] .music-btn:hover,
 :root[data-mode="day"] .mode-btn:hover { box-shadow: 0 10px 24px -10px rgba(157, 118, 207, 0.5); }
