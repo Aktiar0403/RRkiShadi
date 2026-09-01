@@ -40,21 +40,6 @@ function Hero() {
   )
 }
 
-function Marquee() {
-  const text = (
-    <>
-      {'RUCHI '}<b>✦</b>{' RAHUL '}<b>✦</b>{' 16 · 17 DECEMBER 2026 '}<b>✦</b>{' STARDOM RESORT · JAIPUR '}<b>✦</b>{' #RRKISHADI '}<b>✦</b>{' '}
-    </>
-  )
-  return (
-    <div className="marquee" aria-hidden="true">
-      <div className="marquee-track">
-        {text}{text}{text}{text}
-      </div>
-    </div>
-  )
-}
-
 export default function App() {
   const [look, setLook] = useState('cocktail')
   const [inSection, setInSection] = useState(false)
@@ -140,7 +125,6 @@ export default function App() {
       <Rail active={activeChapter} />
       <main>
         <Hero />
-        <Marquee />
         {CHAPTERS.map(([id], i) => (
           <section key={id} className="chapter" id={id}>
             <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>

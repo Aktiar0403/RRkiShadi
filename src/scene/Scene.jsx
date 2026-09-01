@@ -261,7 +261,7 @@ const PALETTES = {
     city: '#c9a3a6',
     bird: '#241f28',
     lantern: ['#ffb347', 2.4],
-    petals: ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1'],
+    petals: ['#c73a55', '#e05575', '#d64d6b', '#f0a8b8'],
   },
   day: {
     bg: '#a8b8e8',
@@ -280,7 +280,7 @@ const PALETTES = {
     city: '#ffffff',
     bird: '#4a4258',
     lantern: ['#f2b6cf', 1.1],
-    petals: ['#e8a7c3', '#c3a6e8', '#ffffff', '#f0d9e6'],
+    petals: ['#e87a93', '#f0a8b8', '#ffffff', '#d64d6b'],
   },
 }
 
@@ -297,8 +297,8 @@ function ScrollCamera({ scrollRef }) {
   // camera stands exactly where the card fills ~92% of the viewport.
   const buildCurves = (camera) => {
     const vHalf = Math.tan((camera.fov * Math.PI) / 360)
-    const pos = [v(0, 2.9, isTouch ? 40 : 33)]
-    const look = [v(0, 3.9, 0)]
+    const pos = [v(0, 2.1, isTouch ? 40 : 33)] // eye level at the gates
+    const look = [v(0, 3.4, 0)]
     PANELS.forEach((p, i) => {
       const m = panelWorld[i]
       let d = p.dist * (isTouch ? 1.15 : 1)
@@ -310,8 +310,8 @@ function ScrollCamera({ scrollRef }) {
       pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1], p.pos[2] + Math.cos(p.ry) * d))
       look.push(v(...p.pos))
     })
-    pos.push(v(0, 2.5, isTouch ? 2.6 : 1.6)) // footer — beneath the dome
-    look.push(v(0, 4.4, -2.2)) //               dome rim, garlands, the night beyond
+    pos.push(v(0, 2.1, isTouch ? 2.6 : 1.6)) // footer — beneath the dome
+    look.push(v(0, 4.2, -2.2)) //               dome rim, garlands, the night beyond
     return {
       posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
       lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
@@ -388,7 +388,7 @@ export default function Scene({ scrollRef, mode = 'night', look, setLook }) {
   return (
     <Canvas
       dpr={dpr}
-      camera={{ position: [0, 2.9, isTouch ? 40 : 33], fov: isTouch ? 58 : 46 }}
+      camera={{ position: [0, 2.1, isTouch ? 40 : 33], fov: isTouch ? 58 : 46 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >

@@ -438,6 +438,66 @@ function Building({ windowGlow, night }) {
   )
 }
 
+/** Rose petals strewn along the walkway and around the chhatri. */
+function RoadPetals({ count = 420 }) {
+  const mesh = useRef()
+  const geometry = useMemo(() => {
+    const s = new THREE.Shape()
+    s.moveTo(0, -0.09)
+    s.quadraticCurveTo(0.06, -0.025, 0.04, 0.045)
+    s.quadraticCurveTo(0.02, 0.1, 0, 0.11)
+    s.quadraticCurveTo(-0.02, 0.1, -0.04, 0.045)
+    s.quadraticCurveTo(-0.06, -0.025, 0, -0.09)
+    return new THREE.ShapeGeometry(s, 6)
+  }, [])
+  const items = useMemo(() => {
+    const arr = []
+    const ROSES = ['#c73a55', '#e05575', '#d64d6b', '#f0a8b8', '#b32d47']
+    for (let i = 0; i < count; i++) {
+      let x, z
+      if (i % 3 === 0) {
+        // around and on the chhatri platform
+        const a = Math.random() * Math.PI * 2
+        const r = Math.random() * 4.4
+        x = Math.cos(a) * r
+        z = Math.sin(a) * r
+      } else {
+        x = THREE.MathUtils.randFloatSpread(4.6)
+        z = THREE.MathUtils.randFloat(2, 27)
+      }
+      arr.push({
+        x,
+        z,
+        y: 0.03 + Math.random() * 0.03,
+        rz: Math.random() * Math.PI * 2,
+        s: THREE.MathUtils.randFloat(0.6, 1.25),
+        color: ROSES[(Math.random() * ROSES.length) | 0],
+      })
+    }
+    return arr
+  }, [count])
+  useEffect(() => {
+    const dummy = new THREE.Object3D()
+    const c = new THREE.Color()
+    items.forEach((it, i) => {
+      dummy.position.set(it.x, it.y, it.z)
+      dummy.rotation.set(-Math.PI / 2, 0, it.rz)
+      dummy.scale.setScalar(it.s)
+      dummy.updateMatrix()
+      mesh.current.setMatrixAt(i, dummy.matrix)
+      mesh.current.setColorAt(i, c.set(it.color))
+    })
+    mesh.current.instanceMatrix.needsUpdate = true
+    mesh.current.instanceColor.needsUpdate = true
+  }, [items])
+  return (
+    <instancedMesh ref={mesh} args={[null, null, items.length]}>
+      <primitive object={geometry} attach="geometry" />
+      <meshStandardMaterial roughness={0.85} side={THREE.DoubleSide} />
+    </instancedMesh>
+  )
+}
+
 /** Wide paved walkway from the gate to the chhatri, softly reflective. */
 function Pathway() {
   return (
@@ -506,6 +566,7 @@ export default function Resort({ mode = 'night' }) {
       <Gate night={night} />
       <WelcomeBoard />
       <Pathway />
+      <RoadPetals count={isTouch ? 280 : 420} />
       <LanternPosts glow={night ? 2.4 : 0.6} />
       <Pool glow={night ? 0.55 : 0.15} />
       <Building windowGlow={night ? 1.7 : 0.12} night={night} />

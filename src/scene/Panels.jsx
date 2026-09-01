@@ -11,11 +11,11 @@ import Tilt from '../Tilt.jsx'
    camera stops in front of each. Order must match the page sections.
 ------------------------------------------------------------------- */
 export const PANELS = [
-  { id: 'celebrations', pos: [2.8, 2.55, 16.8], ry: -0.35, scale: 0.0053, dist: 6.2 },
-  { id: 'stay', pos: [-3.3, 2.5, 11.4], ry: 0.42, scale: 0.0053, dist: 6.2 },
-  { id: 'what-to-wear', pos: [2.9, 2.5, 6.6], ry: -0.42, scale: 0.0053, dist: 6.2 },
-  { id: 'jaipur', pos: [-3.2, 2.6, 2.2], ry: 0.45, scale: 0.005, dist: 6.4 },
-  { id: 'rsvp', pos: [0, 2.8, -0.9], ry: 0, scale: 0.0038, mScale: 0.0053, dist: 7.0 },
+  { id: 'celebrations', pos: [2.8, 2.4, 16.8], ry: -0.35, scale: 0.0053, dist: 6.2 },
+  { id: 'stay', pos: [-3.3, 2.4, 11.4], ry: 0.42, scale: 0.0053, dist: 6.2 },
+  { id: 'what-to-wear', pos: [2.9, 2.4, 6.6], ry: -0.42, scale: 0.0053, dist: 6.2 },
+  { id: 'jaipur', pos: [-3.2, 2.45, 2.2], ry: 0.45, scale: 0.005, dist: 6.4 },
+  { id: 'rsvp', pos: [0, 2.6, -0.9], ry: 0, scale: 0.0038, mScale: 0.0053, dist: 7.0 },
 ]
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
@@ -391,7 +391,8 @@ export default function Panels({ look, setLook, scrollRef }) {
       const el = refs.current[i]
       if (!el) return
       const d = Math.abs(p - (i + 1))
-      const op = THREE.MathUtils.clamp(1 - (d - 0.5) / 0.4, 0, 1)
+      // appear only once the camera has essentially arrived at the stop
+      const op = THREE.MathUtils.clamp(1 - (d - 0.3) / 0.2, 0, 1)
       el.style.opacity = op.toFixed(2)
       el.style.pointerEvents = op > 0.5 ? 'auto' : 'none'
     })
