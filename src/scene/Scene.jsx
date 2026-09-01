@@ -372,8 +372,8 @@ function ScrollCamera({ scrollRef }) {
 
     // gentle parallax only — big sway would crop the tightly framed cards
     cam.position.set(
-      p.x + hx * 0.3 + Math.sin(t * 0.14) * 0.08,
-      p.y + hy * 0.18 + Math.sin(t * 0.19) * 0.05,
+      p.x + hx * 0.15 + Math.sin(t * 0.14) * 0.05,
+      p.y + hy * 0.1 + Math.sin(t * 0.19) * 0.03,
       p.z,
     )
     cam.lookAt(l)

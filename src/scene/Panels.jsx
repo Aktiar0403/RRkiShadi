@@ -24,7 +24,7 @@ const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: co
    factor) — the camera uses this to stand exactly close enough that
    the card fills the view. */
 export const panelWorld = []
-const SCALE_K = 1.55
+const SCALE_K = 1.0 // CSS3D convention: 1px × object scale = world units
 
 export const LOOKS = {
   cocktail: {
