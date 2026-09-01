@@ -11,7 +11,7 @@ import * as THREE from 'three'
 
 const GOLD = { color: '#c9a45f', metalness: 0.7, roughness: 0.3 }
 const HALF = 2.8 // post square half-width
-const TOP = 3.5 // canopy height
+const TOP = 4.5 // canopy height
 
 function useTexture(w, h, draw) {
   return useMemo(() => {
@@ -165,7 +165,7 @@ function LightStrands({ night }) {
     const arr = []
     const edge = HALF + 0.42
     const strand = (x, z) => {
-      const len = 5 + ((Math.random() * 6) | 0)
+      const len = 7 + ((Math.random() * 8) | 0)
       for (let k = 0; k < len; k++) arr.push({ x, z, y: TOP - 0.08 - k * 0.17 })
     }
     for (let t = -edge + 0.3; t <= edge - 0.3; t += 0.4) {
@@ -216,16 +216,16 @@ function Drapes() {
 function Chandelier({ night }) {
   return (
     <group position={[0, TOP, 0]}>
-      <mesh position-y={-0.3}>
-        <cylinderGeometry args={[0.015, 0.015, 0.6, 6]} />
+      <mesh position-y={-0.5}>
+        <cylinderGeometry args={[0.015, 0.015, 1.0, 6]} />
         <meshStandardMaterial {...GOLD} />
       </mesh>
-      <mesh position-y={-0.66}>
+      <mesh position-y={-1.06}>
         <sphereGeometry args={[0.09, 12, 12]} />
         <meshStandardMaterial color="#fff2d0" emissive="#ffd98a" emissiveIntensity={night ? 3 : 1} />
       </mesh>
       {[0.3, 0.2].map((r, i) => (
-        <mesh key={i} position-y={-0.62 - i * 0.14} rotation-x={Math.PI / 2}>
+        <mesh key={i} position-y={-1.02 - i * 0.14} rotation-x={Math.PI / 2}>
           <torusGeometry args={[r, 0.018, 8, 24]} />
           <meshStandardMaterial {...GOLD} />
         </mesh>
@@ -233,7 +233,7 @@ function Chandelier({ night }) {
       {Array.from({ length: 8 }, (_, i) => {
         const a = (i / 8) * Math.PI * 2
         return (
-          <mesh key={`c${i}`} position={[Math.cos(a) * 0.3, -0.74, Math.sin(a) * 0.3]}>
+          <mesh key={`c${i}`} position={[Math.cos(a) * 0.3, -1.14, Math.sin(a) * 0.3]}>
             <sphereGeometry args={[0.035, 6, 6]} />
             <meshStandardMaterial color="#fff2d0" emissive="#ffd98a" emissiveIntensity={night ? 2.4 : 0.8} />
           </mesh>

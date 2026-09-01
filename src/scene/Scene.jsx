@@ -311,7 +311,7 @@ function ScrollCamera({ scrollRef }) {
       look.push(v(...p.pos))
     })
     pos.push(v(0, 1.9, isTouch ? 3.0 : 2.4)) // footer — under the mandap canopy
-    look.push(v(0, 2.9, -1.2)) //               chandelier, light strands, flowers
+    look.push(v(0, 3.3, -1.2)) //               chandelier, light strands, flowers
     return {
       posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
       lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
