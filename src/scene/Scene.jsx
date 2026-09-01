@@ -1,12 +1,11 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Stars, Sparkles, Float } from '@react-three/drei'
+import { Stars, Sparkles } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import Mandap from './Mandap.jsx'
 import Petals from './Petals.jsx'
 import Lanterns from './Lanterns.jsx'
-import Rings from './Rings.jsx'
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
@@ -25,6 +24,7 @@ const PALETTES = {
     ground: '#0b1220',
     stars: true,
     vignette: 0.9,
+    lantern: ['#ffb347', 2.4],
     petals: ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1'],
   },
   day: {
@@ -38,6 +38,7 @@ const PALETTES = {
     ground: '#e6d9e8',
     stars: false,
     vignette: 0.4,
+    lantern: ['#f2b6cf', 1.1],
     petals: ['#e8a7c3', '#c3a6e8', '#ffffff', '#f0d9e6'],
   },
 }
@@ -144,11 +145,8 @@ export default function Scene({ scrollRef, mode = 'night' }) {
       <pointLight position={[0, 3.2, 0]} intensity={pal.point} color="#ffb347" distance={12} decay={2} />
 
       <Mandap />
-      <Lanterns />
+      <Lanterns color={pal.lantern[0]} intensity={pal.lantern[1]} />
       <Petals count={isTouch ? 110 : 240} colors={pal.petals} />
-      <Float speed={1.4} rotationIntensity={0.4} floatIntensity={0.9}>
-        <Rings position={[0, 6.4, 0.4]} />
-      </Float>
 
       <Sparkles count={isTouch ? 50 : 90} scale={[16, 8, 12]} position={[0, 3.5, 0]} size={2.2} speed={0.35} color={pal.sparkle} />
       {pal.stars && <Stars radius={70} depth={40} count={isTouch ? 800 : 1500} factor={3} saturation={0} fade speed={0.6} />}

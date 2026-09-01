@@ -47,9 +47,20 @@ export default function Petals({ count = 240, colors = COLORS }) {
     mesh.current.instanceMatrix.needsUpdate = true
   })
 
+  // teardrop petal outline, not a rectangle
+  const petalGeometry = useMemo(() => {
+    const shape = new THREE.Shape()
+    shape.moveTo(0, -0.1)
+    shape.quadraticCurveTo(0.065, -0.03, 0.045, 0.05)
+    shape.quadraticCurveTo(0.022, 0.11, 0, 0.12)
+    shape.quadraticCurveTo(-0.022, 0.11, -0.045, 0.05)
+    shape.quadraticCurveTo(-0.065, -0.03, 0, -0.1)
+    return new THREE.ShapeGeometry(shape, 8)
+  }, [])
+
   return (
     <instancedMesh ref={mesh} args={[null, null, count]}>
-      <planeGeometry args={[0.13, 0.2]} />
+      <primitive object={petalGeometry} attach="geometry" />
       <meshStandardMaterial side={THREE.DoubleSide} roughness={0.9} />
     </instancedMesh>
   )
