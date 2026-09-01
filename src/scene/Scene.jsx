@@ -7,6 +7,7 @@ import Mandap from './Mandap.jsx'
 import Petals from './Petals.jsx'
 import Lanterns from './Lanterns.jsx'
 import Resort from './Resort.jsx'
+import Panels, { PANELS } from './Panels.jsx'
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
@@ -286,40 +287,22 @@ const PALETTES = {
  * the camera on top of the path.
  */
 function ScrollCamera({ scrollRef }) {
-  const posCurve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3(
-        [
-          v(0, 2.9, isTouch ? 40 : 33), // hero — straight on: gate, names, welcome board
-          v(0, 2.7, 22.5), // celebrations — passing under the arch
-          v(-1.8, 2.3, 15), // stay — drifting toward the pool side
-          v(1.6, 2.1, 9), //  what to wear — weaving back across the walkway
-          v(0, 1.9, 4.8), // jaipur — at the foot of the steps
-          v(0, 2.3, 0.8), // rsvp — stepping inside the chhatri
-          v(0, 2.5, -0.3), // footer — beneath the dome
-        ],
-        false,
-        'centripetal',
-      ),
-    [],
-  )
-  const lookCurve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3(
-        [
-          v(0, 3.9, 0), //  level gaze through the arch, drawn inward
-          v(0, 2.8, 0),
-          v(-5.5, 1.2, 10), // a glance across the pool
-          v(0, 2.9, 0),
-          v(0, 3.6, 0),
-          v(0, 4.4, -0.6),
-          v(0, 5.7, -0.2), // up into the dome
-        ],
-        false,
-        'centripetal',
-      ),
-    [],
-  )
+  // hero at the gates, then a stop facing each board, then the dome
+  const { posCurve, lookCurve } = useMemo(() => {
+    const pos = [v(0, 2.9, isTouch ? 40 : 33)]
+    const look = [v(0, 3.9, 0)]
+    for (const p of PANELS) {
+      const d = p.dist * (isTouch ? 1.8 : 1)
+      pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1] - 0.1, p.pos[2] + Math.cos(p.ry) * d))
+      look.push(v(...p.pos))
+    }
+    pos.push(v(0, 2.4, isTouch ? 1.6 : 0.4)) // footer — beneath the dome
+    look.push(v(0, 5.8, -0.5)) //               gazing up into it
+    return {
+      posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
+      lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
+    }
+  }, [])
   const smooth = useRef(0)
   const pointer = useRef({ x: 0, y: 0 })
   const orient = useRef({ x: 0, y: 0 })
@@ -362,8 +345,8 @@ function ScrollCamera({ scrollRef }) {
     const hy = THREE.MathUtils.clamp(pointer.current.y - orient.current.y, -1.2, 1.2)
 
     state.camera.position.set(
-      p.x + hx * 1.7 + Math.sin(t * 0.14) * 0.35,
-      p.y + hy * 1.0 + Math.sin(t * 0.19) * 0.2,
+      p.x + hx * 0.8 + Math.sin(t * 0.14) * 0.2,
+      p.y + hy * 0.5 + Math.sin(t * 0.19) * 0.12,
       p.z,
     )
     state.camera.lookAt(l)
@@ -371,7 +354,7 @@ function ScrollCamera({ scrollRef }) {
   return null
 }
 
-export default function Scene({ scrollRef, mode = 'night' }) {
+export default function Scene({ scrollRef, mode = 'night', look, setLook }) {
   const pal = PALETTES[mode] || PALETTES.night
   return (
     <Canvas
@@ -394,6 +377,7 @@ export default function Scene({ scrollRef, mode = 'night' }) {
 
       <Mandap />
       <Resort mode={mode} />
+      <Panels look={look} setLook={setLook} scrollRef={scrollRef} />
       <Lanterns color={pal.lantern[0]} intensity={pal.lantern[1]} />
       <Petals count={isTouch ? 110 : 240} colors={pal.petals} xSpread={26} zMin={-6} zMax={24} />
 

@@ -155,7 +155,21 @@ body {
 @media (max-width: 1023px) { .rail { display: none; } }
 
 /* ---------- content flow ---------- */
-main { position: relative; z-index: 1; }
+/* Sections are spacers that pace the camera; the real panels live in
+   the 3D stage, so the page layer must not swallow their clicks. */
+main { position: relative; z-index: 1; pointer-events: none; }
+
+/* ---------- panels inside the 3D world ---------- */
+.stage { pointer-events: none; }
+.p3d-holder { transition: opacity 0.25s ease; }
+.panel3d {
+  width: 520px;
+  max-width: none;
+  background: color-mix(in srgb, var(--tint-strong) 94%, transparent);
+  pointer-events: auto;
+}
+.panel3d.wide3d { width: 640px; }
+.panel3d .section-title::after { transform: scaleX(1); }
 
 /* ---------- hero ---------- */
 .hero {
