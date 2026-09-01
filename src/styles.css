@@ -174,17 +174,24 @@ main { position: relative; z-index: 1; pointer-events: none; }
 /* phones: narrower layout that the camera fills edge to edge; the tall
    RSVP board scrolls inside itself so every field is reachable */
 @media (pointer: coarse) {
-  .panel3d { width: 420px; padding: 28px 22px; }
-  .panel3d.wide3d {
+  .panel3d {
     width: 420px;
-    max-height: 860px;
+    padding: 28px 22px;
+    max-height: 820px; /* screen-shaped, so the camera can fill the width */
     overflow-y: auto;
     touch-action: pan-y;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
+  .panel3d.wide3d { width: 420px; }
   .panel3d .rsvp-form { grid-template-columns: 1fr; }
   .panel3d .lede { font-size: 15px; }
+  /* photos stay 2x2 inside the board — a stacked column gets too tall */
+  .panel3d .explore-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .panel3d .ex-overlay { padding: 12px; }
+  .panel3d .ex-overlay h4 { font-size: 13px; letter-spacing: 1px; }
+  .panel3d .ex-overlay p { display: none; }
+  .panel3d .ex-walk { margin-top: 6px; font-size: 10px; }
 }
 
 /* ---------- custom dropdown ---------- */

@@ -358,7 +358,7 @@ function Grass({ count = 4200 }) {
 
   return (
     <instancedMesh ref={mesh} args={[null, null, blades.length]}>
-      <planeGeometry args={[0.05, 0.3]} />
+      <planeGeometry args={[0.032, 0.22]} />
       <meshStandardMaterial roughness={0.95} side={THREE.DoubleSide} />
     </instancedMesh>
   )
