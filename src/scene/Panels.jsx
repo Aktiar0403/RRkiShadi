@@ -20,6 +20,12 @@ export const PANELS = [
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
+/* Measured world-space size of each board (px × scale × transform
+   factor) — the camera uses this to stand exactly close enough that
+   the card fills the view. */
+export const panelWorld = []
+const SCALE_K = 1.55
+
 export const LOOKS = {
   cocktail: {
     label: 'Cocktail',
@@ -358,6 +364,25 @@ const CONTENT = {
  */
 export default function Panels({ look, setLook, scrollRef }) {
   const refs = useRef([])
+
+  // measure each board once rendered (and again after fonts / resize)
+  useEffect(() => {
+    const measure = () => {
+      PANELS.forEach((cfg, i) => {
+        const el = refs.current[i]
+        if (!el || !el.offsetWidth) return
+        const s = isTouch && cfg.mScale ? cfg.mScale : cfg.scale
+        panelWorld[i] = { w: el.offsetWidth * s * SCALE_K, h: el.offsetHeight * s * SCALE_K }
+      })
+    }
+    const t = setTimeout(measure, 400)
+    document.fonts?.ready?.then(() => setTimeout(measure, 150))
+    window.addEventListener('resize', measure)
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('resize', measure)
+    }
+  }, [])
 
 
   useFrame(() => {

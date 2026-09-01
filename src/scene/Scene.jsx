@@ -7,7 +7,7 @@ import Mandap from './Mandap.jsx'
 import Petals from './Petals.jsx'
 import Lanterns from './Lanterns.jsx'
 import Resort from './Resort.jsx'
-import Panels, { PANELS } from './Panels.jsx'
+import Panels, { PANELS, panelWorld } from './Panels.jsx'
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
@@ -292,22 +292,34 @@ const PALETTES = {
  * the camera on top of the path.
  */
 function ScrollCamera({ scrollRef }) {
-  // hero at the gates, then a stop facing each board, then the dome
-  const { posCurve, lookCurve } = useMemo(() => {
+  // hero at the gates, then a stop framing each board, then the dome.
+  // Each stop distance comes from the board's measured size: the
+  // camera stands exactly where the card fills ~92% of the viewport.
+  const buildCurves = (camera) => {
+    const vHalf = Math.tan((camera.fov * Math.PI) / 360)
     const pos = [v(0, 2.9, isTouch ? 40 : 33)]
     const look = [v(0, 3.9, 0)]
-    for (const p of PANELS) {
-      const d = p.dist * (isTouch ? 1.15 : 1)
-      pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1] - 0.1, p.pos[2] + Math.cos(p.ry) * d))
+    PANELS.forEach((p, i) => {
+      const m = panelWorld[i]
+      let d = p.dist * (isTouch ? 1.15 : 1)
+      if (m) {
+        const dh = m.h / (0.92 * 2 * vHalf)
+        const dw = m.w / (0.92 * 2 * vHalf * camera.aspect)
+        d = Math.max(2.0, dh, dw)
+      }
+      pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1], p.pos[2] + Math.cos(p.ry) * d))
       look.push(v(...p.pos))
-    }
+    })
     pos.push(v(0, 2.5, isTouch ? 2.6 : 1.6)) // footer — beneath the dome
     look.push(v(0, 4.4, -2.2)) //               dome rim, garlands, the night beyond
     return {
       posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
       lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
     }
-  }, [])
+  }
+  const curves = useRef(null)
+  const lastAspect = useRef(0)
+  const fitted = useRef(false)
   const smooth = useRef(0)
   const pointer = useRef({ x: 0, y: 0 })
   const orient = useRef({ x: 0, y: 0 })
@@ -340,21 +352,31 @@ function ScrollCamera({ scrollRef }) {
   }, [])
 
   useFrame((state, delta) => {
+    const cam = state.camera
+    // (re)build the path when measurements arrive or the aspect changes
+    const ready = panelWorld.filter(Boolean).length === PANELS.length
+    if (!curves.current || Math.abs(cam.aspect - lastAspect.current) > 0.01 || (ready && !fitted.current)) {
+      curves.current = buildCurves(cam)
+      lastAspect.current = cam.aspect
+      if (ready) fitted.current = true
+    }
+
     const t = state.clock.elapsedTime
     smooth.current = THREE.MathUtils.damp(smooth.current, scrollRef.current, 2.2, delta)
     const s = THREE.MathUtils.clamp(smooth.current, 0, 1)
-    posCurve.getPoint(s, p)
-    lookCurve.getPoint(s, l)
+    curves.current.posCurve.getPoint(s, p)
+    curves.current.lookCurve.getPoint(s, l)
 
     const hx = THREE.MathUtils.clamp(pointer.current.x + orient.current.x, -1.2, 1.2)
     const hy = THREE.MathUtils.clamp(pointer.current.y - orient.current.y, -1.2, 1.2)
 
-    state.camera.position.set(
-      p.x + hx * 0.8 + Math.sin(t * 0.14) * 0.2,
-      p.y + hy * 0.5 + Math.sin(t * 0.19) * 0.12,
+    // gentle parallax only — big sway would crop the tightly framed cards
+    cam.position.set(
+      p.x + hx * 0.3 + Math.sin(t * 0.14) * 0.08,
+      p.y + hy * 0.18 + Math.sin(t * 0.19) * 0.05,
       p.z,
     )
-    state.camera.lookAt(l)
+    cam.lookAt(l)
   })
   return null
 }
