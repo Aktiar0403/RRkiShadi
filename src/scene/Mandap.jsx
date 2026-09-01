@@ -1,93 +1,322 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-const GOLD = { color: '#b89355', metalness: 0.55, roughness: 0.38 }
-const IVORY = { color: '#f0e8d6', metalness: 0.05, roughness: 0.75 }
+/* ------------------------------------------------------------------
+   The real Stardom wedding mandap, from the resort's gallery:
+   square gold-framed structure, flat lit fabric canopy ringed with
+   flowers, sheer corner drapes, strands of hanging lights, a crystal
+   chandelier, terracotta-print carpet with white mattresses, low
+   havan table and red benches, black uplights around the edge.
+------------------------------------------------------------------- */
 
-/**
- * Every garland bead and rim drop in ONE instanced draw call
- * (previously ~340 individual meshes).
- */
-function Beads({ pillarPositions, topY }) {
-  const items = useMemo(() => {
-    const arr = []
-    const addString = (a, b, sag, count, color) => {
-      const va = new THREE.Vector3(...a)
-      const vb = new THREE.Vector3(...b)
-      const mid = va.clone().add(vb).multiplyScalar(0.5)
-      mid.y -= sag
-      const curve = new THREE.QuadraticBezierCurve3(va, mid, vb)
-      for (const p of curve.getPoints(count - 1)) arr.push({ p, r: 0.052, color })
+const GOLD = { color: '#c9a45f', metalness: 0.7, roughness: 0.3 }
+const HALF = 2.8 // post square half-width
+const TOP = 3.5 // canopy height
+
+function useTexture(w, h, draw) {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    draw(canvas.getContext('2d'), w, h)
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    return tex
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+}
+
+/** Terracotta patterned carpet under everything. */
+function Carpet() {
+  const tex = useTexture(256, 256, (ctx, w, h) => {
+    ctx.fillStyle = '#c2502e'
+    ctx.fillRect(0, 0, w, h)
+    // diagonal lattice with quatrefoil motifs
+    ctx.strokeStyle = 'rgba(138, 53, 32, 0.9)'
+    ctx.lineWidth = 3
+    for (let i = -h; i < w + h; i += 64) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + h, h); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(i + h, 0); ctx.lineTo(i, h); ctx.stroke()
     }
-    const N = pillarPositions.length
-    pillarPositions.forEach((pp, i) => {
-      const q = pillarPositions[(i + 1) % N]
-      const a = [pp[0], topY, pp[2]]
-      const b = [q[0], topY, q[2]]
-      addString(a, b, 0.55, 26, i % 2 ? '#e8a33c' : '#e07b35')
-      addString(a, b, 0.85, 22, '#f0d9a0')
-    })
-    // gold bead drops around the dome rim
-    for (let i = 0; i < 14; i++) {
-      const ang = (i / 14) * Math.PI * 2
-      const x = Math.cos(ang) * 2.98
-      const z = Math.sin(ang) * 2.98
-      for (let k = 0; k < 4; k++) {
-        arr.push({ p: new THREE.Vector3(x, 3.95 - 0.08 * k, z), r: k === 3 ? 0.045 : 0.03, color: '#c8a45f' })
+    ctx.fillStyle = '#e07a50'
+    for (let y = 32; y < h; y += 64) {
+      for (let x = 32; x < w; x += 64) {
+        for (const [dx, dy] of [[-7, 0], [7, 0], [0, -7], [0, 7]]) {
+          ctx.beginPath()
+          ctx.arc(x + dx, y + dy, 6, 0, Math.PI * 2)
+          ctx.fill()
+        }
       }
     }
-    return arr
-  }, [pillarPositions, topY])
-
-  const ref = useRef()
-  useEffect(() => {
-    const dummy = new THREE.Object3D()
-    const c = new THREE.Color()
-    items.forEach((it, i) => {
-      dummy.position.copy(it.p)
-      dummy.scale.setScalar(it.r)
-      dummy.updateMatrix()
-      ref.current.setMatrixAt(i, dummy.matrix)
-      ref.current.setColorAt(i, c.set(it.color))
-    })
-    ref.current.instanceMatrix.needsUpdate = true
-    ref.current.instanceColor.needsUpdate = true
-  }, [items])
-
+  })
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  tex.repeat.set(6, 6)
   return (
-    <instancedMesh ref={ref} args={[null, null, items.length]}>
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshStandardMaterial roughness={0.65} emissive="#c98a3a" emissiveIntensity={0.12} />
-    </instancedMesh>
+    <mesh rotation-x={-Math.PI / 2} position-y={0.015}>
+      <planeGeometry args={[11, 11]} />
+      <meshStandardMaterial map={tex} roughness={0.9} />
+    </mesh>
   )
 }
 
-function Pillar({ position }) {
+/** Slim gold pole clusters at the four corners. */
+function Posts() {
+  const corners = [
+    [HALF, HALF], [-HALF, HALF], [HALF, -HALF], [-HALF, -HALF],
+  ]
+  return corners.map(([x, z], i) => {
+    const sx = Math.sign(x) * -0.24
+    const sz = Math.sign(z) * -0.24
+    return (
+      <group key={i} position={[x, 0, z]}>
+        {[[0, 0], [sx, 0], [0, sz]].map(([ox, oz], k) => (
+          <mesh key={k} position={[ox, TOP / 2, oz]}>
+            <cylinderGeometry args={[0.045, 0.045, TOP, 10]} />
+            <meshStandardMaterial {...GOLD} />
+          </mesh>
+        ))}
+        <mesh position-y={0.06}>
+          <boxGeometry args={[0.55, 0.12, 0.55]} />
+          <meshStandardMaterial {...GOLD} />
+        </mesh>
+      </group>
+    )
+  })
+}
+
+/** Flat fabric canopy, softly lit from within, gold-edged. */
+function Canopy({ night }) {
   return (
-    <group position={position}>
-      <mesh position-y={1.7}>
-        <cylinderGeometry args={[0.09, 0.12, 3.4, 14]} />
-        <meshStandardMaterial {...IVORY} />
+    <group position-y={TOP}>
+      <mesh>
+        <boxGeometry args={[HALF * 2 + 0.9, 0.1, HALF * 2 + 0.9]} />
+        <meshStandardMaterial color="#f7eedd" emissive="#ffdfae" emissiveIntensity={night ? 0.55 : 0.12} roughness={0.8} />
       </mesh>
-      <mesh position-y={0.08}>
-        <cylinderGeometry args={[0.2, 0.24, 0.16, 14]} />
-        <meshStandardMaterial {...GOLD} />
-      </mesh>
-      <mesh position-y={3.34}>
-        <cylinderGeometry args={[0.13, 0.09, 0.14, 14]} />
-        <meshStandardMaterial {...GOLD} />
-      </mesh>
+      {/* gold frame edges */}
+      {[[0, HALF + 0.45], [0, -HALF - 0.45]].map(([x, z], i) => (
+        <mesh key={`a${i}`} position={[x, -0.02, z]}>
+          <boxGeometry args={[HALF * 2 + 0.98, 0.14, 0.08]} />
+          <meshStandardMaterial {...GOLD} />
+        </mesh>
+      ))}
+      {[[HALF + 0.45, 0], [-HALF - 0.45, 0]].map(([x, z], i) => (
+        <mesh key={`b${i}`} position={[x, -0.02, z]}>
+          <boxGeometry args={[0.08, 0.14, HALF * 2 + 0.98]} />
+          <meshStandardMaterial {...GOLD} />
+        </mesh>
+      ))}
     </group>
   )
 }
 
-/** Small glowing diya flames around the platform edge. */
-function Diyas({ radius = 4.0, count = 16 }) {
+/** Ring of flowers around the canopy top, denser at the corners. */
+function FlowerRing() {
+  const mesh = useRef()
+  const items = useMemo(() => {
+    const COLORS = ['#e75480', '#f4c430', '#e34234', '#f8f4ea', '#ff8da1', '#ffa432', '#d94f8e']
+    const arr = []
+    const edge = HALF + 0.45
+    const push = (x, z, big = false) =>
+      arr.push({
+        x: x + THREE.MathUtils.randFloatSpread(0.2),
+        z: z + THREE.MathUtils.randFloatSpread(0.2),
+        y: TOP + 0.12 + Math.random() * 0.12,
+        r: (big ? 0.13 : 0.08) + Math.random() * 0.05,
+        color: COLORS[(Math.random() * COLORS.length) | 0],
+      })
+    for (let t = -edge; t <= edge; t += 0.28) {
+      push(t, edge)
+      push(t, -edge)
+      push(edge, t)
+      push(-edge, t)
+    }
+    for (const cx of [edge, -edge]) {
+      for (const cz of [edge, -edge]) {
+        for (let k = 0; k < 10; k++) push(cx, cz, true)
+      }
+    }
+    return arr
+  }, [])
+  useEffect(() => {
+    const dummy = new THREE.Object3D()
+    const c = new THREE.Color()
+    items.forEach((it, i) => {
+      dummy.position.set(it.x, it.y, it.z)
+      dummy.scale.setScalar(it.r)
+      dummy.updateMatrix()
+      mesh.current.setMatrixAt(i, dummy.matrix)
+      mesh.current.setColorAt(i, c.set(it.color))
+    })
+    mesh.current.instanceMatrix.needsUpdate = true
+    mesh.current.instanceColor.needsUpdate = true
+  }, [items])
+  return (
+    <instancedMesh ref={mesh} args={[null, null, items.length]}>
+      <sphereGeometry args={[1, 8, 8]} />
+      <meshStandardMaterial roughness={0.8} />
+    </instancedMesh>
+  )
+}
+
+/** Strands of tiny warm lights hanging from the canopy edges. */
+function LightStrands({ night }) {
+  const mesh = useRef()
+  const items = useMemo(() => {
+    const arr = []
+    const edge = HALF + 0.42
+    const strand = (x, z) => {
+      const len = 5 + ((Math.random() * 6) | 0)
+      for (let k = 0; k < len; k++) arr.push({ x, z, y: TOP - 0.08 - k * 0.17 })
+    }
+    for (let t = -edge + 0.3; t <= edge - 0.3; t += 0.4) {
+      strand(t, edge)
+      strand(t, -edge)
+      strand(edge, t)
+      strand(-edge, t)
+    }
+    // a few interior strands behind the chandelier, like the photo
+    for (let t = -1.8; t <= 1.8; t += 0.45) strand(t, -1.6)
+    return arr
+  }, [])
+  useEffect(() => {
+    const dummy = new THREE.Object3D()
+    items.forEach((it, i) => {
+      dummy.position.set(it.x, it.y, it.z)
+      dummy.scale.setScalar(0.028)
+      dummy.updateMatrix()
+      mesh.current.setMatrixAt(i, dummy.matrix)
+    })
+    mesh.current.instanceMatrix.needsUpdate = true
+  }, [items])
+  return (
+    <instancedMesh ref={mesh} args={[null, null, items.length]}>
+      <sphereGeometry args={[1, 6, 6]} />
+      <meshStandardMaterial color="#ffe6b8" emissive="#ffc46a" emissiveIntensity={night ? 2.2 : 0.7} />
+    </instancedMesh>
+  )
+}
+
+/** Sheer curved drapes at the corners. */
+function Drapes() {
+  const corners = [
+    [HALF, HALF, Math.PI * 0.25],
+    [-HALF, HALF, Math.PI * 0.75],
+    [-HALF, -HALF, Math.PI * 1.25],
+    [HALF, -HALF, Math.PI * 1.75],
+  ]
+  return corners.map(([x, z, ry], i) => (
+    <mesh key={i} position={[x * 0.94, TOP / 2 - 0.05, z * 0.94]} rotation-y={ry}>
+      <cylinderGeometry args={[0.5, 0.65, TOP - 0.15, 10, 1, true, 0, Math.PI * 0.9]} />
+      <meshStandardMaterial color="#f6e8da" roughness={0.9} transparent opacity={0.92} side={THREE.DoubleSide} />
+    </mesh>
+  ))
+}
+
+/** Crystal chandelier at the centre. */
+function Chandelier({ night }) {
+  return (
+    <group position={[0, TOP, 0]}>
+      <mesh position-y={-0.3}>
+        <cylinderGeometry args={[0.015, 0.015, 0.6, 6]} />
+        <meshStandardMaterial {...GOLD} />
+      </mesh>
+      <mesh position-y={-0.66}>
+        <sphereGeometry args={[0.09, 12, 12]} />
+        <meshStandardMaterial color="#fff2d0" emissive="#ffd98a" emissiveIntensity={night ? 3 : 1} />
+      </mesh>
+      {[0.3, 0.2].map((r, i) => (
+        <mesh key={i} position-y={-0.62 - i * 0.14} rotation-x={Math.PI / 2}>
+          <torusGeometry args={[r, 0.018, 8, 24]} />
+          <meshStandardMaterial {...GOLD} />
+        </mesh>
+      ))}
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i / 8) * Math.PI * 2
+        return (
+          <mesh key={`c${i}`} position={[Math.cos(a) * 0.3, -0.74, Math.sin(a) * 0.3]}>
+            <sphereGeometry args={[0.035, 6, 6]} />
+            <meshStandardMaterial color="#fff2d0" emissive="#ffd98a" emissiveIntensity={night ? 2.4 : 0.8} />
+          </mesh>
+        )
+      })}
+    </group>
+  )
+}
+
+/** Mattresses, havan table and red benches, like the ceremony setup. */
+function Seating() {
+  return (
+    <group>
+      {/* white mattresses around the centre */}
+      {[
+        [0, 1.35, 1.7, 0.9, 0],
+        [-1.25, -0.1, 0.9, 1.6, 0],
+        [1.25, -0.1, 0.9, 1.6, 0],
+      ].map(([x, z, w, d], i) => (
+        <mesh key={`m${i}`} position={[x, 0.07, z]}>
+          <boxGeometry args={[w, 0.1, d]} />
+          <meshStandardMaterial color="#f2ede2" roughness={0.95} />
+        </mesh>
+      ))}
+      {/* low havan table */}
+      <mesh position={[0, 0.14, -0.1]}>
+        <boxGeometry args={[0.8, 0.2, 0.55]} />
+        <meshStandardMaterial color="#6b4a2e" roughness={0.85} />
+      </mesh>
+      <mesh position={[0, 0.28, -0.1]}>
+        <cylinderGeometry args={[0.1, 0.13, 0.09, 10]} />
+        <meshStandardMaterial {...GOLD} />
+      </mesh>
+      {/* red benches at the corners */}
+      {[
+        [1.9, 1.6], [-1.9, 1.6], [1.9, -1.7], [-1.9, -1.7],
+      ].map(([x, z], i) => (
+        <group key={`b${i}`} position={[x, 0, z]}>
+          <mesh position-y={0.16}>
+            <boxGeometry args={[1.3, 0.14, 0.55]} />
+            <meshStandardMaterial color="#8a5a34" roughness={0.85} />
+          </mesh>
+          <mesh position-y={0.3}>
+            <boxGeometry args={[1.3, 0.16, 0.55]} />
+            <meshStandardMaterial color="#b03030" roughness={0.9} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+/** Black cylindrical uplights around the carpet edge. */
+function Uplights({ night }) {
+  const spots = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => {
+        const a = (i / 10) * Math.PI * 2 + 0.3
+        return [Math.cos(a) * 4.6, Math.sin(a) * 4.6]
+      }),
+    [],
+  )
+  return spots.map(([x, z], i) => (
+    <group key={i} position={[x, 0, z]}>
+      <mesh position-y={0.16}>
+        <cylinderGeometry args={[0.07, 0.08, 0.32, 10]} />
+        <meshStandardMaterial color="#1c1c20" roughness={0.6} />
+      </mesh>
+      <mesh position-y={0.33}>
+        <cylinderGeometry args={[0.055, 0.055, 0.02, 10]} />
+        <meshStandardMaterial color="#fff0c8" emissive="#ffca6a" emissiveIntensity={night ? 2.6 : 0.5} />
+      </mesh>
+    </group>
+  ))
+}
+
+/** Small diya flames dotting the carpet edge. */
+function Diyas({ radius = 5.1, count = 12 }) {
   const positions = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => {
         const a = (i / count) * Math.PI * 2
-        return [Math.cos(a) * radius, 0.62, Math.sin(a) * radius]
+        return [Math.cos(a) * radius, 0.03, Math.sin(a) * radius]
       }),
     [radius, count],
   )
@@ -105,89 +334,18 @@ function Diyas({ radius = 4.0, count = 16 }) {
   ))
 }
 
-/**
- * A Rajasthani chhatri — six slender pillars, a ring beam, a fluted
- * ivory dome with a gold band and kalash finial, marigold bead
- * garlands swagged between the pillars.
- */
-export default function Mandap() {
-  const R = 2.6 // pillar circle radius
-  const N = 6
-  const topY = 3.42
-
-  // no offset: pillars flank the entrance axis instead of standing on it,
-  // so nothing blocks the view into the pavilion (or the RSVP board)
-  const pillarPositions = useMemo(
-    () =>
-      Array.from({ length: N }, (_, i) => {
-        const a = (i / N) * Math.PI * 2
-        return [Math.cos(a) * R, 0.6, Math.sin(a) * R]
-      }),
-    [],
-  )
-
-  // graceful onion-dome profile
-  const domeGeometry = useMemo(() => {
-    const pts = [
-      new THREE.Vector2(3.05, 0),
-      new THREE.Vector2(2.95, 0.12),
-      new THREE.Vector2(2.6, 0.45),
-      new THREE.Vector2(2.05, 0.95),
-      new THREE.Vector2(1.35, 1.4),
-      new THREE.Vector2(0.65, 1.72),
-      new THREE.Vector2(0.18, 1.9),
-      new THREE.Vector2(0, 1.95),
-    ]
-    return new THREE.LatheGeometry(pts, 40)
-  }, [])
-
+export default function Mandap({ night = true }) {
   return (
     <group>
-      {/* stepped platform */}
-      <mesh position-y={0.1}>
-        <cylinderGeometry args={[4.6, 4.8, 0.2, 48]} />
-        <meshStandardMaterial {...IVORY} />
-      </mesh>
-      <mesh position-y={0.3}>
-        <cylinderGeometry args={[4.0, 4.2, 0.2, 48]} />
-        <meshStandardMaterial color="#e2d3b4" metalness={0.25} roughness={0.6} />
-      </mesh>
-      <mesh position-y={0.5}>
-        <cylinderGeometry args={[3.4, 3.6, 0.2, 48]} />
-        <meshStandardMaterial {...IVORY} />
-      </mesh>
-
-      {pillarPositions.map((p, i) => (
-        <Pillar key={i} position={p} />
-      ))}
-
-      {/* ring beam the pillars carry */}
-      <mesh position-y={4.02} rotation-x={Math.PI / 2}>
-        <torusGeometry args={[2.85, 0.09, 12, 48]} />
-        <meshStandardMaterial {...IVORY} />
-      </mesh>
-      <mesh position-y={4.14} rotation-x={Math.PI / 2}>
-        <torusGeometry args={[2.98, 0.05, 10, 48]} />
-        <meshStandardMaterial {...GOLD} />
-      </mesh>
-
-      {/* fluted ivory dome — double-sided so the interior reads when you stand beneath it */}
-      <mesh position-y={4.18} geometry={domeGeometry}>
-        <meshStandardMaterial color="#ede2ca" metalness={0.1} roughness={0.6} side={THREE.DoubleSide} />
-      </mesh>
-      {/* kalash finial */}
-      <mesh position-y={6.2}>
-        <sphereGeometry args={[0.16, 16, 16]} />
-        <meshStandardMaterial {...GOLD} emissive="#b89355" emissiveIntensity={0.5} />
-      </mesh>
-      <mesh position-y={6.42}>
-        <coneGeometry args={[0.07, 0.2, 12]} />
-        <meshStandardMaterial {...GOLD} />
-      </mesh>
-
-      {/* garlands + rim drops, one instanced draw call */}
-      <Beads pillarPositions={pillarPositions} topY={topY} />
-
+      <Carpet />
+      <Posts />
+      <Canopy night={night} />
+      <FlowerRing />
+      <LightStrands night={night} />
+      <Drapes />
+      <Chandelier night={night} />
+      <Seating />
+      <Uplights night={night} />
       <Diyas />
     </group>
   )

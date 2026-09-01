@@ -310,8 +310,8 @@ function ScrollCamera({ scrollRef }) {
       pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1], p.pos[2] + Math.cos(p.ry) * d))
       look.push(v(...p.pos))
     })
-    pos.push(v(0, 2.1, isTouch ? 2.6 : 1.6)) // footer — beneath the dome
-    look.push(v(0, 4.2, -2.2)) //               dome rim, garlands, the night beyond
+    pos.push(v(0, 1.9, isTouch ? 3.0 : 2.4)) // footer — under the mandap canopy
+    look.push(v(0, 2.9, -1.2)) //               chandelier, light strands, flowers
     return {
       posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
       lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
@@ -408,7 +408,7 @@ export default function Scene({ scrollRef, mode = 'night', look, setLook }) {
       <directionalLight position={[6, 8, 6]} intensity={pal.fill[1]} color={pal.fill[0]} />
       <pointLight position={[0, 3.2, 0]} intensity={pal.point} color="#ffb347" distance={12} decay={2} />
 
-      <Mandap />
+      <Mandap night={mode === 'night'} />
       <Resort mode={mode} />
       <Panels look={look} setLook={setLook} scrollRef={scrollRef} />
       <Lanterns color={pal.lantern[0]} intensity={pal.lantern[1]} />

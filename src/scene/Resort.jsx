@@ -331,7 +331,7 @@ function Grass({ count = 4200 }) {
       const x = THREE.MathUtils.randFloatSpread(66)
       const z = THREE.MathUtils.randFloat(-18, 32)
       if (Math.abs(x) < 2.4 && z > 2 && z < 32) continue // walkway
-      if (Math.hypot(x, z) < 5.2) continue // chhatri platform
+      if (Math.abs(x) < 6 && Math.abs(z) < 6) continue // mandap carpet
       if (Math.hypot((x + 7) / 1.45, z - 10) < 4.0) continue // pool
       if (z < -9 && Math.abs(x) < 14) continue // building footprint
       arr.push({
