@@ -93,15 +93,13 @@ function Rail({ active }) {
 function Hero() {
   return (
     <section className="hero" id="top">
-      <p className="hero-script">with love, we invite you to the wedding of</p>
-      <h1 className="hero-names">
-        Ruchi
-        <em>weds</em>
-        Rahul
-      </h1>
-      <div className="hero-rule" aria-hidden="true" />
-      <p className="hero-meta">16 · 17 December 2026 — Stardom Resort, Jaipur</p>
-      <div className="hero-scroll" aria-hidden="true" />
+      {/* the gate in the 3D scene carries the names — this stays for screen readers */}
+      <h1 className="sr-only">With love, we invite you to the wedding of Ruchi and Rahul — 16–17 December 2026, Stardom Resort, Jaipur</h1>
+      <div className="hero-bottom">
+        <div className="hero-rule" aria-hidden="true" />
+        <p className="hero-meta">16 · 17 December 2026 — Stardom Resort, Jaipur</p>
+        <div className="hero-scroll" aria-hidden="true" />
+      </div>
     </section>
   )
 }

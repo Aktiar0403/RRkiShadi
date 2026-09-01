@@ -40,76 +40,157 @@ function useCanvasTexture(w, h, draw) {
   return texture
 }
 
-/** Gold venue name on a transparent strip. */
-function VenueNameTexture() {
-  return useCanvasTexture(1024, 128, (ctx, w, h) => {
+/* ------------------------------------------------------------------
+   The grand gateway — straight-on, framing the walkway. Carries
+   "STARDOM RESORT", the welcome script, and RUCHI WEDS RAHUL
+   floating in the arch, like the reference photograph.
+------------------------------------------------------------------- */
+function Gate({ night }) {
+  const headerTex = useCanvasTexture(1400, 300, (ctx, w) => {
+    ctx.textAlign = 'center'
+    ctx.font = '600 104px Cinzel, serif'
+    ctx.fillStyle = '#5a4632'
+    ctx.shadowColor = 'rgba(90, 70, 50, 0.35)'
+    ctx.shadowBlur = 6
+    ctx.fillText('STARDOM RESORT', w / 2, 118)
+    ctx.shadowBlur = 0
+    ctx.font = '84px "Great Vibes", cursive'
+    ctx.fillStyle = '#8a5f42'
+    ctx.fillText('welcome, we invite you to the wedding of', w / 2, 238)
+  })
+
+  const letterFill = (ctx, h) => {
+    const g = ctx.createLinearGradient(0, 0, 0, h)
+    g.addColorStop(0, '#6a5f4e')
+    g.addColorStop(0.45, '#3b352c')
+    g.addColorStop(1, '#241f18')
+    return g
+  }
+  const ruchiTex = useCanvasTexture(1200, 300, (ctx, w, h) => {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = '600 74px Cinzel, serif'
-    ctx.fillStyle = '#f0d98c'
-    ctx.shadowColor = 'rgba(240, 217, 140, 0.6)'
-    ctx.shadowBlur = 18
-    ctx.fillText('STARDOM RESORT', w / 2, h / 2 + 4)
+    ctx.font = '700 224px Cinzel, serif'
+    ctx.fillStyle = letterFill(ctx, h)
+    ctx.fillText('RUCHI', w / 2, h / 2 + 8)
   })
-}
+  const wedsTex = useCanvasTexture(600, 170, (ctx, w, h) => {
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '600 116px Cinzel, serif'
+    ctx.fillStyle = letterFill(ctx, h)
+    ctx.fillText('WEDS', w / 2, h / 2 + 4)
+  })
+  const rahulTex = useCanvasTexture(1200, 300, (ctx, w, h) => {
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '700 224px Cinzel, serif'
+    ctx.fillStyle = letterFill(ctx, h)
+    ctx.fillText('RAHUL', w / 2, h / 2 + 8)
+  })
 
-/** Nameplate on the gate lintel. */
-function GateName() {
-  const tex = VenueNameTexture()
   return (
-    <mesh position={[0, 5.06, 21.47]}>
-      <planeGeometry args={[6.4, 0.8]} />
-      <meshBasicMaterial map={tex} transparent color="#ffe9b0" />
-    </mesh>
-  )
-}
+    <group position={[0, 0, 21]}>
+      {/* massive square pylons with cornice caps */}
+      {[-4.2, 4.2].map((x) => (
+        <group key={x} position-x={x}>
+          <mesh position-y={3.4}>
+            <boxGeometry args={[1.6, 6.8, 1.6]} />
+            <meshStandardMaterial {...SAND} />
+          </mesh>
+          <mesh position-y={6.94}>
+            <boxGeometry args={[2.0, 0.28, 2.0]} />
+            <meshStandardMaterial {...SAND} />
+          </mesh>
+          <mesh position-y={7.2}>
+            <boxGeometry args={[2.2, 0.24, 2.2]} />
+            <meshStandardMaterial {...SAND} />
+          </mesh>
+          <mesh position-y={7.48}>
+            <boxGeometry args={[1.7, 0.32, 1.7]} />
+            <meshStandardMaterial {...SAND} />
+          </mesh>
+        </group>
+      ))}
 
-/** Glowing name high on the building tower. */
-function BuildingName({ night }) {
-  const tex = VenueNameTexture()
-  return (
-    <mesh position={[0, 8.1, -8.76]}>
-      <planeGeometry args={[4.2, 0.55]} />
-      <meshBasicMaterial map={tex} transparent color={night ? '#ffe9b0' : '#8a6f3a'} />
-    </mesh>
+      {/* entablature */}
+      <mesh position-y={7.0}>
+        <boxGeometry args={[8.4, 1.5, 1.1]} />
+        <meshStandardMaterial {...SAND} />
+      </mesh>
+      <mesh position-y={7.82}>
+        <boxGeometry args={[8.8, 0.16, 1.2]} />
+        <meshStandardMaterial {...BRASS} />
+      </mesh>
+      <mesh position-y={6.2}>
+        <boxGeometry args={[8.6, 0.12, 1.15]} />
+        <meshStandardMaterial {...BRASS} />
+      </mesh>
+
+      {/* venue name + welcome script on the entablature */}
+      <mesh position={[0, 7.02, 0.58]}>
+        <planeGeometry args={[7.4, 1.55]} />
+        <meshBasicMaterial map={headerTex} transparent />
+      </mesh>
+
+      {/* RUCHI WEDS RAHUL floating in the arch */}
+      <mesh position={[0, 5.25, -0.3]}>
+        <planeGeometry args={[5.4, 1.35]} />
+        <meshBasicMaterial map={ruchiTex} transparent side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[0, 4.3, -0.3]}>
+        <planeGeometry args={[2.2, 0.62]} />
+        <meshBasicMaterial map={wedsTex} transparent side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[0, 3.35, -0.3]}>
+        <planeGeometry args={[5.4, 1.35]} />
+        <meshBasicMaterial map={rahulTex} transparent side={THREE.DoubleSide} />
+      </mesh>
+
+      {/* warm uplights washing the pylons */}
+      {night && (
+        <>
+          <pointLight position={[-4.2, 0.6, 1.4]} intensity={7} color="#ffb066" distance={9} decay={2} />
+          <pointLight position={[4.2, 0.6, 1.4]} intensity={7} color="#ffb066" distance={9} decay={2} />
+        </>
+      )}
+    </group>
   )
 }
 
 /** Welcome board on posts, anchored beside the entrance. */
 function WelcomeBoard() {
-  const tex = useCanvasTexture(640, 400, (ctx, w, h) => {
-    // deep green panel with gold double border
-    ctx.fillStyle = '#12281c'
-    ctx.fillRect(0, 0, w, h)
+  const tex = useCanvasTexture(640, 400, (ctx, w) => {
+    ctx.fillStyle = '#12351f'
+    ctx.fillRect(0, 0, w, 400)
     ctx.strokeStyle = '#d4af37'
     ctx.lineWidth = 6
-    ctx.strokeRect(14, 14, w - 28, h - 28)
+    ctx.strokeRect(14, 14, w - 28, 400 - 28)
     ctx.lineWidth = 2
-    ctx.strokeRect(28, 28, w - 56, h - 56)
+    ctx.strokeRect(28, 28, w - 56, 400 - 56)
     ctx.textAlign = 'center'
     ctx.fillStyle = '#d9c48c'
-    ctx.font = '500 34px Cinzel, serif'
-    ctx.fillText('WELCOME TO THE WEDDING OF', w / 2, 105)
+    ctx.font = '500 52px Cinzel, serif'
+    ctx.fillText('✦  Welcome  ✦', w / 2, 130)
     ctx.fillStyle = '#f4ead8'
-    ctx.font = '110px "Great Vibes", cursive'
-    ctx.fillText('Ruchi & Rahul', w / 2, 225)
+    ctx.font = '96px "Great Vibes", cursive'
+    ctx.fillText('Ruchi Weds Rahul', w / 2, 268)
     ctx.fillStyle = '#d9c48c'
-    ctx.font = '500 30px Cinzel, serif'
-    ctx.fillText('16 · 17 DECEMBER 2026', w / 2, 330)
+    ctx.font = '500 26px Cinzel, serif'
+    ctx.fillText('16 · 17 DECEMBER 2026', w / 2, 348)
   })
   return (
-    <group position={[4.4, 0, 19.2]} rotation-y={-0.25}>
+    <group position={[5.6, 0, 18.4]} rotation-y={-0.3}>
       {[-1.15, 1.15].map((x) => (
         <mesh key={x} position={[x, 0.95, -0.06]}>
           <cylinderGeometry args={[0.05, 0.06, 1.9, 8]} />
-          <meshStandardMaterial color="#5d4426" roughness={0.9} />
+          <meshStandardMaterial color="#4a3620" roughness={0.9} />
         </mesh>
       ))}
-      <mesh position-y={1.55}>
+      <mesh position-y={1.62}>
         <boxGeometry args={[2.7, 1.7, 0.08]} />
-        <meshStandardMaterial color="#4a3620" roughness={0.85} />
+        <meshStandardMaterial color="#3a2a18" roughness={0.85} />
       </mesh>
-      <mesh position={[0, 1.55, 0.045]}>
+      <mesh position={[0, 1.62, 0.045]}>
         <planeGeometry args={[2.56, 1.6]} />
         <meshBasicMaterial map={tex} />
       </mesh>
@@ -118,8 +199,7 @@ function WelcomeBoard() {
 }
 
 /* ------------------------------------------------------------------
-   Palms — curved trunk of stacked segments, drooping ribbon fronds
-   built along a real arc, coconut cluster at the crown.
+   Palms — curved trunk of stacked segments, drooping ribbon fronds.
 ------------------------------------------------------------------- */
 function frondGeometry(len = 1.9, droop = 1.0, width = 0.2, segs = 9) {
   const positions = []
@@ -127,7 +207,7 @@ function frondGeometry(len = 1.9, droop = 1.0, width = 0.2, segs = 9) {
   for (let i = 0; i <= segs; i++) {
     const t = i / segs
     const x = t * len
-    const y = t * 0.25 - droop * t * t // rises slightly, then droops
+    const y = t * 0.25 - droop * t * t
     const w = width * (1 - t * 0.85) * (0.35 + Math.sin(Math.min(t * 2.4, 1) * Math.PI * 0.5) * 0.65)
     positions.push(x, y, -w, x, y, w)
     if (i < segs) {
@@ -147,7 +227,6 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
   const segments = 6
   const height = 3.1
   const crown = useMemo(() => {
-    // crown position follows the trunk's curve
     const bend = lean * 2.2
     return [Math.sin(bend) * height * 0.45, 0.5 + height, 0]
   }, [lean])
@@ -155,7 +234,6 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
   const greens = ['#2f6040', '#3a7050', '#28543a']
   return (
     <group position={position} scale={scale}>
-      {/* curved trunk */}
       {Array.from({ length: segments }, (_, i) => {
         const t = i / (segments - 1)
         const bend = lean * 2.2
@@ -170,7 +248,6 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
           </mesh>
         )
       })}
-      {/* coconuts */}
       <group position={crown}>
         {[0, 1, 2].map((i) => (
           <mesh key={i} position={[Math.cos(i * 2.1 + seed) * 0.12, -0.08, Math.sin(i * 2.1 + seed) * 0.12]}>
@@ -178,10 +255,9 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
             <meshStandardMaterial color="#5b452a" roughness={0.9} />
           </mesh>
         ))}
-        {/* fronds */}
         {Array.from({ length: fronds }, (_, i) => {
           const a = (i / fronds) * Math.PI * 2 + seed
-          const pitch = -0.15 - ((i * 7919 + seed * 13) % 10) / 22 // varied droop
+          const pitch = -0.15 - ((i * 7919 + seed * 13) % 10) / 22
           return (
             <group key={i} rotation-y={a}>
               <mesh geometry={frond} rotation-z={pitch} scale={[0.9 + ((i * 31) % 5) / 12, 1, 1]}>
@@ -196,27 +272,26 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
 }
 
 /* ------------------------------------------------------------------
-   Grass — instanced blades scattered over the lawns, kept off the
-   walkway, pool, and chhatri platform.
+   Fields of grass either side of the walkway.
 ------------------------------------------------------------------- */
-function Grass({ count = 2600 }) {
+function Grass({ count = 4200 }) {
   const mesh = useRef()
   const blades = useMemo(() => {
     const arr = []
     let guard = 0
     while (arr.length < count && guard++ < count * 30) {
-      const x = THREE.MathUtils.randFloatSpread(52)
-      const z = THREE.MathUtils.randFloat(-16, 26)
-      if (Math.abs(x) < 2.1 && z > 2 && z < 25) continue // walkway
+      const x = THREE.MathUtils.randFloatSpread(66)
+      const z = THREE.MathUtils.randFloat(-18, 32)
+      if (Math.abs(x) < 2.4 && z > 2 && z < 32) continue // walkway
       if (Math.hypot(x, z) < 5.2) continue // chhatri platform
-      if (Math.hypot((x + 7) / 1.45, z - 10) < 3.9) continue // pool
-      if (z < -8 && Math.abs(x) < 11) continue // building footprint
+      if (Math.hypot((x + 7) / 1.45, z - 10) < 4.0) continue // pool
+      if (z < -9 && Math.abs(x) < 14) continue // building footprint
       arr.push({
         x,
         z,
         ry: Math.random() * Math.PI,
         tilt: THREE.MathUtils.randFloatSpread(0.5),
-        s: THREE.MathUtils.randFloat(0.6, 1.4),
+        s: THREE.MathUtils.randFloat(0.7, 1.9),
         shade: Math.random(),
       })
     }
@@ -248,34 +323,6 @@ function Grass({ count = 2600 }) {
   )
 }
 
-/** Entrance gateway the camera passes through. */
-function Gate() {
-  return (
-    <group position={[0, 0, 21]}>
-      {[-3.6, 3.6].map((x) => (
-        <group key={x} position-x={x}>
-          <mesh position-y={2.6}>
-            <boxGeometry args={[1.1, 5.2, 1.1]} />
-            <meshStandardMaterial {...SAND} />
-          </mesh>
-          <mesh position-y={5.5}>
-            <sphereGeometry args={[0.55, 14, 14]} />
-            <meshStandardMaterial {...BRASS} />
-          </mesh>
-        </group>
-      ))}
-      <mesh position-y={5.05}>
-        <boxGeometry args={[8.3, 1.0, 0.9]} />
-        <meshStandardMaterial {...SAND} />
-      </mesh>
-      <mesh position-y={5.68}>
-        <boxGeometry args={[8.7, 0.18, 1.0]} />
-        <meshStandardMaterial {...BRASS} />
-      </mesh>
-    </group>
-  )
-}
-
 /** The glittering pool, off the walkway. */
 function Pool({ glow }) {
   return (
@@ -292,34 +339,48 @@ function Pool({ glow }) {
   )
 }
 
-/** Resort block behind the lawns, windows lit at night. */
+/** Palace block at the end of the walkway, windows lit at night. */
 function Building({ windowGlow, night }) {
+  const nameTex = useCanvasTexture(1024, 128, (ctx, w, h) => {
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '600 74px Cinzel, serif'
+    ctx.fillStyle = '#f0d98c'
+    ctx.shadowColor = 'rgba(240, 217, 140, 0.6)'
+    ctx.shadowBlur = 18
+    ctx.fillText('STARDOM RESORT', w / 2, h / 2 + 4)
+  })
   const windows = useMemo(() => {
     const arr = []
-    for (let fx = -5; fx <= 5; fx++) {
-      if (fx === 0) continue // tower stands here
+    for (let fx = -7; fx <= 7; fx++) {
+      if (Math.abs(fx) < 2) continue // central tower + entrance
       for (let fy = 0; fy < 3; fy++) arr.push([fx * 1.7, 1.5 + fy * 1.9])
     }
     return arr
   }, [])
   return (
-    <group position={[0, 0, -11]}>
+    <group position={[0, 0, -14]}>
       <mesh position-y={3.4}>
-        <boxGeometry args={[20, 6.8, 4]} />
+        <boxGeometry args={[26, 6.8, 4]} />
         <meshStandardMaterial color="#c9b696" roughness={0.8} />
       </mesh>
       {/* central tower with gold dome */}
       <mesh position-y={4.6}>
-        <boxGeometry args={[4.2, 9.2, 4.4]} />
+        <boxGeometry args={[5.2, 9.2, 4.4]} />
         <meshStandardMaterial color="#d3c0a0" roughness={0.8} />
       </mesh>
       <mesh position-y={9.5}>
-        <sphereGeometry args={[1.5, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <sphereGeometry args={[1.7, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial {...BRASS} />
       </mesh>
-      <mesh position-y={11.1}>
+      <mesh position-y={11.3}>
         <coneGeometry args={[0.12, 0.5, 10]} />
         <meshStandardMaterial {...BRASS} />
+      </mesh>
+      {/* glowing entrance aligned with the walkway */}
+      <mesh position={[0, 1.5, 2.23]}>
+        <planeGeometry args={[1.9, 3.0]} />
+        <meshStandardMaterial color="#3a2f22" emissive="#ffce8a" emissiveIntensity={night ? 2.2 : 0.3} />
       </mesh>
       {/* lit windows */}
       {windows.map(([x, y], i) => (
@@ -328,22 +389,25 @@ function Building({ windowGlow, night }) {
           <meshStandardMaterial color="#3a2f22" emissive="#ffd9a0" emissiveIntensity={windowGlow} />
         </mesh>
       ))}
-      <BuildingName night={night} />
+      <mesh position={[0, 8.4, 2.26]}>
+        <planeGeometry args={[4.6, 0.6]} />
+        <meshBasicMaterial map={nameTex} transparent color={night ? '#ffe9b0' : '#8a6f3a'} />
+      </mesh>
     </group>
   )
 }
 
-/** Sandstone walkway from the gate to the chhatri, gold-edged. */
+/** Wide paved walkway from the gate to the chhatri, softly reflective. */
 function Pathway() {
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.012, 13]}>
-        <planeGeometry args={[3.2, 22]} />
-        <meshStandardMaterial color="#d9c9a8" roughness={0.85} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.012, 16]}>
+        <planeGeometry args={[4.2, 30]} />
+        <meshStandardMaterial color="#e0d2b2" roughness={0.35} metalness={0.08} />
       </mesh>
-      {[-1.72, 1.72].map((x) => (
-        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.016, 13]}>
-          <planeGeometry args={[0.12, 22]} />
+      {[-2.2, 2.2].map((x) => (
+        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.016, 16]}>
+          <planeGeometry args={[0.14, 30]} />
           <meshStandardMaterial {...BRASS} />
         </mesh>
       ))}
@@ -351,39 +415,46 @@ function Pathway() {
   )
 }
 
-/** Little glowing lamps guiding you in along the path. */
-function PathLamps() {
+/** Rows of caged lanterns lining the walkway, like the reference. */
+function LanternPosts({ glow = 2.4 }) {
   const spots = useMemo(() => {
     const arr = []
-    for (let z = 5; z <= 19; z += 2) arr.push([-2.25, z], [2.25, z])
+    for (let z = 3.5; z <= 20; z += 1.5) arr.push([-2.6, z], [2.6, z])
     return arr
   }, [])
   return spots.map(([x, z], i) => (
     <group key={i} position={[x, 0, z]}>
-      <mesh position-y={0.35}>
-        <cylinderGeometry args={[0.03, 0.05, 0.7, 6]} />
-        <meshStandardMaterial color="#6d5638" roughness={0.9} />
+      <mesh position-y={0.45}>
+        <cylinderGeometry args={[0.035, 0.05, 0.9, 6]} />
+        <meshStandardMaterial color="#26221c" roughness={0.8} />
       </mesh>
-      <mesh position-y={0.78}>
-        <sphereGeometry args={[0.07, 8, 8]} />
-        <meshStandardMaterial color="#ffcf7d" emissive="#ff9d2e" emissiveIntensity={2.4} />
+      <mesh position-y={1.0}>
+        <boxGeometry args={[0.17, 0.24, 0.17]} />
+        <meshStandardMaterial color="#ffcf7d" emissive="#ff9d2e" emissiveIntensity={glow} />
+      </mesh>
+      <mesh position-y={1.16}>
+        <coneGeometry args={[0.13, 0.1, 4]} />
+        <meshStandardMaterial color="#26221c" roughness={0.8} />
       </mesh>
     </group>
   ))
 }
 
 const PALMS = [
-  [[-3.4, 0, 6.5], 1.05, 0.06],
-  [[3.5, 0, 8.5], 0.95, -0.08],
-  [[-3.6, 0, 12.5], 1.1, 0.1],
-  [[3.4, 0, 15.5], 1.0, -0.05],
-  [[-3.2, 0, 18.5], 0.9, 0.07],
-  [[-10.5, 0, 7.5], 1.15, -0.1],
-  [[-4.6, 0, 14.5], 0.85, 0.12],
-  [[8.5, 0, 5], 1.1, 0.09],
-  [[7.5, 0, 12], 0.9, -0.07],
-  [[-8.5, 0, -5], 1.2, 0.05],
-  [[8.5, 0, -5.5], 1.15, -0.06],
+  // rows flanking the walkway
+  [[-3.9, 0, 5.5], 1.0, 0.06],
+  [[3.9, 0, 5.5], 0.95, -0.07],
+  [[-3.9, 0, 9.5], 1.1, 0.09],
+  [[3.9, 0, 9.5], 1.0, -0.05],
+  [[-3.9, 0, 13.5], 0.95, 0.08],
+  [[3.9, 0, 13.5], 1.05, -0.09],
+  [[-3.9, 0, 17.5], 1.05, 0.05],
+  [[3.9, 0, 17.5], 0.9, -0.06],
+  // scattered beyond
+  [[-11, 0, 6.5], 1.15, -0.1],
+  [[9.5, 0, 11], 0.9, -0.07],
+  [[-9, 0, -6], 1.2, 0.05],
+  [[9, 0, -6.5], 1.15, -0.06],
 ]
 
 /** Stylized Stardom Resort grounds: gate, walkway, pool, palms, block. */
@@ -391,14 +462,13 @@ export default function Resort({ mode = 'night' }) {
   const night = mode === 'night'
   return (
     <group>
-      <Gate />
-      <GateName />
+      <Gate night={night} />
       <WelcomeBoard />
       <Pathway />
-      <PathLamps />
+      <LanternPosts glow={night ? 2.4 : 0.6} />
       <Pool glow={night ? 0.55 : 0.15} />
       <Building windowGlow={night ? 1.7 : 0.12} night={night} />
-      <Grass count={isTouch ? 1100 : 2600} />
+      <Grass count={isTouch ? 1600 : 4200} />
       {PALMS.map(([p, s, l], i) => (
         <Palm key={i} position={p} scale={s} lean={l} seed={i * 1.7} />
       ))}
