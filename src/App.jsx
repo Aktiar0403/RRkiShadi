@@ -389,8 +389,25 @@ export default function App() {
   const [look, setLook] = useState('cocktail')
   const [inSection, setInSection] = useState(false)
   const [activeChapter, setActiveChapter] = useState('')
+  const [mode, setMode] = useState(() => {
+    try {
+      return localStorage.getItem('rr-mode') === 'day' ? 'day' : 'night'
+    } catch {
+      return 'night'
+    }
+  })
   const sectionRef = useRef(null)
   const scrollRef = useRef(0)
+
+  // day / night skin — page and 3D scene together
+  useEffect(() => {
+    document.documentElement.dataset.mode = mode
+    try {
+      localStorage.setItem('rr-mode', mode)
+    } catch {
+      /* private mode */
+    }
+  }, [mode])
 
   // scroll progress: drives the top bar and the 3D camera path
   useEffect(() => {
@@ -438,9 +455,17 @@ export default function App() {
     <ThemeContext.Provider value={{ look, setLook, sectionRef }}>
       <div className="progressbar" aria-hidden="true" />
       <Music />
+      <button
+        className="mode-btn"
+        onClick={() => setMode(mode === 'night' ? 'day' : 'night')}
+        aria-label={mode === 'night' ? 'Switch to day theme' : 'Switch to night theme'}
+        title={mode === 'night' ? 'Day theme' : 'Night theme'}
+      >
+        {mode === 'night' ? '☀' : '☾'}
+      </button>
       <div className="stage">
         <Suspense fallback={null}>
-          <Scene scrollRef={scrollRef} />
+          <Scene scrollRef={scrollRef} mode={mode} />
         </Suspense>
       </div>
       <Rail active={activeChapter} />

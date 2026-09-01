@@ -4,8 +4,8 @@ import * as THREE from 'three'
 
 const COLORS = ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1']
 
-/** Instanced marigold petals drifting down through the scene. */
-export default function Petals({ count = 240 }) {
+/** Instanced petals drifting down through the scene. */
+export default function Petals({ count = 240, colors = COLORS }) {
   const mesh = useRef()
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
@@ -28,11 +28,11 @@ export default function Petals({ count = 240 }) {
   useEffect(() => {
     const c = new THREE.Color()
     for (let i = 0; i < count; i++) {
-      c.set(COLORS[Math.floor(Math.random() * COLORS.length)])
+      c.set(colors[i % colors.length])
       mesh.current.setColorAt(i, c)
     }
     mesh.current.instanceColor.needsUpdate = true
-  }, [count])
+  }, [count, colors])
 
   useFrame((state) => {
     const t = state.clock.elapsedTime

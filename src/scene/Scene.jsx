@@ -12,6 +12,36 @@ const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: co
 
 const v = (x, y, z) => new THREE.Vector3(x, y, z)
 
+/* night: dusk over the mandap · day: a blush-and-violet morning */
+const PALETTES = {
+  night: {
+    bg: '#0a0d16',
+    fogFar: 42,
+    ambient: ['#a9b4cd', 0.32],
+    key: ['#e0813f', 1.5],
+    fill: ['#d9c48c', 0.45],
+    point: 14,
+    sparkle: '#d9c48c',
+    ground: '#0b1220',
+    stars: true,
+    vignette: 0.9,
+    petals: ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1'],
+  },
+  day: {
+    bg: '#f3e8f0',
+    fogFar: 54,
+    ambient: ['#fff3f7', 0.9],
+    key: ['#ffd9e8', 1.25],
+    fill: ['#b9a3e0', 0.65],
+    point: 6,
+    sparkle: '#c3a6e8',
+    ground: '#e6d9e8',
+    stars: false,
+    vignette: 0.4,
+    petals: ['#e8a7c3', '#c3a6e8', '#ffffff', '#f0d9e6'],
+  },
+}
+
 /**
  * The camera flies a path through the scene as the page scrolls —
  * front of the mandap, orbit right, aerial, in close through the
@@ -96,7 +126,8 @@ function ScrollCamera({ scrollRef }) {
   return null
 }
 
-export default function Scene({ scrollRef }) {
+export default function Scene({ scrollRef, mode = 'night' }) {
+  const pal = PALETTES[mode] || PALETTES.night
   return (
     <Canvas
       dpr={isTouch ? 1 : [1, 1.5]}
@@ -104,35 +135,34 @@ export default function Scene({ scrollRef }) {
       gl={{ antialias: !isTouch, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
-      <color attach="background" args={['#0a0d16']} />
-      <fog attach="fog" args={['#0a0d16', 16, 42]} />
+      <color attach="background" args={[pal.bg]} />
+      <fog attach="fog" args={[pal.bg, 16, pal.fogFar]} />
 
-      {/* night lighting — warm sunset key, cool indigo fill */}
-      <ambientLight intensity={0.32} color="#a9b4cd" />
-      <directionalLight position={[-8, 6, -4]} intensity={1.5} color="#e0813f" />
-      <directionalLight position={[6, 8, 6]} intensity={0.45} color="#d9c48c" />
-      <pointLight position={[0, 3.2, 0]} intensity={14} color="#ffb347" distance={12} decay={2} />
+      <ambientLight intensity={pal.ambient[1]} color={pal.ambient[0]} />
+      <directionalLight position={[-8, 6, -4]} intensity={pal.key[1]} color={pal.key[0]} />
+      <directionalLight position={[6, 8, 6]} intensity={pal.fill[1]} color={pal.fill[0]} />
+      <pointLight position={[0, 3.2, 0]} intensity={pal.point} color="#ffb347" distance={12} decay={2} />
 
       <Mandap />
       <Lanterns />
-      <Petals count={isTouch ? 110 : 240} />
+      <Petals count={isTouch ? 110 : 240} colors={pal.petals} />
       <Float speed={1.4} rotationIntensity={0.4} floatIntensity={0.9}>
         <Rings position={[0, 6.4, 0.4]} />
       </Float>
 
-      <Sparkles count={isTouch ? 50 : 90} scale={[16, 8, 12]} position={[0, 3.5, 0]} size={2.2} speed={0.35} color="#d9c48c" />
-      <Stars radius={70} depth={40} count={isTouch ? 800 : 1500} factor={3} saturation={0} fade speed={0.6} />
+      <Sparkles count={isTouch ? 50 : 90} scale={[16, 8, 12]} position={[0, 3.5, 0]} size={2.2} speed={0.35} color={pal.sparkle} />
+      {pal.stars && <Stars radius={70} depth={40} count={isTouch ? 800 : 1500} factor={3} saturation={0} fade speed={0.6} />}
 
       {/* ground */}
       <mesh rotation-x={-Math.PI / 2} position-y={-0.05}>
         <circleGeometry args={[45, 48]} />
-        <meshStandardMaterial color="#0b1220" roughness={1} />
+        <meshStandardMaterial color={pal.ground} roughness={1} />
       </mesh>
 
       <ScrollCamera scrollRef={scrollRef} />
       <EffectComposer enabled={!isTouch}>
         <Bloom mipmapBlur intensity={0.85} luminanceThreshold={1} />
-        <Vignette eskil={false} offset={0.15} darkness={0.9} />
+        <Vignette eskil={false} offset={0.15} darkness={pal.vignette} />
       </EffectComposer>
     </Canvas>
   )
