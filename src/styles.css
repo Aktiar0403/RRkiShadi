@@ -477,6 +477,15 @@ main { position: relative; z-index: 1; pointer-events: none; }
 .event-row .time { color: var(--mist); font-size: 15px; margin-top: 3px; }
 .event-row .attire { color: var(--accent); font-size: 14px; margin-top: 8px; font-style: italic; transition: color 0.8s ease; }
 
+.venue-strip { display: flex; gap: 10px; margin-top: 26px; }
+.venue-strip img {
+  width: calc(33.33% - 7px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--gold-dim);
+  transition: transform 0.4s ease;
+}
+.venue-strip img:hover { transform: translateY(-4px); }
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 28px; }
 .info-card {
   border: 1px solid rgba(212, 175, 55, 0.2);

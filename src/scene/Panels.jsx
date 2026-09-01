@@ -105,6 +105,15 @@ function Stay() {
       <p className="kicker">your stay &amp; getting there</p>
       <h2 className="section-title">Room to Be Together</h2>
       <p className="lede">A calm resort off Ajmer Road — open lawns, a glittering pool and room to simply be together.</p>
+      <div className="venue-strip">
+        {[
+          ['/venue/pool.jpg', 'The resort pool'],
+          ['/venue/lawn.jpg', 'The lawns'],
+          ['/venue/room.jpg', 'A guest room'],
+        ].map(([src, alt]) => (
+          <img key={src} src={src} alt={alt} loading="lazy" />
+        ))}
+      </div>
       <div className="info-grid">
         {cards.map(([title, text]) => (
           <Tilt key={title} max={7}>

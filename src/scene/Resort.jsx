@@ -371,18 +371,22 @@ function Grass({ count = 4200 }) {
   )
 }
 
-/** The glittering pool, off the walkway. */
+/** The figure-8 pool with grey tile deck, like the real one. */
 function Pool({ glow }) {
   return (
-    <group position={[-7, 0.02, 10]}>
-      <mesh rotation-x={-Math.PI / 2} scale={[1.4, 1, 1]}>
-        <circleGeometry args={[3.4, 36]} />
-        <meshStandardMaterial color="#e2d7bd" roughness={0.75} />
+    <group position={[-7.5, 0.02, 10]}>
+      {/* deck */}
+      <mesh rotation-x={-Math.PI / 2} scale={[1.1, 1.5, 1]}>
+        <circleGeometry args={[3.3, 40]} />
+        <meshStandardMaterial color="#c2c6ca" roughness={0.8} />
       </mesh>
-      <mesh rotation-x={-Math.PI / 2} position-y={0.02} scale={[1.4, 1, 1]}>
-        <circleGeometry args={[2.7, 36]} />
-        <meshStandardMaterial color="#1c5c6e" metalness={0.4} roughness={0.12} emissive="#1c5c6e" emissiveIntensity={glow} />
-      </mesh>
+      {/* figure-8 water: two overlapping circles */}
+      {[-1.25, 1.25].map((oz, i) => (
+        <mesh key={i} rotation-x={-Math.PI / 2} position={[0, 0.022, oz]}>
+          <circleGeometry args={[i ? 2.0 : 1.8, 36]} />
+          <meshStandardMaterial color="#2b83c4" metalness={0.35} roughness={0.12} emissive="#1c5f94" emissiveIntensity={glow} />
+        </mesh>
+      ))}
     </group>
   )
 }
@@ -463,60 +467,131 @@ function ScanName({ night }) {
 
 /** Palace block at the end of the walkway, windows lit at night. */
 function Building({ windowGlow, night }) {
-  const nameTex = useCanvasTexture(1024, 128, (ctx, w, h) => {
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = '600 74px Cinzel, serif'
-    ctx.fillStyle = '#f0d98c'
-    ctx.shadowColor = 'rgba(240, 217, 140, 0.6)'
-    ctx.shadowBlur = 18
-    ctx.fillText('STARDOM RESORT', w / 2, h / 2 + 4)
-  })
-  const windows = useMemo(() => {
-    const arr = []
-    for (let fx = -7; fx <= 7; fx++) {
-      if (Math.abs(fx) < 2) continue // central tower + entrance
-      for (let fy = 0; fy < 3; fy++) arr.push([fx * 1.7, 1.5 + fy * 1.9])
+  // golden glass curtain wall, like the real banquet hall
+  const glassTex = useCanvasTexture(512, 256, (ctx, w, h) => {
+    for (let x = 0; x < w; x += 32) {
+      const g = ctx.createLinearGradient(x, 0, x + 32, h)
+      g.addColorStop(0, '#d8a84e')
+      g.addColorStop(0.5, '#a87838')
+      g.addColorStop(1, '#c9973f')
+      ctx.fillStyle = g
+      ctx.fillRect(x, 0, 32, h)
+      ctx.fillStyle = 'rgba(56, 38, 20, 0.85)'
+      ctx.fillRect(x, 0, 3, h) // vertical mullions
     }
+    ctx.fillStyle = 'rgba(56, 38, 20, 0.5)'
+    for (let y = 0; y < h; y += 64) ctx.fillRect(0, y, w, 2)
+  })
+  // red STARDOM lettering + gold mandala disc, like the roofline sign
+  const signTex = useCanvasTexture(1200, 200, (ctx, w, h) => {
+    ctx.strokeStyle = '#d4af37'
+    ctx.lineWidth = 6
+    ctx.beginPath(); ctx.arc(90, h / 2, 55, 0, Math.PI * 2); ctx.stroke()
+    ctx.lineWidth = 2
+    ctx.beginPath(); ctx.arc(90, h / 2, 38, 0, Math.PI * 2); ctx.stroke()
+    ctx.beginPath(); ctx.arc(90, h / 2, 20, 0, Math.PI * 2); ctx.stroke()
+    ctx.textBaseline = 'middle'
+    ctx.font = '700 96px Cinzel, serif'
+    ctx.fillStyle = '#c0392b'
+    ctx.fillText('STARDOM', 175, h / 2)
+    ctx.font = '600 44px Cinzel, serif'
+    ctx.fillStyle = '#d4af37'
+    ctx.fillText('RESORT', 740, h / 2 + 10)
+  })
+  const hotelWindows = useMemo(() => {
+    const arr = []
+    for (let fx = -1.5; fx <= 1.5; fx++) for (let fy = 0; fy < 4; fy++) arr.push([fx * 2.2, 1.6 + fy * 2.3])
     return arr
   }, [])
   return (
-    <group position={[0, 0, -14]}>
-      <mesh position-y={3.4}>
-        <boxGeometry args={[26, 6.8, 4]} />
-        <meshStandardMaterial color="#c9b696" roughness={0.8} />
+    <group position={[0, 0, -16]}>
+      {/* main banquet hall — wide bronze box, flat roof band */}
+      <mesh position-y={4}>
+        <boxGeometry args={[26, 8, 6]} />
+        <meshStandardMaterial color="#7a5a3e" roughness={0.7} />
       </mesh>
-      {/* central tower with gold dome */}
-      <mesh position-y={4.6}>
-        <boxGeometry args={[5.2, 9.2, 4.4]} />
-        <meshStandardMaterial color="#d3c0a0" roughness={0.8} />
+      <mesh position-y={8.25}>
+        <boxGeometry args={[26.6, 0.5, 6.6]} />
+        <meshStandardMaterial color="#5f4530" roughness={0.7} />
       </mesh>
-      <mesh position-y={9.5}>
-        <sphereGeometry args={[1.7, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial {...BRASS} />
+      {/* golden glass facade */}
+      <mesh position={[-1.5, 4, 3.03]}>
+        <planeGeometry args={[17, 7.2]} />
+        <meshStandardMaterial
+          map={glassTex}
+          emissiveMap={glassTex}
+          emissive="#ffca6a"
+          emissiveIntensity={night ? 0.85 : 0.12}
+          metalness={0.6}
+          roughness={0.25}
+        />
       </mesh>
-      <mesh position-y={11.3}>
-        <coneGeometry args={[0.12, 0.5, 10]} />
-        <meshStandardMaterial {...BRASS} />
+      {/* entrance canopy */}
+      <mesh position={[0, 2.6, 3.7]}>
+        <boxGeometry args={[6, 0.28, 1.5]} />
+        <meshStandardMaterial color="#5f4530" roughness={0.7} />
       </mesh>
-      {/* glowing entrance aligned with the walkway */}
-      <mesh position={[0, 1.5, 2.23]}>
-        <planeGeometry args={[1.9, 3.0]} />
-        <meshStandardMaterial color="#3a2f22" emissive="#ffce8a" emissiveIntensity={night ? 2.2 : 0.3} />
+      {/* roofline sign */}
+      <mesh position={[0.5, 9.15, 2.4]}>
+        <planeGeometry args={[10, 1.66]} />
+        <meshBasicMaterial map={signTex} transparent />
       </mesh>
-      {/* lit windows */}
-      {windows.map(([x, y], i) => (
-        <mesh key={i} position={[x, y, 2.02]}>
-          <planeGeometry args={[0.58, 1.0]} />
-          <meshStandardMaterial color="#3a2f22" emissive="#f5c987" emissiveIntensity={windowGlow * 0.75} />
+      {/* white hotel block, set back to the right like the real grounds */}
+      <group position={[17.5, 0, -5]}>
+        <mesh position-y={5.5}>
+          <boxGeometry args={[10, 11, 9]} />
+          <meshStandardMaterial color="#e8e4dc" roughness={0.85} />
         </mesh>
-      ))}
-      <mesh position={[0, 8.4, 2.26]}>
-        <planeGeometry args={[4.6, 0.6]} />
-        <meshBasicMaterial map={nameTex} transparent color={night ? '#ffe9b0' : '#8a6f3a'} />
-      </mesh>
+        <mesh position-y={11.2}>
+          <boxGeometry args={[10.5, 0.4, 9.5]} />
+          <meshStandardMaterial color="#d5d0c6" roughness={0.85} />
+        </mesh>
+        {hotelWindows.map(([x, y], i) => (
+          <mesh key={i} position={[x, y, 4.52]}>
+            <planeGeometry args={[0.9, 1.3]} />
+            <meshStandardMaterial color="#4a4438" emissive="#f5c987" emissiveIntensity={windowGlow * 0.5} />
+          </mesh>
+        ))}
+      </group>
     </group>
   )
+}
+
+/** White jaali lattice screens lining the walkway, like the real resort. */
+function JaaliScreens() {
+  const tex = useCanvasTexture(256, 320, (ctx, w, h) => {
+    ctx.fillStyle = '#f2efe8'
+    ctx.fillRect(0, 0, w, h)
+    ctx.globalCompositeOperation = 'destination-out'
+    for (let y = 20; y < h - 30; y += 26) {
+      for (let x = 20; x < w - 30; x += 26) {
+        const o = (((x + y) / 26) | 0) % 2 ? 7 : 0
+        ctx.fillRect(x + o, y, 15, 15)
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over'
+  })
+  const spots = useMemo(() => {
+    const arr = []
+    for (let z = 4.5; z <= 19.5; z += 5) arr.push([-3.05, z], [3.05, z])
+    return arr
+  }, [])
+  return spots.map(([x, z], i) => (
+    <group key={i} position={[x, 0, z]} rotation-y={Math.PI / 2}>
+      <mesh position-y={0.3}>
+        <boxGeometry args={[1.7, 0.6, 0.22]} />
+        <meshStandardMaterial color="#eeeae2" roughness={0.9} />
+      </mesh>
+      <mesh position-y={1.55}>
+        <planeGeometry args={[1.5, 1.95]} />
+        <meshStandardMaterial map={tex} transparent side={THREE.DoubleSide} roughness={0.9} />
+      </mesh>
+      <mesh position-y={2.6}>
+        <boxGeometry args={[1.7, 0.14, 0.22]} />
+        <meshStandardMaterial color="#eeeae2" roughness={0.9} />
+      </mesh>
+    </group>
+  ))
 }
 
 /** Rose petals strewn along the walkway and around the chhatri. */
@@ -579,13 +654,34 @@ function RoadPetals({ count = 420 }) {
   )
 }
 
-/** Wide paved walkway from the gate to the chhatri, softly reflective. */
+/** Blue-grey tiled walkway from the gate to the chhatri, like the real paths. */
 function Pathway() {
+  const tileTex = useCanvasTexture(128, 128, (ctx, w, h) => {
+    ctx.fillStyle = '#aebfc2'
+    ctx.fillRect(0, 0, w, h)
+    const shades = ['#9db0b4', '#a8bcc4', '#b6c6c9', '#9fb6c4']
+    for (let y = 0; y < h; y += 32) {
+      for (let x = 0; x < w; x += 32) {
+        if (Math.random() < 0.5) {
+          ctx.fillStyle = shades[(Math.random() * shades.length) | 0]
+          ctx.fillRect(x, y, 32, 32)
+        }
+      }
+    }
+    ctx.strokeStyle = 'rgba(90, 104, 108, 0.6)'
+    ctx.lineWidth = 2
+    for (let i = 0; i <= w; i += 32) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke()
+    }
+  })
+  tileTex.wrapS = tileTex.wrapT = THREE.RepeatWrapping
+  tileTex.repeat.set(3, 22)
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.02, 16]}>
         <planeGeometry args={[4.2, 30]} />
-        <meshStandardMaterial color="#e0d2b2" roughness={0.35} metalness={0.08} />
+        <meshStandardMaterial map={tileTex} roughness={0.4} metalness={0.05} />
       </mesh>
       {[-2.2, 2.2].map((x) => (
         <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.026, 16]}>
@@ -647,6 +743,7 @@ export default function Resort({ mode = 'night' }) {
       <Gate night={night} />
       <WelcomeBoard />
       <Pathway />
+      <JaaliScreens />
       <RoadPetals count={isTouch ? 280 : 420} />
       <LanternPosts glow={night ? 2.4 : 0.6} />
       <Pool glow={night ? 0.55 : 0.15} />
