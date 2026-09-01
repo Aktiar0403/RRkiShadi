@@ -1,38 +1,64 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
 const GOLD = { color: '#b89355', metalness: 0.55, roughness: 0.38 }
 const IVORY = { color: '#f0e8d6', metalness: 0.05, roughness: 0.75 }
 
-/** A string of marigold beads sagging between two points. */
-function GarlandBeads({ from, to, sag = 0.6, count = 26, color = '#e8a33c' }) {
-  const positions = useMemo(() => {
-    const a = new THREE.Vector3(...from)
-    const b = new THREE.Vector3(...to)
-    const mid = a.clone().add(b).multiplyScalar(0.5)
-    mid.y -= sag
-    const curve = new THREE.QuadraticBezierCurve3(a, mid, b)
-    return curve.getPoints(count - 1)
-  }, [from, to, sag, count])
-  return positions.map((p, i) => (
-    <mesh key={i} position={[p.x, p.y, p.z]}>
-      <sphereGeometry args={[0.052, 8, 8]} />
-      <meshStandardMaterial color={color} roughness={0.65} emissive={color} emissiveIntensity={0.18} />
-    </mesh>
-  ))
-}
+/**
+ * Every garland bead and rim drop in ONE instanced draw call
+ * (previously ~340 individual meshes).
+ */
+function Beads({ pillarPositions, topY }) {
+  const items = useMemo(() => {
+    const arr = []
+    const addString = (a, b, sag, count, color) => {
+      const va = new THREE.Vector3(...a)
+      const vb = new THREE.Vector3(...b)
+      const mid = va.clone().add(vb).multiplyScalar(0.5)
+      mid.y -= sag
+      const curve = new THREE.QuadraticBezierCurve3(va, mid, vb)
+      for (const p of curve.getPoints(count - 1)) arr.push({ p, r: 0.052, color })
+    }
+    const N = pillarPositions.length
+    pillarPositions.forEach((pp, i) => {
+      const q = pillarPositions[(i + 1) % N]
+      const a = [pp[0], topY, pp[2]]
+      const b = [q[0], topY, q[2]]
+      addString(a, b, 0.55, 26, i % 2 ? '#e8a33c' : '#e07b35')
+      addString(a, b, 0.85, 22, '#f0d9a0')
+    })
+    // gold bead drops around the dome rim
+    for (let i = 0; i < 14; i++) {
+      const ang = (i / 14) * Math.PI * 2
+      const x = Math.cos(ang) * 2.98
+      const z = Math.sin(ang) * 2.98
+      for (let k = 0; k < 4; k++) {
+        arr.push({ p: new THREE.Vector3(x, 3.95 - 0.08 * k, z), r: k === 3 ? 0.045 : 0.03, color: '#c8a45f' })
+      }
+    }
+    return arr
+  }, [pillarPositions, topY])
 
-/** Short vertical string of gold beads hanging from the dome rim. */
-function BeadDrop({ position }) {
+  const ref = useRef()
+  useEffect(() => {
+    const dummy = new THREE.Object3D()
+    const c = new THREE.Color()
+    items.forEach((it, i) => {
+      dummy.position.copy(it.p)
+      dummy.scale.setScalar(it.r)
+      dummy.updateMatrix()
+      ref.current.setMatrixAt(i, dummy.matrix)
+      ref.current.setColorAt(i, c.set(it.color))
+    })
+    ref.current.instanceMatrix.needsUpdate = true
+    ref.current.instanceColor.needsUpdate = true
+  }, [items])
+
   return (
-    <group position={position}>
-      {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position-y={-0.08 * i}>
-          <sphereGeometry args={[i === 3 ? 0.045 : 0.03, 8, 8]} />
-          <meshStandardMaterial {...GOLD} emissive="#b89355" emissiveIntensity={0.35} />
-        </mesh>
-      ))}
-    </group>
+    <instancedMesh ref={ref} args={[null, null, items.length]}>
+      <sphereGeometry args={[1, 8, 8]} />
+      <meshStandardMaterial roughness={0.65} emissive="#c98a3a" emissiveIntensity={0.12} />
+    </instancedMesh>
   )
 }
 
@@ -115,15 +141,6 @@ export default function Mandap() {
     return new THREE.LatheGeometry(pts, 40)
   }, [])
 
-  const rimDrops = useMemo(
-    () =>
-      Array.from({ length: 14 }, (_, i) => {
-        const a = (i / 14) * Math.PI * 2
-        return [Math.cos(a) * 2.98, 3.95, Math.sin(a) * 2.98]
-      }),
-    [],
-  )
-
   return (
     <group>
       {/* stepped platform */}
@@ -168,23 +185,8 @@ export default function Mandap() {
         <meshStandardMaterial {...GOLD} />
       </mesh>
 
-      {/* gold bead drops around the dome rim */}
-      {rimDrops.map((p, i) => (
-        <BeadDrop key={i} position={p} />
-      ))}
-
-      {/* marigold garlands swagged pillar to pillar */}
-      {pillarPositions.map((p, i) => {
-        const q = pillarPositions[(i + 1) % N]
-        const a = [p[0], topY, p[2]]
-        const b = [q[0], topY, q[2]]
-        return (
-          <group key={`g${i}`}>
-            <GarlandBeads from={a} to={b} sag={0.55} color={i % 2 ? '#e8a33c' : '#e07b35'} />
-            <GarlandBeads from={a} to={b} sag={0.85} count={22} color="#f0d9a0" />
-          </group>
-        )
-      })}
+      {/* garlands + rim drops, one instanced draw call */}
+      <Beads pillarPositions={pillarPositions} topY={topY} />
 
       <Diyas />
     </group>

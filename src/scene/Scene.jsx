@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Stars, Sparkles } from '@react-three/drei'
+import { Stars, Sparkles, PerformanceMonitor } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import Mandap from './Mandap.jsx'
 import Petals from './Petals.jsx'
@@ -383,13 +383,19 @@ function ScrollCamera({ scrollRef }) {
 
 export default function Scene({ scrollRef, mode = 'night', look, setLook }) {
   const pal = PALETTES[mode] || PALETTES.night
+  // adaptive quality: drop resolution on struggling devices, restore on strong ones
+  const [dpr, setDpr] = useState(isTouch ? 1.7 : 1.25)
   return (
     <Canvas
-      dpr={isTouch ? [1.5, 2] : [1, 1.5]}
+      dpr={dpr}
       camera={{ position: [0, 2.9, isTouch ? 40 : 33], fov: isTouch ? 58 : 46 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
+      <PerformanceMonitor
+        onDecline={() => setDpr(isTouch ? 1.1 : 1)}
+        onIncline={() => setDpr(isTouch ? 2 : 1.5)}
+      />
       <color attach="background" args={[pal.bg]} />
       <fog attach="fog" args={[pal.fog, 22, pal.fogFar]} />
       <Sky colors={pal.sky} />

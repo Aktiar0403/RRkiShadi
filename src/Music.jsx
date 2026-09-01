@@ -51,11 +51,11 @@ export default function Music() {
     const audio = new Audio(SRC)
     audio.loop = true
     audio.volume = 0
-    audio.preload = 'auto'
+    audio.preload = 'metadata' // don't pull the whole track until it plays
     audioRef.current = audio
     const onReady = () => setState('ready')
     const onError = () => setState('missing')
-    audio.addEventListener('canplaythrough', onReady, { once: true })
+    audio.addEventListener('loadedmetadata', onReady, { once: true })
     audio.addEventListener('error', onError, { once: true })
     return () => {
       cancelAnimationFrame(fadeRef.current)
