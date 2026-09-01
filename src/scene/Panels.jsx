@@ -11,11 +11,11 @@ import Tilt from '../Tilt.jsx'
    camera stops in front of each. Order must match the page sections.
 ------------------------------------------------------------------- */
 export const PANELS = [
-  { id: 'celebrations', pos: [2.8, 2.55, 16.8], ry: -0.35, scale: 0.0062, dist: 5.2 },
-  { id: 'stay', pos: [-3.3, 2.5, 11.4], ry: 0.42, scale: 0.0062, dist: 5.2 },
-  { id: 'what-to-wear', pos: [2.9, 2.5, 6.6], ry: -0.42, scale: 0.0062, dist: 5.2 },
-  { id: 'jaipur', pos: [-3.2, 2.6, 2.2], ry: 0.45, scale: 0.006, dist: 5.4 },
-  { id: 'rsvp', pos: [0, 2.8, -0.9], ry: 0, scale: 0.006, dist: 5.8 },
+  { id: 'celebrations', pos: [2.8, 2.55, 16.8], ry: -0.35, scale: 0.0044, dist: 5.2 },
+  { id: 'stay', pos: [-3.3, 2.5, 11.4], ry: 0.42, scale: 0.0044, dist: 5.2 },
+  { id: 'what-to-wear', pos: [2.9, 2.5, 6.6], ry: -0.42, scale: 0.0044, dist: 5.2 },
+  { id: 'jaipur', pos: [-3.2, 2.6, 2.2], ry: 0.45, scale: 0.0042, dist: 5.4 },
+  { id: 'rsvp', pos: [0, 2.8, -0.9], ry: 0, scale: 0.0033, dist: 5.8 },
 ]
 
 export const LOOKS = {
@@ -321,6 +321,7 @@ const CONTENT = {
 export default function Panels({ look, setLook, scrollRef }) {
   const refs = useRef([])
 
+
   useFrame(() => {
     const p = (scrollRef.current || 0) * 6
     PANELS.forEach((cfg, i) => {
@@ -342,6 +343,7 @@ export default function Panels({ look, setLook, scrollRef }) {
         position={cfg.pos}
         rotation-y={cfg.ry}
         scale={cfg.scale}
+        distanceFactor={400}
         zIndexRange={[20, 0]}
       >
         <div className="p3d-holder" ref={(el) => (refs.current[i] = el)}>
