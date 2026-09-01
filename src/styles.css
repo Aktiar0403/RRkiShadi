@@ -421,16 +421,47 @@ main { position: relative; z-index: 1; }
 
 /* ---------- explore ---------- */
 .explore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
-.explore-card {
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  padding: 20px;
-  height: 100%;
-  background: rgba(10, 13, 22, 0.35);
+.explore-card.photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  text-decoration: none;
   transition: border-color 0.3s ease;
 }
 .tilt:hover .explore-card, .tilt:active .explore-card { border-color: var(--accent); }
-.explore-card h4 { font-family: var(--display); font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--cream); margin-bottom: 6px; }
-.explore-card p { font-size: 13.5px; color: var(--mist); }
+.explore-card.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+}
+.explore-card.photo:hover img, .explore-card.photo:active img { transform: scale(1.07); }
+.ex-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px;
+  background: linear-gradient(transparent 30%, rgba(8, 8, 12, 0.85));
+}
+.ex-overlay h4 { font-family: var(--display); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #f4ead8; margin-bottom: 5px; }
+.ex-overlay p { font-size: 13px; line-height: 1.45; color: rgba(244, 234, 216, 0.75); }
+.ex-walk {
+  margin-top: 10px;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  opacity: 0.85;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.explore-card.photo:hover .ex-walk { opacity: 1; transform: translateX(4px); }
+.ex-credit { margin-top: 16px; font-size: 11px; letter-spacing: 1px; color: var(--mist); opacity: 0.7; }
 @media (max-width: 560px) { .explore-grid { grid-template-columns: 1fr; } }
 
 /* ---------- rsvp ---------- */

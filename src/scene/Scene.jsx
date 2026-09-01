@@ -12,6 +12,205 @@ const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: co
 
 const v = (x, y, z) => new THREE.Vector3(x, y, z)
 
+/**
+ * Jaipur on the horizon — hazy hills with fort walls, then rows of
+ * pink-city facades (domes, chhatris, a honeycomb Hawa-Mahal-like
+ * centrepiece) in the old city's true terracotta pinks.
+ */
+function Cityscape({ tint }) {
+  const texture = useMemo(() => {
+    const W = 2048
+    const H = 300
+    const canvas = document.createElement('canvas')
+    canvas.width = W
+    canvas.height = H
+    const ctx = canvas.getContext('2d')
+
+    // far Aravalli hills with fort wall
+    ctx.fillStyle = 'rgba(150, 122, 130, 0.8)'
+    ctx.beginPath()
+    ctx.moveTo(0, H)
+    for (let x = 0; x <= W; x += 64) {
+      ctx.lineTo(x, H - 120 - Math.sin(x * 0.004) * 46 - Math.sin(x * 0.013) * 22)
+    }
+    ctx.lineTo(W, H)
+    ctx.fill()
+    // crenellated wall + watchtowers along the ridge
+    ctx.fillStyle = 'rgba(128, 100, 104, 0.9)'
+    for (let x = 40; x < W; x += 26) {
+      const ridge = H - 128 - Math.sin(x * 0.004) * 46 - Math.sin(x * 0.013) * 22
+      ctx.fillRect(x, ridge - 7, 13, 9)
+      if (x % 338 < 26) ctx.fillRect(x - 4, ridge - 26, 22, 28)
+    }
+
+    // pink city rows
+    const pinks = ['#d98e7a', '#e0987f', '#c97f66', '#d4876f', '#e2a084']
+    let x = 0
+    while (x < W) {
+      const bw = 46 + Math.random() * 80
+      const bh = 46 + Math.random() * 82
+      const col = pinks[(Math.random() * pinks.length) | 0]
+      ctx.fillStyle = col
+      ctx.fillRect(x, H - bh, bw, bh)
+      // windows
+      ctx.fillStyle = 'rgba(90, 56, 50, 0.55)'
+      for (let wx = x + 8; wx < x + bw - 8; wx += 14) {
+        for (let wy = H - bh + 10; wy < H - 10; wy += 18) {
+          ctx.fillRect(wx, wy, 5, 9)
+        }
+      }
+      // occasional dome or chhatri on the roofline
+      if (Math.random() < 0.35) {
+        ctx.fillStyle = col
+        ctx.beginPath()
+        ctx.arc(x + bw / 2, H - bh, bw * 0.22, Math.PI, 0)
+        ctx.fill()
+      } else if (Math.random() < 0.3) {
+        ctx.fillStyle = col
+        ctx.fillRect(x + bw / 2 - 2, H - bh - 14, 4, 14)
+        ctx.fillRect(x + bw / 2 - 10, H - bh - 16, 20, 4)
+      }
+      x += bw + 6
+    }
+
+    // honeycomb centrepiece, Hawa Mahal style
+    const cx = W * 0.52
+    ctx.fillStyle = '#d4876f'
+    for (let tier = 0; tier < 5; tier++) {
+      const tw = 300 - tier * 52
+      const th = 34
+      const ty = H - 90 - tier * th
+      ctx.fillRect(cx - tw / 2, ty, tw, th)
+      ctx.fillStyle = 'rgba(90, 56, 50, 0.5)'
+      for (let wx = cx - tw / 2 + 8; wx < cx + tw / 2 - 8; wx += 16) {
+        ctx.beginPath()
+        ctx.arc(wx + 4, ty + 16, 4.5, Math.PI, 0)
+        ctx.fill()
+        ctx.fillRect(wx, ty + 16, 9, 12)
+      }
+      ctx.fillStyle = '#d4876f'
+    }
+
+    // atmospheric haze rising from the horizon
+    const haze = ctx.createLinearGradient(0, H - 130, 0, H)
+    haze.addColorStop(0, 'rgba(240, 205, 175, 0)')
+    haze.addColorStop(1, 'rgba(240, 205, 175, 0.45)')
+    ctx.fillStyle = haze
+    ctx.fillRect(0, 0, W, H)
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    return tex
+  }, [])
+  return (
+    <mesh position={[0, 7.2, -52]}>
+      <planeGeometry args={[260, 36]} />
+      <meshBasicMaterial map={texture} transparent fog={false} depthWrite={false} color={tint} />
+    </mesh>
+  )
+}
+
+/** Soft clouds drifting across the sky. */
+function Clouds({ tint }) {
+  const texture = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 256
+    canvas.height = 128
+    const ctx = canvas.getContext('2d')
+    for (let i = 0; i < 26; i++) {
+      const x = 40 + Math.random() * 176
+      const y = 45 + Math.random() * 40
+      const r = 14 + Math.random() * 26
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+      g.addColorStop(0, 'rgba(255,255,255,0.16)')
+      g.addColorStop(1, 'rgba(255,255,255,0)')
+      ctx.fillStyle = g
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    const tex = new THREE.CanvasTexture(canvas)
+    return tex
+  }, [])
+  const group = useRef()
+  const clouds = useMemo(
+    () =>
+      Array.from({ length: 9 }, (_, i) => ({
+        x: THREE.MathUtils.randFloatSpread(180),
+        y: THREE.MathUtils.randFloat(18, 34),
+        z: THREE.MathUtils.randFloat(-50, -34),
+        w: THREE.MathUtils.randFloat(22, 44),
+        speed: THREE.MathUtils.randFloat(0.25, 0.7),
+        o: THREE.MathUtils.randFloat(0.4, 0.8),
+        key: i,
+      })),
+    [],
+  )
+  useFrame((_, delta) => {
+    group.current.children.forEach((m, i) => {
+      m.position.x += clouds[i].speed * delta
+      if (m.position.x > 110) m.position.x = -110
+    })
+  })
+  return (
+    <group ref={group}>
+      {clouds.map((c) => (
+        <mesh key={c.key} position={[c.x, c.y, c.z]}>
+          <planeGeometry args={[c.w, c.w * 0.5]} />
+          <meshBasicMaterial map={texture} transparent opacity={c.o} fog={false} depthWrite={false} color={tint} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** A few birds crossing the sky, wings beating. */
+function Birds({ color = '#2a2530' }) {
+  const birds = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => ({
+        y: THREE.MathUtils.randFloat(11, 20),
+        z: THREE.MathUtils.randFloat(-42, -26),
+        x: THREE.MathUtils.randFloatSpread(120),
+        speed: THREE.MathUtils.randFloat(2.2, 4),
+        flap: THREE.MathUtils.randFloat(6, 10),
+        phase: Math.random() * Math.PI * 2,
+        s: THREE.MathUtils.randFloat(0.5, 1),
+        key: i,
+      })),
+    [],
+  )
+  const group = useRef()
+  useFrame((state) => {
+    const t = state.clock.elapsedTime
+    group.current.children.forEach((b, i) => {
+      const cfg = birds[i]
+      b.position.x += cfg.speed * 0.016
+      if (b.position.x > 90) b.position.x = -90
+      b.position.y = cfg.y + Math.sin(t * 0.7 + cfg.phase) * 0.6
+      const wing = Math.sin(t * cfg.flap + cfg.phase) * 0.75
+      b.children[0].rotation.z = wing
+      b.children[1].rotation.z = Math.PI - wing
+    })
+  })
+  return (
+    <group ref={group}>
+      {birds.map((b) => (
+        <group key={b.key} position={[b.x, b.y, b.z]} scale={b.s}>
+          <mesh position-x={-0.28}>
+            <planeGeometry args={[0.62, 0.13]} />
+            <meshBasicMaterial color={color} side={THREE.DoubleSide} fog={false} />
+          </mesh>
+          <mesh position-x={0.28}>
+            <planeGeometry args={[0.62, 0.13]} />
+            <meshBasicMaterial color={color} side={THREE.DoubleSide} fog={false} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
 /** Gradient dusk sky behind the whole resort. */
 function Sky({ colors }) {
   const texture = useMemo(() => {
@@ -52,6 +251,9 @@ const PALETTES = {
     ground: '#16281a',
     stars: true,
     vignette: 0.9,
+    cloud: '#e8c2a8',
+    city: '#c9a3a6',
+    bird: '#241f28',
     lantern: ['#ffb347', 2.4],
     petals: ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1'],
   },
@@ -68,6 +270,9 @@ const PALETTES = {
     ground: '#dbe5d4',
     stars: false,
     vignette: 0.4,
+    cloud: '#ffffff',
+    city: '#ffffff',
+    bird: '#4a4258',
     lantern: ['#f2b6cf', 1.1],
     petals: ['#e8a7c3', '#c3a6e8', '#ffffff', '#f0d9e6'],
   },
@@ -85,7 +290,7 @@ function ScrollCamera({ scrollRef }) {
     () =>
       new THREE.CatmullRomCurve3(
         [
-          v(0, 2.9, 33), //   hero — straight on: the gate, the names in the arch
+          v(0, 2.9, isTouch ? 40 : 33), // hero — straight on: gate, names, welcome board
           v(0, 2.7, 22.5), // celebrations — passing under the arch
           v(-1.8, 2.3, 15), // stay — drifting toward the pool side
           v(1.6, 2.1, 9), //  what to wear — weaving back across the walkway
@@ -171,13 +376,16 @@ export default function Scene({ scrollRef, mode = 'night' }) {
   return (
     <Canvas
       dpr={isTouch ? 1 : [1, 1.5]}
-      camera={{ position: [0, 2.9, 33], fov: isTouch ? 58 : 46 }}
+      camera={{ position: [0, 2.9, isTouch ? 40 : 33], fov: isTouch ? 58 : 46 }}
       gl={{ antialias: !isTouch, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
       <color attach="background" args={[pal.bg]} />
       <fog attach="fog" args={[pal.fog, 22, pal.fogFar]} />
       <Sky colors={pal.sky} />
+      <Cityscape tint={pal.city} />
+      <Clouds tint={pal.cloud} />
+      <Birds color={pal.bird} />
 
       <ambientLight intensity={pal.ambient[1]} color={pal.ambient[0]} />
       <directionalLight position={[-8, 6, -4]} intensity={pal.key[1]} color={pal.key[0]} />

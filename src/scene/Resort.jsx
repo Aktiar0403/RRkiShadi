@@ -179,7 +179,7 @@ function WelcomeBoard() {
     ctx.fillText('16 · 17 DECEMBER 2026', w / 2, 348)
   })
   return (
-    <group position={[5.6, 0, 18.4]} rotation-y={-0.3}>
+    <group position={[3.1, 0, 26]} rotation-y={-0.35} scale={1.1}>
       {[-1.15, 1.15].map((x) => (
         <mesh key={x} position={[x, 0.95, -0.06]}>
           <cylinderGeometry args={[0.05, 0.06, 1.9, 8]} />
@@ -272,8 +272,46 @@ function Palm({ position, scale = 1, lean = 0.08, seed = 0 }) {
 }
 
 /* ------------------------------------------------------------------
-   Fields of grass either side of the walkway.
+   Lawn — a dense mown-turf carpet (tiled canvas texture, like a golf
+   fairway) with short instanced blades scattered over it for depth.
 ------------------------------------------------------------------- */
+function Turf() {
+  const texture = useMemo(() => {
+    const size = 256
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#3d7a4a'
+    ctx.fillRect(0, 0, size, size)
+    // mow stripes
+    for (let s = 0; s < size; s += 32) {
+      ctx.fillStyle = (s / 32) % 2 ? 'rgba(255,255,255,0.045)' : 'rgba(0,0,0,0.05)'
+      ctx.fillRect(s, 0, 32, size)
+    }
+    // dense short-blade speckle
+    const greens = ['#356e41', '#468a55', '#2c5c36', '#4f9660', '#3a7546']
+    for (let i = 0; i < 9000; i++) {
+      ctx.fillStyle = greens[(Math.random() * greens.length) | 0]
+      const x = Math.random() * size
+      const y = Math.random() * size
+      ctx.fillRect(x, y, 1, 1 + Math.random() * 2)
+    }
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+    tex.repeat.set(46, 46)
+    tex.anisotropy = 8
+    tex.colorSpace = THREE.SRGBColorSpace
+    return tex
+  }, [])
+  return (
+    <mesh rotation-x={-Math.PI / 2} position-y={0.004}>
+      <circleGeometry args={[68, 48]} />
+      <meshStandardMaterial map={texture} roughness={0.95} />
+    </mesh>
+  )
+}
+
 function Grass({ count = 4200 }) {
   const mesh = useRef()
   const blades = useMemo(() => {
@@ -290,8 +328,8 @@ function Grass({ count = 4200 }) {
         x,
         z,
         ry: Math.random() * Math.PI,
-        tilt: THREE.MathUtils.randFloatSpread(0.5),
-        s: THREE.MathUtils.randFloat(0.7, 1.9),
+        tilt: THREE.MathUtils.randFloatSpread(0.4),
+        s: THREE.MathUtils.randFloat(0.45, 0.95), // short, mown height
         shade: Math.random(),
       })
     }
@@ -301,7 +339,7 @@ function Grass({ count = 4200 }) {
   useEffect(() => {
     const dummy = new THREE.Object3D()
     const c = new THREE.Color()
-    const greens = [new THREE.Color('#2c5638'), new THREE.Color('#3a6b47'), new THREE.Color('#24462e')]
+    const greens = [new THREE.Color('#356e41'), new THREE.Color('#468a55'), new THREE.Color('#2c5c36')]
     blades.forEach((b, i) => {
       dummy.position.set(b.x, 0.14 * b.s, b.z)
       dummy.rotation.set(b.tilt, b.ry, 0)
@@ -401,12 +439,12 @@ function Building({ windowGlow, night }) {
 function Pathway() {
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.012, 16]}>
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.02, 16]}>
         <planeGeometry args={[4.2, 30]} />
         <meshStandardMaterial color="#e0d2b2" roughness={0.35} metalness={0.08} />
       </mesh>
       {[-2.2, 2.2].map((x) => (
-        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.016, 16]}>
+        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.026, 16]}>
           <planeGeometry args={[0.14, 30]} />
           <meshStandardMaterial {...BRASS} />
         </mesh>
@@ -468,7 +506,8 @@ export default function Resort({ mode = 'night' }) {
       <LanternPosts glow={night ? 2.4 : 0.6} />
       <Pool glow={night ? 0.55 : 0.15} />
       <Building windowGlow={night ? 1.7 : 0.12} night={night} />
-      <Grass count={isTouch ? 1600 : 4200} />
+      <Turf />
+      <Grass count={isTouch ? 2400 : 6500} />
       {PALMS.map(([p, s, l], i) => (
         <Palm key={i} position={p} scale={s} lean={l} seed={i * 1.7} />
       ))}

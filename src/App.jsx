@@ -235,30 +235,58 @@ function WhatToWear() {
 
 function Explore() {
   const spots = [
-    ['Amber Fort', 'Hilltop ramparts and mirror-work halls — go early for golden light.'],
-    ['Hawa Mahal', 'The pink honeycomb facade of the old city, best seen from the cafés across.'],
-    ['City Palace', 'Courtyards, peacock gates and the royal collection in the heart of Jaipur.'],
-    ['Johri Bazaar', 'Jewellery, block prints and lac bangles — leave room in your suitcase.'],
+    {
+      img: '/jaipur/amber.jpg',
+      name: 'Amber Fort',
+      blurb: 'Hilltop ramparts and mirror-work halls — go early for golden light.',
+      maps: 'https://www.google.com/maps/search/?api=1&query=Amber+Fort+Jaipur',
+    },
+    {
+      img: '/jaipur/hawa.jpg',
+      name: 'Hawa Mahal',
+      blurb: 'The pink honeycomb facade of the old city, best seen from the cafés across.',
+      maps: 'https://www.google.com/maps/search/?api=1&query=Hawa+Mahal+Jaipur',
+    },
+    {
+      img: '/jaipur/city.jpg',
+      name: 'City Palace',
+      blurb: 'Courtyards, peacock gates and the royal collection in the heart of Jaipur.',
+      maps: 'https://www.google.com/maps/search/?api=1&query=City+Palace+Jaipur',
+    },
+    {
+      img: '/jaipur/johari.jpg',
+      name: 'Johri Bazaar',
+      blurb: 'Jewellery, block prints and lac bangles — leave room in your suitcase.',
+      maps: 'https://www.google.com/maps/search/?api=1&query=Johari+Bazaar+Jaipur',
+    },
   ]
   return (
     <section className="chapter flip" id="jaipur">
       <span className="ch-num" aria-hidden="true">04</span>
       <Reveal>
-        <div className="panel">
+        <div className="panel wide">
           <div className="stitch" aria-hidden="true" />
           <p className="kicker">explore jaipur</p>
           <h2 className="section-title">The Pink City Waits</h2>
-          <p className="lede">Arriving early or staying on? A few favourites, all within an hour of the resort.</p>
+          <p className="lede">
+            Arriving early or staying on? A few favourites, all within an hour of the resort — tap one to step inside
+            and walk around it on the map.
+          </p>
           <div className="explore-grid">
-            {spots.map(([name, blurb]) => (
-              <Tilt key={name} max={8}>
-                <div className="explore-card">
-                  <h4>{name}</h4>
-                  <p>{blurb}</p>
-                </div>
+            {spots.map((s) => (
+              <Tilt key={s.name} max={7}>
+                <a className="explore-card photo" href={s.maps} target="_blank" rel="noreferrer">
+                  <img src={s.img} alt={s.name} loading="lazy" />
+                  <div className="ex-overlay">
+                    <h4>{s.name}</h4>
+                    <p>{s.blurb}</p>
+                    <span className="ex-walk">Walk around →</span>
+                  </div>
+                </a>
               </Tilt>
             ))}
           </div>
+          <p className="ex-credit">Photographs · Wikimedia Commons</p>
         </div>
       </Reveal>
     </section>
