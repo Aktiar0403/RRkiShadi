@@ -171,6 +171,80 @@ main { position: relative; z-index: 1; pointer-events: none; }
 .panel3d.wide3d { width: 640px; }
 .panel3d .section-title::after { transform: scaleX(1); }
 
+/* phones: narrower layout that the camera fills edge to edge; the tall
+   RSVP board scrolls inside itself so every field is reachable */
+@media (pointer: coarse) {
+  .panel3d { width: 420px; padding: 28px 22px; }
+  .panel3d.wide3d {
+    width: 420px;
+    max-height: 860px;
+    overflow-y: auto;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .panel3d .rsvp-form { grid-template-columns: 1fr; }
+  .panel3d .lede { font-size: 15px; }
+}
+
+/* ---------- custom dropdown ---------- */
+.dd-field { position: relative; }
+.dd-btn {
+  font-family: var(--body-font);
+  font-size: 15px;
+  text-align: left;
+  color: var(--cream);
+  padding: 13px 38px 13px 14px;
+  border: 1px solid var(--gold-dim);
+  background: var(--input-bg);
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.8s ease;
+}
+.dd-btn.empty { color: var(--mist); }
+.dd-btn:focus, .dd-btn.open {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.dd-caret {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  transition: transform 0.25s ease;
+}
+.dd-btn.open .dd-caret { transform: translateY(-50%) rotate(180deg); }
+.dd-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  background: var(--option-bg, #101528);
+  border: 1px solid var(--gold-dim);
+  max-height: 216px;
+  overflow-y: auto;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.65);
+}
+.dd-list li {
+  padding: 12px;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  color: var(--cream-soft);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dd-list li:hover, .dd-list li:active, .dd-list li.sel {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--cream);
+}
+
 /* ---------- hero ---------- */
 .hero {
   min-height: 100svh;

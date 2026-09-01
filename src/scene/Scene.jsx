@@ -297,7 +297,7 @@ function ScrollCamera({ scrollRef }) {
     const pos = [v(0, 2.9, isTouch ? 40 : 33)]
     const look = [v(0, 3.9, 0)]
     for (const p of PANELS) {
-      const d = p.dist * (isTouch ? 1.8 : 1)
+      const d = p.dist * (isTouch ? 1.15 : 1)
       pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1] - 0.1, p.pos[2] + Math.cos(p.ry) * d))
       look.push(v(...p.pos))
     }

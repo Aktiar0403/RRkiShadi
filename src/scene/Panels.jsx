@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import Tilt from '../Tilt.jsx'
 
@@ -11,12 +11,14 @@ import Tilt from '../Tilt.jsx'
    camera stops in front of each. Order must match the page sections.
 ------------------------------------------------------------------- */
 export const PANELS = [
-  { id: 'celebrations', pos: [2.8, 2.55, 16.8], ry: -0.35, scale: 0.0044, dist: 5.2 },
-  { id: 'stay', pos: [-3.3, 2.5, 11.4], ry: 0.42, scale: 0.0044, dist: 5.2 },
-  { id: 'what-to-wear', pos: [2.9, 2.5, 6.6], ry: -0.42, scale: 0.0044, dist: 5.2 },
-  { id: 'jaipur', pos: [-3.2, 2.6, 2.2], ry: 0.45, scale: 0.0042, dist: 5.4 },
-  { id: 'rsvp', pos: [0, 2.8, -0.9], ry: 0, scale: 0.0033, dist: 5.8 },
+  { id: 'celebrations', pos: [2.8, 2.55, 16.8], ry: -0.35, scale: 0.0053, dist: 6.2 },
+  { id: 'stay', pos: [-3.3, 2.5, 11.4], ry: 0.42, scale: 0.0053, dist: 6.2 },
+  { id: 'what-to-wear', pos: [2.9, 2.5, 6.6], ry: -0.42, scale: 0.0053, dist: 6.2 },
+  { id: 'jaipur', pos: [-3.2, 2.6, 2.2], ry: 0.45, scale: 0.005, dist: 6.4 },
+  { id: 'rsvp', pos: [0, 2.8, -0.9], ry: 0, scale: 0.0038, mScale: 0.0053, dist: 7.0 },
 ]
+
+const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
 export const LOOKS = {
   cocktail: {
@@ -194,6 +196,55 @@ function Explore() {
   )
 }
 
+/** Custom dropdown — reliable and styled inside the 3D-transformed panel. */
+function Dropdown({ id, name, label, options, placeholder = 'Choose…' }) {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
+  const ref = useRef(null)
+  useEffect(() => {
+    const close = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', close)
+    return () => document.removeEventListener('pointerdown', close)
+  }, [])
+  return (
+    <div className="field dd-field" ref={ref}>
+      <label htmlFor={id}>{label}</label>
+      <input type="hidden" name={name} value={value} />
+      <button
+        type="button"
+        id={id}
+        className={`dd-btn ${open ? 'open' : ''} ${value ? '' : 'empty'}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+      >
+        {value || placeholder}
+        <span className="dd-caret" aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <ul className="dd-list" role="listbox" aria-labelledby={id}>
+          {options.map((o) => (
+            <li
+              key={o}
+              role="option"
+              aria-selected={o === value}
+              className={o === value ? 'sel' : ''}
+              onClick={() => {
+                setValue(o)
+                setOpen(false)
+              }}
+            >
+              {o}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function Rsvp() {
   const [status, setStatus] = useState('idle')
 
@@ -205,6 +256,10 @@ function Rsvp() {
     const payload = Object.fromEntries(form.entries())
     delete payload.events
     payload.events = events
+    if (!payload.attending) {
+      setStatus('incomplete')
+      return
+    }
     try {
       const res = await fetch('/api/rsvp', {
         method: 'POST',
@@ -234,14 +289,12 @@ function Rsvp() {
             <label htmlFor="phone">Phone</label>
             <input id="phone" name="phone" type="tel" required autoComplete="tel" />
           </div>
-          <div className="field">
-            <label htmlFor="attending">Will you attend?</label>
-            <select id="attending" name="attending" required defaultValue="">
-              <option value="" disabled>Choose…</option>
-              <option>Joyfully accept</option>
-              <option>Regretfully decline</option>
-            </select>
-          </div>
+          <Dropdown
+            id="attending"
+            name="attending"
+            label="Will you attend?"
+            options={['Joyfully accept', 'Regretfully decline']}
+          />
           <div className="field">
             <label htmlFor="party_size">Guests in your party</label>
             <input id="party_size" name="party_size" type="number" min="1" max="12" defaultValue="1" />
@@ -258,16 +311,7 @@ function Rsvp() {
             <label htmlFor="rooms">Rooms needed</label>
             <input id="rooms" name="rooms" type="text" placeholder="e.g. 1 double" />
           </div>
-          <div className="field">
-            <label htmlFor="travel_mode">Travelling by</label>
-            <select id="travel_mode" name="travel_mode" defaultValue="">
-              <option value="" disabled>Choose…</option>
-              <option>Car</option>
-              <option>Flight</option>
-              <option>Train</option>
-              <option>Other</option>
-            </select>
-          </div>
+          <Dropdown id="travel_mode" name="travel_mode" label="Travelling by" options={['Car', 'Flight', 'Train', 'Other']} />
           <div className="field">
             <label htmlFor="arrival">Arrival</label>
             <input id="arrival" name="arrival" type="text" placeholder="16 Dec, 2 PM" />
@@ -276,16 +320,7 @@ function Rsvp() {
             <label htmlFor="departure">Departure</label>
             <input id="departure" name="departure" type="text" placeholder="18 Dec, 11 AM" />
           </div>
-          <div className="field">
-            <label htmlFor="dietary">Dietary preference</label>
-            <select id="dietary" name="dietary" defaultValue="">
-              <option value="" disabled>Choose…</option>
-              <option>Vegetarian</option>
-              <option>Non-vegetarian</option>
-              <option>Jain</option>
-              <option>Vegan</option>
-            </select>
-          </div>
+          <Dropdown id="dietary" name="dietary" label="Dietary preference" options={['Vegetarian', 'Non-vegetarian', 'Jain', 'Vegan']} />
           <div className="field">
             <label htmlFor="song">A song that gets you dancing</label>
             <input id="song" name="song" type="text" placeholder="Optional" />
@@ -299,6 +334,9 @@ function Rsvp() {
           </button>
           {status === 'error' && (
             <p className="rsvp-error">Could not submit just now — please try again, or reach us directly.</p>
+          )}
+          {status === 'incomplete' && (
+            <p className="rsvp-error">Please choose whether you will attend.</p>
           )}
         </form>
       )}
@@ -342,7 +380,7 @@ export default function Panels({ look, setLook, scrollRef }) {
         transform
         position={cfg.pos}
         rotation-y={cfg.ry}
-        scale={cfg.scale}
+        scale={isTouch && cfg.mScale ? cfg.mScale : cfg.scale}
         distanceFactor={400}
         zIndexRange={[20, 0]}
       >
