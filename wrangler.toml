@@ -1,0 +1,8 @@
+name = "rrkishadi"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rrkishadi-rsvp"
+database_id = "16335844-a082-4979-b8c1-be1a8a4e8d13"
