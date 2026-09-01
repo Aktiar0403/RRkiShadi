@@ -5,15 +5,15 @@ import * as THREE from 'three'
 const COLORS = ['#e89b3c', '#e0813f', '#d9c48c', '#f3efe1']
 
 /** Instanced petals drifting down through the scene. */
-export default function Petals({ count = 240, colors = COLORS }) {
+export default function Petals({ count = 240, colors = COLORS, xSpread = 20, zMin = -8, zMax = 5 }) {
   const mesh = useRef()
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
   const petals = useMemo(
     () =>
       Array.from({ length: count }, () => ({
-        x: THREE.MathUtils.randFloatSpread(20),
-        z: THREE.MathUtils.randFloat(-8, 5),
+        x: THREE.MathUtils.randFloatSpread(xSpread),
+        z: THREE.MathUtils.randFloat(zMin, zMax),
         y: THREE.MathUtils.randFloat(0, 14),
         speed: THREE.MathUtils.randFloat(0.35, 0.9),
         sway: THREE.MathUtils.randFloat(0.4, 1.4),
@@ -22,7 +22,7 @@ export default function Petals({ count = 240, colors = COLORS }) {
         spinY: THREE.MathUtils.randFloat(0.5, 2),
         scale: THREE.MathUtils.randFloat(0.5, 1.1),
       })),
-    [count],
+    [count, xSpread, zMin, zMax],
   )
 
   useEffect(() => {

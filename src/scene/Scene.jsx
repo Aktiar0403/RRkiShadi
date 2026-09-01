@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import Mandap from './Mandap.jsx'
 import Petals from './Petals.jsx'
 import Lanterns from './Lanterns.jsx'
+import Resort from './Resort.jsx'
 
 const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 
@@ -15,13 +16,13 @@ const v = (x, y, z) => new THREE.Vector3(x, y, z)
 const PALETTES = {
   night: {
     bg: '#0a0d16',
-    fogFar: 42,
+    fogFar: 60,
     ambient: ['#a9b4cd', 0.32],
     key: ['#e0813f', 1.5],
     fill: ['#d9c48c', 0.45],
     point: 14,
     sparkle: '#d9c48c',
-    ground: '#0b1220',
+    ground: '#0e1d14',
     stars: true,
     vignette: 0.9,
     lantern: ['#ffb347', 2.4],
@@ -29,13 +30,13 @@ const PALETTES = {
   },
   day: {
     bg: '#f3e8f0',
-    fogFar: 54,
+    fogFar: 72,
     ambient: ['#fff3f7', 0.9],
     key: ['#ffd9e8', 1.25],
     fill: ['#b9a3e0', 0.65],
     point: 6,
     sparkle: '#c3a6e8',
-    ground: '#e6d9e8',
+    ground: '#dbe5d4',
     stars: false,
     vignette: 0.4,
     lantern: ['#f2b6cf', 1.1],
@@ -44,23 +45,24 @@ const PALETTES = {
 }
 
 /**
- * The camera flies a path through the scene as the page scrolls —
- * front of the mandap, orbit right, aerial, in close through the
- * garlands, then a long pull-back for the RSVP. Pointer hover (or
- * the phone's physical tilt) sways the camera on top of the path.
+ * Scrolling walks you INTO the resort: arrive before the gates, pass
+ * under the arch, drift along the lamp-lit walkway (a glance at the
+ * pool), climb to the chhatri, and end standing inside it, gazing up
+ * into the dome. Pointer hover (or the phone's physical tilt) sways
+ * the camera on top of the path.
  */
 function ScrollCamera({ scrollRef }) {
   const posCurve = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
         [
-          v(0, 2.6, 11), //   hero — face the mandap
-          v(7.5, 3.2, 7.5), // celebrations — orbit right
-          v(2, 9.5, 12), //   stay — rise to an aerial view
-          v(-7, 2.6, 6.5), // what to wear — swing left, in close
-          v(-3, 1.6, 5.2), // jaipur — low through the garlands
-          v(0, 5, 14.5), //   rsvp — long pull-back
-          v(0, 6.5, 17), //   footer
+          v(0, 3.6, 30), //   hero — the resort ahead, gates framing the chhatri
+          v(0, 2.7, 21.5), // celebrations — passing under the arch
+          v(-1.8, 2.3, 15), // stay — drifting toward the pool side
+          v(1.6, 2.1, 9), //  what to wear — weaving back across the walkway
+          v(0, 1.9, 4.8), // jaipur — at the foot of the steps
+          v(0, 2.3, 0.8), // rsvp — stepping inside the chhatri
+          v(0, 2.5, -0.3), // footer — beneath the dome
         ],
         false,
         'centripetal',
@@ -70,7 +72,15 @@ function ScrollCamera({ scrollRef }) {
   const lookCurve = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
-        [v(0, 2.2, 0), v(0, 2.4, 0), v(0, 1.2, 0), v(0, 2.6, 0), v(0, 3.8, 0), v(0, 3.2, 0), v(0, 4.2, 0)],
+        [
+          v(0, 3.2, 0), //  toward the chhatri, always drawing you in
+          v(0, 2.8, 0),
+          v(-5.5, 1.2, 10), // a glance across the pool
+          v(0, 2.9, 0),
+          v(0, 3.6, 0),
+          v(0, 4.4, -0.6),
+          v(0, 5.7, -0.2), // up into the dome
+        ],
         false,
         'centripetal',
       ),
@@ -132,12 +142,12 @@ export default function Scene({ scrollRef, mode = 'night' }) {
   return (
     <Canvas
       dpr={isTouch ? 1 : [1, 1.5]}
-      camera={{ position: [0, 2.6, 11], fov: isTouch ? 58 : 46 }}
+      camera={{ position: [0, 3.6, 30], fov: isTouch ? 58 : 46 }}
       gl={{ antialias: !isTouch, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
       <color attach="background" args={[pal.bg]} />
-      <fog attach="fog" args={[pal.bg, 16, pal.fogFar]} />
+      <fog attach="fog" args={[pal.bg, 20, pal.fogFar]} />
 
       <ambientLight intensity={pal.ambient[1]} color={pal.ambient[0]} />
       <directionalLight position={[-8, 6, -4]} intensity={pal.key[1]} color={pal.key[0]} />
@@ -145,15 +155,16 @@ export default function Scene({ scrollRef, mode = 'night' }) {
       <pointLight position={[0, 3.2, 0]} intensity={pal.point} color="#ffb347" distance={12} decay={2} />
 
       <Mandap />
+      <Resort mode={mode} />
       <Lanterns color={pal.lantern[0]} intensity={pal.lantern[1]} />
-      <Petals count={isTouch ? 110 : 240} colors={pal.petals} />
+      <Petals count={isTouch ? 110 : 240} colors={pal.petals} xSpread={26} zMin={-6} zMax={24} />
 
-      <Sparkles count={isTouch ? 50 : 90} scale={[16, 8, 12]} position={[0, 3.5, 0]} size={2.2} speed={0.35} color={pal.sparkle} />
+      <Sparkles count={isTouch ? 50 : 90} scale={[18, 8, 26]} position={[0, 3.5, 7]} size={2.2} speed={0.35} color={pal.sparkle} />
       {pal.stars && <Stars radius={70} depth={40} count={isTouch ? 800 : 1500} factor={3} saturation={0} fade speed={0.6} />}
 
-      {/* ground */}
+      {/* lawns */}
       <mesh rotation-x={-Math.PI / 2} position-y={-0.05}>
-        <circleGeometry args={[45, 48]} />
+        <circleGeometry args={[70, 48]} />
         <meshStandardMaterial color={pal.ground} roughness={1} />
       </mesh>
 

@@ -152,9 +152,9 @@ export default function Mandap() {
         <meshStandardMaterial {...GOLD} />
       </mesh>
 
-      {/* fluted ivory dome */}
+      {/* fluted ivory dome — double-sided so the interior reads when you stand beneath it */}
       <mesh position-y={4.18} geometry={domeGeometry}>
-        <meshStandardMaterial color="#ede2ca" metalness={0.1} roughness={0.6} />
+        <meshStandardMaterial color="#ede2ca" metalness={0.1} roughness={0.6} side={THREE.DoubleSide} />
       </mesh>
       {/* kalash finial */}
       <mesh position-y={6.2}>
