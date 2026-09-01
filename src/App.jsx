@@ -1,5 +1,6 @@
 import { Suspense, createContext, lazy, useContext, useEffect, useRef, useState } from 'react'
 import Tilt from './Tilt.jsx'
+import Music from './Music.jsx'
 
 const Scene = lazy(() => import('./scene/Scene.jsx'))
 
@@ -436,6 +437,7 @@ export default function App() {
   return (
     <ThemeContext.Provider value={{ look, setLook, sectionRef }}>
       <div className="progressbar" aria-hidden="true" />
+      <Music />
       <div className="stage">
         <Suspense fallback={null}>
           <Scene scrollRef={scrollRef} />

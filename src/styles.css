@@ -433,6 +433,46 @@ main { position: relative; z-index: 1; }
 .rsvp-done { margin-top: 30px; font-family: var(--script); font-size: 32px; color: var(--gold-2); }
 .rsvp-error { grid-column: 1 / -1; color: var(--rani); font-size: 14px; }
 
+/* ---------- music toggle ---------- */
+.music-btn {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 50;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--tint-strong);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.music-btn:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(212, 175, 55, 0.5); }
+.music-btn:active { transform: scale(0.94); }
+.music-btn .eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; }
+.music-btn .eq i {
+  width: 3px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: height 0.3s ease, background 0.3s ease;
+}
+.music-btn.on .eq i { animation: eq 0.9s ease-in-out infinite; }
+.music-btn.on .eq i:nth-child(2) { animation-delay: 0.2s; }
+.music-btn.on .eq i:nth-child(3) { animation-delay: 0.45s; }
+@keyframes eq {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .music-btn.on .eq i { animation: none; height: 12px; }
+}
+
 /* ---------- footer ---------- */
 footer {
   position: relative;
