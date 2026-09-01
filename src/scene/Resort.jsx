@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const SAND = { color: '#d8c5a3', roughness: 0.8 }
@@ -49,43 +50,45 @@ function Gate({ night }) {
   const headerTex = useCanvasTexture(1400, 300, (ctx, w) => {
     ctx.textAlign = 'center'
     ctx.font = '600 104px Cinzel, serif'
-    ctx.fillStyle = '#5a4632'
-    ctx.shadowColor = 'rgba(90, 70, 50, 0.35)'
-    ctx.shadowBlur = 6
+    ctx.fillStyle = '#f0d98c'
+    ctx.shadowColor = 'rgba(20, 14, 8, 0.7)'
+    ctx.shadowBlur = 10
     ctx.fillText('STARDOM RESORT', w / 2, 118)
-    ctx.shadowBlur = 0
     ctx.font = '84px "Great Vibes", cursive'
-    ctx.fillStyle = '#8a5f42'
+    ctx.fillStyle = '#f2c9a0'
     ctx.fillText('welcome, we invite you to the wedding of', w / 2, 238)
+    ctx.shadowBlur = 0
   })
 
   const letterFill = (ctx, h) => {
     const g = ctx.createLinearGradient(0, 0, 0, h)
-    g.addColorStop(0, '#6a5f4e')
-    g.addColorStop(0.45, '#3b352c')
-    g.addColorStop(1, '#241f18')
+    g.addColorStop(0, '#8a7c64')
+    g.addColorStop(0.45, '#4a4236')
+    g.addColorStop(1, '#2c261e')
     return g
   }
-  const ruchiTex = useCanvasTexture(1200, 300, (ctx, w, h) => {
+  const drawName = (text, size) => (ctx, w, h) => {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = '700 224px Cinzel, serif'
+    ctx.font = `700 ${size}px Cinzel, serif`
     ctx.fillStyle = letterFill(ctx, h)
-    ctx.fillText('RUCHI', w / 2, h / 2 + 8)
-  })
-  const wedsTex = useCanvasTexture(600, 170, (ctx, w, h) => {
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = '600 116px Cinzel, serif'
-    ctx.fillStyle = letterFill(ctx, h)
-    ctx.fillText('WEDS', w / 2, h / 2 + 4)
-  })
-  const rahulTex = useCanvasTexture(1200, 300, (ctx, w, h) => {
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = '700 224px Cinzel, serif'
-    ctx.fillStyle = letterFill(ctx, h)
-    ctx.fillText('RAHUL', w / 2, h / 2 + 8)
+    ctx.fillText(text, w / 2, h / 2 + 8)
+    // gold rim so the letters read against the dark palace behind
+    ctx.strokeStyle = 'rgba(240, 217, 140, 0.75)'
+    ctx.lineWidth = 3
+    ctx.strokeText(text, w / 2, h / 2 + 8)
+  }
+  const ruchiTex = useCanvasTexture(1200, 300, drawName('RUCHI', 224))
+  const wedsTex = useCanvasTexture(600, 170, drawName('WEDS', 112))
+  const rahulTex = useCanvasTexture(1200, 300, drawName('RAHUL', 224))
+
+  // the floating names bow out as you pass under the arch
+  const nameMats = useRef([])
+  useFrame((state) => {
+    const o = THREE.MathUtils.clamp((state.camera.position.z - 23.5) / 4.5, 0, 1)
+    nameMats.current.forEach((m) => {
+      if (m) m.opacity = o
+    })
   })
 
   return (
@@ -135,15 +138,15 @@ function Gate({ night }) {
       {/* RUCHI WEDS RAHUL floating in the arch */}
       <mesh position={[0, 5.25, -0.3]}>
         <planeGeometry args={[5.4, 1.35]} />
-        <meshBasicMaterial map={ruchiTex} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial ref={(m) => (nameMats.current[0] = m)} map={ruchiTex} transparent side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, 4.3, -0.3]}>
         <planeGeometry args={[2.2, 0.62]} />
-        <meshBasicMaterial map={wedsTex} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial ref={(m) => (nameMats.current[1] = m)} map={wedsTex} transparent side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, 3.35, -0.3]}>
         <planeGeometry args={[5.4, 1.35]} />
-        <meshBasicMaterial map={rahulTex} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial ref={(m) => (nameMats.current[2] = m)} map={rahulTex} transparent side={THREE.DoubleSide} />
       </mesh>
 
       {/* warm uplights washing the pylons */}
@@ -423,8 +426,8 @@ function Building({ windowGlow, night }) {
       {/* lit windows */}
       {windows.map(([x, y], i) => (
         <mesh key={i} position={[x, y, 2.02]}>
-          <planeGeometry args={[0.7, 1.15]} />
-          <meshStandardMaterial color="#3a2f22" emissive="#ffd9a0" emissiveIntensity={windowGlow} />
+          <planeGeometry args={[0.58, 1.0]} />
+          <meshStandardMaterial color="#3a2f22" emissive="#f5c987" emissiveIntensity={windowGlow * 0.75} />
         </mesh>
       ))}
       <mesh position={[0, 8.4, 2.26]}>

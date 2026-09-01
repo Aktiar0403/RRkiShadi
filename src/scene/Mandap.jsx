@@ -89,10 +89,12 @@ export default function Mandap() {
   const N = 6
   const topY = 3.42
 
+  // no offset: pillars flank the entrance axis instead of standing on it,
+  // so nothing blocks the view into the pavilion (or the RSVP board)
   const pillarPositions = useMemo(
     () =>
       Array.from({ length: N }, (_, i) => {
-        const a = (i / N) * Math.PI * 2 + Math.PI / N
+        const a = (i / N) * Math.PI * 2
         return [Math.cos(a) * R, 0.6, Math.sin(a) * R]
       }),
     [],

@@ -225,6 +225,11 @@ function Sky({ colors }) {
     g.addColorStop(1, colors[2])
     ctx.fillStyle = g
     ctx.fillRect(0, 0, 16, 256)
+    // light dither so the stretched gradient doesn't band
+    for (let i = 0; i < 900; i++) {
+      ctx.fillStyle = `rgba(255,255,255,${(Math.random() * 0.03).toFixed(3)})`
+      ctx.fillRect((Math.random() * 16) | 0, (Math.random() * 256) | 0, 1, 1)
+    }
     const tex = new THREE.CanvasTexture(canvas)
     tex.colorSpace = THREE.SRGBColorSpace
     return tex
@@ -296,8 +301,8 @@ function ScrollCamera({ scrollRef }) {
       pos.push(v(p.pos[0] + Math.sin(p.ry) * d, p.pos[1] - 0.1, p.pos[2] + Math.cos(p.ry) * d))
       look.push(v(...p.pos))
     }
-    pos.push(v(0, 2.4, isTouch ? 1.6 : 0.4)) // footer — beneath the dome
-    look.push(v(0, 5.8, -0.5)) //               gazing up into it
+    pos.push(v(0, 2.5, isTouch ? 2.6 : 1.6)) // footer — beneath the dome
+    look.push(v(0, 4.4, -2.2)) //               dome rim, garlands, the night beyond
     return {
       posCurve: new THREE.CatmullRomCurve3(pos, false, 'centripetal'),
       lookCurve: new THREE.CatmullRomCurve3(look, false, 'centripetal'),
@@ -358,9 +363,9 @@ export default function Scene({ scrollRef, mode = 'night', look, setLook }) {
   const pal = PALETTES[mode] || PALETTES.night
   return (
     <Canvas
-      dpr={isTouch ? 1 : [1, 1.5]}
+      dpr={isTouch ? [1.5, 2] : [1, 1.5]}
       camera={{ position: [0, 2.9, isTouch ? 40 : 33], fov: isTouch ? 58 : 46 }}
-      gl={{ antialias: !isTouch, powerPreference: 'high-performance' }}
+      gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
       <color attach="background" args={[pal.bg]} />
