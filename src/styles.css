@@ -661,6 +661,14 @@ footer .tag { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; c
   transform: rotate(-20deg);
 }
 :root[data-mode="day"] .silk::after { opacity: 0.6; }
+/* matte finish: no sheen, no folds — a flat colour with a soft vignette */
+:root[data-finish="matte"] .silk {
+  background:
+    radial-gradient(120% 100% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.22) 100%),
+    var(--bg);
+}
+:root[data-finish="matte"] .silk::after { display: none; }
+:root[data-finish="matte"] .hero-glow { opacity: 0.6; }
 /* a thin double gold rule framing the page */
 .silk::before {
   content: "";
@@ -775,10 +783,11 @@ footer {
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .picker .chip:hover { transform: translateY(-2px); border-color: var(--gold); }
-/* single-tone chips: ring in their own shade, and a divider before the group */
+/* single-tone chips ring in their own shade; matte chips are flat; a divider opens each group */
 .picker .chip.mono { border-color: color-mix(in srgb, var(--c) 45%, white); }
-.picker .chip:not(.mono) + .chip.mono { margin-left: 18px; position: relative; }
-.picker .chip:not(.mono) + .chip.mono::before {
+.picker .chip.matte { background: var(--c); }
+.picker .chip.group-start { margin-left: 18px; position: relative; }
+.picker .chip.group-start::before {
   content: "";
   position: absolute;
   left: -14px;

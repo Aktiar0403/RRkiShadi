@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
 import { CONTENT } from './Content.jsx'
-import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor } from './themes.js'
+import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, describe } from './themes.js'
 
 /* ------------------------------------------------------------------
    The invitation is set on dark satin with gold: the names pooled in
@@ -72,22 +72,26 @@ function ThemePicker({ theme, setTheme }) {
   return (
     <div className="picker" role="radiogroup" aria-label="Satin colour">
       <div className="picker-label">
-        <b>{active.name}</b> {active.mono ? '· single tone' : '+ gold'} <span>{i + 1} / {THEMES.length}</span>
+        <b>{active.name}</b> {describe(active)} <span>{i + 1} / {THEMES.length}</span>
       </div>
       <div className="picker-row">
-        {THEMES.map((t) => (
+        {THEMES.map((t, k) => {
+          const prev = THEMES[k - 1]
+          const groupStart = prev && (!!prev.mono !== !!t.mono || !!prev.flat !== !!t.flat)
+          return (
           <button
             key={t.id}
             type="button"
             role="radio"
             aria-checked={t.id === theme}
-            aria-label={t.mono ? `${t.name}, single tone` : `${t.name} + gold`}
-            title={t.mono ? `${t.name} · single tone` : `${t.name} + gold`}
-            className={`chip ${t.mono ? 'mono' : ''} ${t.id === theme ? 'active' : ''}`}
+            aria-label={`${t.name}, ${describe(t)}`}
+            title={`${t.name} · ${describe(t)}`}
+            className={`chip ${t.mono ? 'mono' : ''} ${t.flat ? 'matte' : ''} ${groupStart ? 'group-start' : ''} ${t.id === theme ? 'active' : ''}`}
             style={{ '--c': t.hex }}
             onClick={() => setTheme(t.id)}
           />
-        ))}
+          )
+        })}
       </div>
     </div>
   )
@@ -111,6 +115,7 @@ export default function App() {
     const root = document.documentElement.style
     for (const [k, v] of Object.entries(vars)) root.setProperty(k, v)
     document.documentElement.dataset.theme = t.id
+    document.documentElement.dataset.finish = t.flat ? 'matte' : 'satin'
     writePref('rr-theme', theme)
   }, [theme, mode])
 

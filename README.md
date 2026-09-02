@@ -15,13 +15,16 @@ pooled in light at the top, and the five chapters as glass panels down the
 page.
 
 ### Choosing the colour
-`src/themes.js` holds **30 satin colourways**: 20 dual-tone ("+ gold" —
+`src/themes.js` holds **40 colourways**: 20 dual-tone ("+ gold" —
 Dark Red, Maroon, Wine, Rani Pink, Burgundy, Bottle Green, Emerald, Teal,
 Royal Purple, Aubergine, Violet, Midnight Blue, Royal Blue, Navy, Peacock,
 Rust, Terracotta, Chocolate, Plum, Charcoal) and 10 **single-tone**
 (`mono: true` — Onyx, Oxblood, Forest, Slate Blue, Indigo, Espresso, Olive,
 Graphite, Mulberry, Steel Blue) where the gold role is a pale shade of the
-same hue instead. A **chooser strip at the bottom of the page** cycles
+same hue instead, plus 10 **matte** ones (`flat: true` — Matte Black, Matte
+Maroon, Deep Plum, Ink Blue, Pine, Clay, Mocha, Slate Grey, Dusty Rose,
+Sage) that drop the satin sheen for a flat colour with a soft vignette.
+A **chooser strip at the bottom of the page** cycles
 through them so the couple can pick; the choice is remembered per browser
 (`localStorage rr-theme`).
 
@@ -68,7 +71,7 @@ public/
 src/
   App.jsx                 shell: hero, chapters, rail, progress bar, theme picker,
                           day/night + colourway state (localStorage rr-mode / rr-theme)
-  themes.js               THEMES (30 satin colourways), paletteFor(), SHOW_PICKER
+  themes.js               THEMES (40 colourways), paletteFor(), describe(), SHOW_PICKER
   Content.jsx             the 5 chapters + LOOKS (What-to-Wear palettes & notes)
   Music.jsx               background-music toggle (starts on first tap, remembered)
   Tilt.jsx                pointer/touch tilt wrapper for cards
@@ -86,8 +89,9 @@ content, rail and buttons are inset by the same token.
 ### Theming
 `App.jsx` computes `paletteFor(hex, mode)` for the active colourway and
 writes every `--token` as an inline custom property on `<html>`, so the
-CSS `:root` block is only the pre-JS fallback. `data-mode` (day/night) and
-`data-theme` (colourway id) are also set on `<html>`. Colour properties
+CSS `:root` block is only the pre-JS fallback. `data-mode` (day/night),
+`data-theme` (colourway id) and `data-finish` (satin/matte) are also set
+on `<html>`; matte hides the sheen layers of `.silk`. Colour properties
 ease over 0.8s.
 
 ### RSVP

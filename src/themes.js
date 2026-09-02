@@ -3,8 +3,9 @@
    (night silk, day silk, inks, tints) is derived from it in
    paletteFor(). Dual-tone entries pair the satin with gold; `mono`
    entries stay in one colour family (accents are lighter shades of the
-   same hue). To keep only the chosen one later: delete the others from
-   THEMES (and set SHOW_PICKER = false to hide the chooser).
+   same hue); `flat` entries drop the satin sheen for a matte finish.
+   To keep only the chosen one later: delete the others from THEMES
+   (and set SHOW_PICKER = false to hide the chooser).
 ------------------------------------------------------------------- */
 export const SHOW_PICKER = true
 
@@ -40,7 +41,24 @@ export const THEMES = [
   { id: 'graphite', name: 'Graphite', hex: '#2a2a30', mono: true },
   { id: 'mulberry', name: 'Mulberry', hex: '#4a1a3a', mono: true },
   { id: 'steel', name: 'Steel Blue', hex: '#2f4a6a', mono: true },
+  // matte — no satin sheen, gold accents
+  { id: 'matte-black', name: 'Matte Black', hex: '#121214', flat: true },
+  { id: 'matte-maroon', name: 'Matte Maroon', hex: '#5b1a24', flat: true },
+  { id: 'deep-plum', name: 'Deep Plum', hex: '#3f1f3b', flat: true },
+  { id: 'ink', name: 'Ink Blue', hex: '#1a2440', flat: true },
+  { id: 'pine', name: 'Pine', hex: '#1f3a2a', flat: true },
+  { id: 'clay', name: 'Clay', hex: '#8b4a3a', flat: true },
+  { id: 'mocha', name: 'Mocha', hex: '#4b3a30', flat: true },
+  { id: 'slate-grey', name: 'Slate Grey', hex: '#3a4048', flat: true },
+  { id: 'dusty-rose', name: 'Dusty Rose', hex: '#8a4a5a', flat: true },
+  { id: 'sage', name: 'Sage', hex: '#4d6a55', flat: true },
 ]
+
+/** Human label for a colourway's finish/tone, used by the chooser. */
+export function describe(t) {
+  const tone = t.mono ? 'single tone' : '+ gold'
+  return t.flat ? `matte ${tone}` : tone
+}
 
 export const DEFAULT_THEME = THEMES[0].id
 
