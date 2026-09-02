@@ -713,6 +713,20 @@ footer {
 footer .f-script { font-family: var(--script); font-size: 44px; color: var(--rani); transform: rotate(-2deg); display: inline-block; }
 footer .f-names { font-family: var(--display); font-size: 22px; letter-spacing: 8px; text-transform: uppercase; color: var(--cream); margin: 12px 0 8px; }
 footer .tag { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+footer .f-switch {
+  display: inline-block;
+  margin-top: 34px;
+  padding: 10px 20px;
+  border: 1px solid var(--gold-dim);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mist);
+  pointer-events: auto;
+  transition: color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+footer .f-switch:hover { color: var(--cream); border-color: var(--gold); transform: translateY(-2px); }
 
 /* ---------- mobile ---------- */
 @media (max-width: 640px) {

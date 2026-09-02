@@ -135,6 +135,7 @@ export default function App() {
         <span className="f-script">see you in Jaipur</span>
         <p className="f-names">Ruchi &amp; Rahul</p>
         <p className="tag">#RRkiShadi · 16–17 December 2026</p>
+        <a className="f-switch" href="/static">Lite version · no 3D</a>
       </footer>
     </>
   )
