@@ -1182,3 +1182,22 @@ footer .f-venue a:hover { color: var(--gold-2); border-color: var(--gold); }
   .venue-links { width: 100%; }
   .link-btn { flex: 1; text-align: center; padding: 12px 10px; font-size: 11px; }
 }
+
+/* ---------- chapter numeral: a watermark inside the panel's top-right corner ---------- */
+.panel .ch-num,
+.chapter.flip .panel .ch-num,
+:root[data-style="brand"] .panel .ch-num,
+:root[data-style="brand"] .chapter.flip .panel .ch-num {
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  left: auto;
+  font-size: clamp(64px, 8vw, 120px);
+  line-height: 1;
+  opacity: 0.55;
+  z-index: 0;
+}
+.panel > *:not(.ch-num):not(.stitch) { position: relative; z-index: 1; }
+@media (max-width: 640px) {
+  .panel .ch-num { font-size: 64px; top: 10px; right: 14px; opacity: 0.45; }
+}

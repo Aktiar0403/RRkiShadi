@@ -198,9 +198,9 @@ export default function App() {
           const Content = CONTENT[id]
           return (
             <section key={id} className={`chapter ${i % 2 ? 'flip' : ''}`} id={id}>
-              <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>
               <div className={`panel reveal ${id === 'rsvp' ? 'wide' : ''}`}>
                 <div className="stitch" aria-hidden="true" />
+                <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>
                 <Content />
               </div>
             </section>
