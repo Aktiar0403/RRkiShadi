@@ -15,12 +15,15 @@ pooled in light at the top, and the five chapters as glass panels down the
 page.
 
 ### Choosing the colour
-`src/themes.js` holds **20 satin colourways** (Dark Red, Maroon, Wine, Rani
-Pink, Burgundy, Bottle Green, Emerald, Teal, Royal Purple, Aubergine,
-Violet, Midnight Blue, Royal Blue, Navy, Peacock, Rust, Terracotta,
-Chocolate, Plum, Charcoal — each "+ gold"). A **chooser strip at the bottom
-of the page** cycles through them so the couple can pick; the choice is
-remembered per browser (`localStorage rr-theme`).
+`src/themes.js` holds **30 satin colourways**: 20 dual-tone ("+ gold" —
+Dark Red, Maroon, Wine, Rani Pink, Burgundy, Bottle Green, Emerald, Teal,
+Royal Purple, Aubergine, Violet, Midnight Blue, Royal Blue, Navy, Peacock,
+Rust, Terracotta, Chocolate, Plum, Charcoal) and 10 **single-tone**
+(`mono: true` — Onyx, Oxblood, Forest, Slate Blue, Indigo, Espresso, Olive,
+Graphite, Mulberry, Steel Blue) where the gold role is a pale shade of the
+same hue instead. A **chooser strip at the bottom of the page** cycles
+through them so the couple can pick; the choice is remembered per browser
+(`localStorage rr-theme`).
 
 Every token (satin shades, panel tints, inks, accent, kicker colour) is
 derived from the colourway's hex in `paletteFor()` for both **night** and
@@ -65,7 +68,7 @@ public/
 src/
   App.jsx                 shell: hero, chapters, rail, progress bar, theme picker,
                           day/night + colourway state (localStorage rr-mode / rr-theme)
-  themes.js               THEMES (20 satin colourways), paletteFor(), SHOW_PICKER
+  themes.js               THEMES (30 satin colourways), paletteFor(), SHOW_PICKER
   Content.jsx             the 5 chapters + LOOKS (What-to-Wear palettes & notes)
   Music.jsx               background-music toggle (starts on first tap, remembered)
   Tilt.jsx                pointer/touch tilt wrapper for cards

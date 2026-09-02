@@ -1,8 +1,10 @@
 /* ------------------------------------------------------------------
-   Satin + gold colourways. Each entry is one satin colour; the full
-   palette (night silk, day silk, inks, tints) is derived from it in
-   paletteFor(). To keep only the chosen one later: delete the others
-   from THEMES (and set SHOW_PICKER = false to hide the chooser).
+   Satin colourways. Each entry is one satin colour; the full palette
+   (night silk, day silk, inks, tints) is derived from it in
+   paletteFor(). Dual-tone entries pair the satin with gold; `mono`
+   entries stay in one colour family (accents are lighter shades of the
+   same hue). To keep only the chosen one later: delete the others from
+   THEMES (and set SHOW_PICKER = false to hide the chooser).
 ------------------------------------------------------------------- */
 export const SHOW_PICKER = true
 
@@ -27,6 +29,17 @@ export const THEMES = [
   { id: 'chocolate', name: 'Chocolate', hex: '#4a2a1a' },
   { id: 'plum', name: 'Plum', hex: '#5a1d4a' },
   { id: 'charcoal', name: 'Charcoal', hex: '#1c1c22' },
+  // single tone — no gold
+  { id: 'onyx', name: 'Onyx', hex: '#141418', mono: true },
+  { id: 'oxblood', name: 'Oxblood', hex: '#4a0f14', mono: true },
+  { id: 'forest', name: 'Forest', hex: '#123524', mono: true },
+  { id: 'slate', name: 'Slate Blue', hex: '#263a5a', mono: true },
+  { id: 'indigo', name: 'Indigo', hex: '#2a2560', mono: true },
+  { id: 'espresso', name: 'Espresso', hex: '#3b2418', mono: true },
+  { id: 'olive', name: 'Olive', hex: '#3a3f1a', mono: true },
+  { id: 'graphite', name: 'Graphite', hex: '#2a2a30', mono: true },
+  { id: 'mulberry', name: 'Mulberry', hex: '#4a1a3a', mono: true },
+  { id: 'steel', name: 'Steel Blue', hex: '#2f4a6a', mono: true },
 ]
 
 export const DEFAULT_THEME = THEMES[0].id
@@ -61,19 +74,21 @@ const hsl = (h, s, l, a) =>
  * cream ink. Day: the same hue as a pale satin, antique gold, hue-tinted
  * dark ink.
  */
-export function paletteFor(hex, mode) {
+export function paletteFor(hex, mode, mono = false) {
   const [h, s, l] = hexToHsl(hex)
   if (mode === 'day') {
     const ps = s * 0.6
+    // single tone by day: the "gold" role is a deep shade of the hue
+    const gold = mono
+      ? { '--gold': hsl(h, Math.max(s, 30), 34), '--gold-2': hsl(h, Math.max(s, 30), 26), '--gold-dim': hsl(h, Math.max(s, 30), 34, 0.4) }
+      : { '--gold': '#b08d3f', '--gold-2': '#8f6f2a', '--gold-dim': 'rgba(176, 141, 63, 0.42)' }
     return {
+      ...gold,
       '--bg': hsl(h, ps, 94),
       '--silk-1': hsl(h, ps, 97.5),
       '--silk-2': hsl(h, ps, 87),
       '--silk-3': hsl(h + 18, ps, 93),
       '--silk-glow': 'rgba(255, 255, 255, 0.96)',
-      '--gold': '#b08d3f',
-      '--gold-2': '#8f6f2a',
-      '--gold-dim': 'rgba(176, 141, 63, 0.42)',
       '--rani': hsl(h, Math.max(s, 55), 46),
       '--cream': hsl(h, Math.min(s, 55), 16),
       '--cream-soft': hsl(h, Math.min(s, 40), 27),
@@ -87,15 +102,17 @@ export function paletteFor(hex, mode) {
       '--footer-fade': hsl(h, ps * 0.5, 94, 0.96),
     }
   }
+  // single tone by night: the "gold" role is a pale shade of the hue
+  const gold = mono
+    ? { '--gold': hsl(h, Math.max(s * 0.6, 12), 78), '--gold-2': hsl(h, Math.max(s * 0.6, 12), 90), '--gold-dim': hsl(h, Math.max(s * 0.6, 12), 78, 0.35) }
+    : { '--gold': '#d4af37', '--gold-2': '#f0d98c', '--gold-dim': 'rgba(212, 175, 55, 0.35)' }
   return {
+    ...gold,
     '--bg': hsl(h, s, l - 6),
     '--silk-1': hsl(h, s, l + 9),
     '--silk-2': hsl(h, s, Math.max(4, l - 10)),
     '--silk-3': hsl(h + 18, s, l + 5),
     '--silk-glow': hsl(h, s, l - 4, 0.92),
-    '--gold': '#d4af37',
-    '--gold-2': '#f0d98c',
-    '--gold-dim': 'rgba(212, 175, 55, 0.35)',
     '--rani': hsl(h, Math.max(s, 60), 84),
     '--cream': '#f4ead8',
     '--cream-soft': '#d6cdb9',

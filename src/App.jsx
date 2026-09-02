@@ -55,7 +55,7 @@ function Hero() {
         <p className="hero-script">with love, we invite you to the wedding of</p>
         <h1 className="hero-names">
           Ruchi
-          <em>weds</em>
+          <em aria-label="and">&amp;</em>
           Rahul
         </h1>
         <div className="hero-rule" aria-hidden="true" />
@@ -72,7 +72,7 @@ function ThemePicker({ theme, setTheme }) {
   return (
     <div className="picker" role="radiogroup" aria-label="Satin colour">
       <div className="picker-label">
-        <b>{active.name}</b> + gold <span>{i + 1} / {THEMES.length}</span>
+        <b>{active.name}</b> {active.mono ? '· single tone' : '+ gold'} <span>{i + 1} / {THEMES.length}</span>
       </div>
       <div className="picker-row">
         {THEMES.map((t) => (
@@ -81,9 +81,9 @@ function ThemePicker({ theme, setTheme }) {
             type="button"
             role="radio"
             aria-checked={t.id === theme}
-            aria-label={`${t.name} + gold`}
-            title={`${t.name} + gold`}
-            className={`chip ${t.id === theme ? 'active' : ''}`}
+            aria-label={t.mono ? `${t.name}, single tone` : `${t.name} + gold`}
+            title={t.mono ? `${t.name} · single tone` : `${t.name} + gold`}
+            className={`chip ${t.mono ? 'mono' : ''} ${t.id === theme ? 'active' : ''}`}
             style={{ '--c': t.hex }}
             onClick={() => setTheme(t.id)}
           />
@@ -107,7 +107,7 @@ export default function App() {
   // the satin colourway (× day/night) becomes the page's tokens
   useEffect(() => {
     const t = THEMES.find((x) => x.id === theme) || THEMES[0]
-    const vars = paletteFor(t.hex, mode)
+    const vars = paletteFor(t.hex, mode, !!t.mono)
     const root = document.documentElement.style
     for (const [k, v] of Object.entries(vars)) root.setProperty(k, v)
     document.documentElement.dataset.theme = t.id
