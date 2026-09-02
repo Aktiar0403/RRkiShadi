@@ -34,10 +34,15 @@ Google Fonts stand-in, e.g. SF Pro → Inter, Circular → DM Sans, Copernicus
 → Lora, Futura → Outfit, IBM Plex stays IBM Plex), display weight, tracking
 and case, and the corner radii of buttons, inputs and cards. On a brand
 theme the classic invitation styling (Cinzel caps, script kicker, gold
-brackets and frame) steps aside for the brand's own. A **chooser strip at
-the bottom of the page** cycles
-through them so the couple can pick; the choice is remembered per browser
-(`localStorage rr-theme`).
+brackets and frame) steps aside for the brand's own.
+
+**The look gallery** (`src/ThemePicker.jsx`): a floating pill at the bottom
+shows the current look with prev/next arrows and opens a full-screen
+gallery — tabs per group (Satin + gold / Single tone / Matte / Brands),
+search, a day/night preview switch, and one card per look rendered in that
+look's own colours and typeface. Tapping a card applies it live behind the
+gallery. "Copy link" gives `?theme=<id>` so a look can be sent to someone;
+the choice is remembered per browser (`localStorage rr-theme`).
 
 Every token (satin shades, panel tints, inks, accent, kicker colour) is
 derived from the colourway's hex in `paletteFor()` for both **night** and
@@ -80,8 +85,9 @@ public/
   venue/*.jpg             real resort photos (stardomresortjaipur.in)
   og.png                  share card
 src/
-  App.jsx                 shell: hero, chapters, rail, progress bar, theme picker,
-                          day/night + colourway state (localStorage rr-mode / rr-theme)
+  App.jsx                 shell: hero, chapters, rail, progress bar, look pill + gallery,
+                          day/night + colourway state (localStorage rr-mode / rr-theme, ?theme=)
+  ThemePicker.jsx         the look gallery (grouped, searchable, live preview cards)
   themes.js               THEMES (40 colourways + brands), paletteFor(), describe(), SHOW_PICKER
   brandThemes.js          74 brand palettes (generated — see scripts/extract_brands.py)
   Content.jsx             the 5 chapters + LOOKS (What-to-Wear palettes & notes)
