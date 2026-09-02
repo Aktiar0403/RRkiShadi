@@ -77,7 +77,7 @@ function ThemePicker({ theme, setTheme }) {
       <div className="picker-row">
         {THEMES.map((t, k) => {
           const prev = THEMES[k - 1]
-          const groupStart = prev && (!!prev.mono !== !!t.mono || !!prev.flat !== !!t.flat)
+          const groupStart = prev && (!!prev.mono !== !!t.mono || !!prev.flat !== !!t.flat || !!prev.brand !== !!t.brand)
           return (
           <button
             key={t.id}
@@ -86,8 +86,8 @@ function ThemePicker({ theme, setTheme }) {
             aria-checked={t.id === theme}
             aria-label={`${t.name}, ${describe(t)}`}
             title={`${t.name} · ${describe(t)}`}
-            className={`chip ${t.mono ? 'mono' : ''} ${t.flat ? 'matte' : ''} ${groupStart ? 'group-start' : ''} ${t.id === theme ? 'active' : ''}`}
-            style={{ '--c': t.hex }}
+            className={`chip ${t.mono ? 'mono' : ''} ${t.flat ? 'matte' : ''} ${t.brand ? 'brand' : ''} ${groupStart ? 'group-start' : ''} ${t.id === theme ? 'active' : ''}`}
+            style={{ '--c': t.hex || t.light, '--a': t.accent || 'transparent' }}
             onClick={() => setTheme(t.id)}
           />
           )
@@ -111,7 +111,7 @@ export default function App() {
   // the satin colourway (× day/night) becomes the page's tokens
   useEffect(() => {
     const t = THEMES.find((x) => x.id === theme) || THEMES[0]
-    const vars = paletteFor(t.hex, mode, !!t.mono)
+    const vars = paletteFor(t, mode)
     const root = document.documentElement.style
     for (const [k, v] of Object.entries(vars)) root.setProperty(k, v)
     document.documentElement.dataset.theme = t.id

@@ -786,6 +786,7 @@ footer {
 /* single-tone chips ring in their own shade; matte chips are flat; a divider opens each group */
 .picker .chip.mono { border-color: color-mix(in srgb, var(--c) 45%, white); }
 .picker .chip.matte { background: var(--c); }
+.picker .chip.brand { background: linear-gradient(135deg, var(--c) 0 55%, var(--a) 55% 100%); }
 .picker .chip.group-start { margin-left: 18px; position: relative; }
 .picker .chip.group-start::before {
   content: "";
