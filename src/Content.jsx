@@ -107,13 +107,14 @@ function Stay() {
   )
 }
 
-function WhatToWear({ look, setLook }) {
-  const active = look ? LOOKS[look] : null
+function WhatToWear() {
+  const [look, setLook] = useState('cocktail')
+  const active = LOOKS[look]
   return (
     <>
       <p className="kicker">what to wear</p>
       <h2 className="section-title">Dress the Evening</h2>
-      <p className="lede">Pick a celebration — the whole invitation dresses itself in its colours.</p>
+      <p className="lede">Three evenings, three palettes — pick one to see its colours.</p>
       <div className="tabs" role="tablist" aria-label="Choose an event look">
         {Object.entries(LOOKS).map(([key, l]) => (
           <button
@@ -127,22 +128,16 @@ function WhatToWear({ look, setLook }) {
           </button>
         ))}
       </div>
-      {active ? (
-        <>
-          <div className="swatches">
-            {active.swatches.map(([name, hex]) => (
-              <div className="swatch" key={name}>
-                <div className="chip" style={{ background: hex }} />
-                <span>{name}</span>
-              </div>
-            ))}
+      <div className="swatches">
+        {active.swatches.map(([name, hex]) => (
+          <div className="swatch" key={name}>
+            <div className="chip" style={{ background: hex }} />
+            <span>{name}</span>
           </div>
-          <p className="dress-note">“{active.note}”</p>
-          <p className="dress-sub">{active.title} — {active.sub}</p>
-        </>
-      ) : (
-        <p className="dress-hint">Three evenings, three palettes. Tap one to see its colours and swatches.</p>
-      )}
+        ))}
+      </div>
+      <p className="dress-note">“{active.note}”</p>
+      <p className="dress-sub">{active.title} — {active.sub}</p>
     </>
   )
 }

@@ -9,27 +9,29 @@ A wedding-invitation website for the wedding of **Ruchi & Rahul**,
 
 ## Concept
 
-The invitation is draped in a **Banarasi silk**, drawn entirely in CSS and
-inline SVG: deep rani-pink silk with a woven sheen, a dense gold zari jaal
-of flowering butas, zari *kinara* (borders) of smoothly looping creeper down
-both edges, and the couple's names on the *pallu* with striped zari bands
-beneath. The five chapters sit as glass panels down the page.
+The invitation sits on **dark satin with gold**: a smooth CSS sheen with
+soft folds, a thin double gold rule framing the page, the couple's names
+pooled in light at the top, and the five chapters as glass panels down the
+page.
 
-**Picking a celebration in "What to Wear" re-dyes the whole silk** — and the
-choice is remembered:
+### Choosing the colour
+`src/themes.js` holds **20 satin colourways** (Dark Red, Maroon, Wine, Rani
+Pink, Burgundy, Bottle Green, Emerald, Teal, Royal Purple, Aubergine,
+Violet, Midnight Blue, Royal Blue, Navy, Peacock, Rust, Terracotta,
+Chocolate, Plum, Charcoal — each "+ gold"). A **chooser strip at the bottom
+of the page** cycles through them so the couple can pick; the choice is
+remembered per browser (`localStorage rr-theme`).
 
-| Look | Night silk | Day silk |
-|---|---|---|
-| (none yet) | rani pink | blush |
-| Cocktail Dinner | bottle green | mint |
-| Sundowner Wedding | sunset / terracotta | ivory-peach |
-| Pyjama Party | midnight blue | pearl-violet |
+Every token (satin shades, panel tints, inks, accent, kicker colour) is
+derived from the colourway's hex in `paletteFor()` for both **night** and
+**day** (the day/night toggle top-right gives a pale satin twin of the same
+hue with antique-gold accents).
 
-A **day / night** toggle (top-right) swaps the silk between the deep and the
-pale palettes.
+**To finalise:** delete the unwanted entries from `THEMES`, set
+`SHOW_PICKER = false`, rebuild and deploy. The first entry is the default.
 
-> An earlier 3D "walk into the resort" edition was removed in September 2026;
-> `/static` (its lite twin's old URL) now redirects here.
+> Earlier editions (a 3D "walk into the resort", then a Banarasi brocade)
+> were retired in September 2026; `/static` redirects here.
 
 ## Stack
 
@@ -61,37 +63,29 @@ public/
   venue/*.jpg             real resort photos (stardomresortjaipur.in)
   og.png                  share card
 src/
-  App.jsx                 shell: hero (pallu), chapters, rail, progress bar,
-                          day/night + look state (localStorage rr-mode / rr-look)
-  Content.jsx             the 5 chapters + LOOKS (per-event palettes & notes)
+  App.jsx                 shell: hero, chapters, rail, progress bar, theme picker,
+                          day/night + colourway state (localStorage rr-mode / rr-theme)
+  themes.js               THEMES (20 satin colourways), paletteFor(), SHOW_PICKER
+  Content.jsx             the 5 chapters + LOOKS (What-to-Wear palettes & notes)
   Music.jsx               background-music toggle (starts on first tap, remembered)
   Tilt.jsx                pointer/touch tilt wrapper for cards
-  styles.css              tokens (silk palettes per mode × look), the silk,
-                          zari SVG tiles, panel CSS
+  styles.css              fallback tokens, the satin, gold frame, picker, panel CSS
 ```
 
 ## Key systems
 
-### The silk (`styles.css`, "The silk" section)
-`.silk` is a fixed full-page layer: base gradient from `--silk-1/2/3`, a
-broad diagonal sheen, a 3px weave, then `::after` tiles the zari jaal SVG
-(`--zari-jaal`) and `::before` tiles the kinara SVG (`--zari-kinara`) down
-both edges over two darker `<span>` bands of width `--kinara`. Content,
-rail, buttons and chapter numerals are inset by `--kinara`.
-
-The two SVG tiles are inline data URIs generated from small path
-definitions (buta = stem + leaves + 8-petal blossom; kinara = a vine whose
-Bézier tangents match at the tile's top and bottom so the loops are
-seamless). Gold is `#d4af37` at night, antique `#b8933f` by day.
+### The satin (`styles.css`, "The satin" section)
+`.silk` is a fixed full-page layer: base gradient from `--silk-1/2/3`, broad
+diagonal fold bands, a 4px sheen, and `::after` adds large slanted soft
+highlights. `::before` draws the double gold frame inset by `--kinara`;
+content, rail and buttons are inset by the same token.
 
 ### Theming
-`data-mode` (day/night) and `data-theme` (cocktail/wedding/pyjama) on
-`<html>` select token blocks: `:root`, `:root[data-mode="day"]`,
-`:root[data-theme="…"]`, `:root[data-mode="day"][data-theme="…"]`. Each
-look overrides the silk colours, `--silk-glow` (the pool behind the hero
-names), panel tints, `--accent` and the kicker colour `--rani`; the day
-looks also re-ink `--gold`, `--cream`, `--mist`. Colour properties ease
-over 0.8s.
+`App.jsx` computes `paletteFor(hex, mode)` for the active colourway and
+writes every `--token` as an inline custom property on `<html>`, so the
+CSS `:root` block is only the pre-JS fallback. `data-mode` (day/night) and
+`data-theme` (colourway id) are also set on `<html>`. Colour properties
+ease over 0.8s.
 
 ### RSVP
 `Content.jsx` `Rsvp` posts JSON to `/api/rsvp`; the Pages Function stores
@@ -104,8 +98,8 @@ previously switched it off (`localStorage rr-music`).
 
 ## Tuning knobs
 
-- Silk colours per look/mode: token blocks at the top of `styles.css`.
-- Zari density: `.silk::after { opacity, background-size }`,
-  `.hero-pallu { background-size }`.
-- Border width: `--kinara`.
+- Colourways: `THEMES` in `src/themes.js`; how shades/inks derive from the
+  hex: `paletteFor()`.
+- Satin sheen and folds: `.silk` / `.silk::after` in `styles.css`.
+- Frame inset: `--kinara`; picker height: `--picker-h`.
 - Event copy, swatches, notes: `LOOKS` in `src/Content.jsx`.

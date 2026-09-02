@@ -1,68 +1,45 @@
 /* ==================================================================
-   RR ki Shadi — "Banarasi"
-   The invitation is draped in a Banarasi silk: deep rani-pink silk
-   with a woven sheen, a dense gold zari jaal of flowering butas, zari
-   kinara (borders) of looping creeper down both edges, the names on
-   the pallu. Regal Roman caps (Cinzel), a whisper of script (Great
-   Vibes), geometric body (Jost).
+   RR ki Shadi — "Satin & Gold"
+   The invitation sits on dark satin — a smooth sheen with soft folds —
+   framed by a thin gold rule, with the names pooled in light at the
+   top and the chapters as glass panels down the page. Regal Roman caps
+   (Cinzel), a whisper of script (Great Vibes), geometric body (Jost).
 
-   Picking a celebration in "What to Wear" re-dyes the whole silk:
-   cocktail → bottle green, wedding → sunset, pyjama party → midnight.
-   Day mode is the same brocade on pale silk.
+   COLOUR: the satin colourway is chosen from src/themes.js and applied
+   as inline custom properties on <html> (paletteFor()), for both night
+   and day. The :root values below are only the pre-JS fallback
+   (Dark Red + gold) so the first paint isn't blank.
    ================================================================== */
 :root {
-  --bg: #4a0a2c;
-  --silk-1: #8c1454;
-  --silk-2: #3d0722;
-  --silk-3: #6a1152;
-  --silk-glow: rgba(70, 8, 40, 0.92);
+  --bg: #5c0d17;
+  --silk-1: #7f1421;
+  --silk-2: #3f0910;
+  --silk-3: #7a1a2e;
+  --silk-glow: rgba(92, 13, 23, 0.92);
   --gold: #d4af37;
   --gold-2: #f0d98c;
   --gold-dim: rgba(212, 175, 55, 0.35);
-  --rani: #ffb8d6;
+  --rani: #ffc2c8;
   --cream: #f4ead8;
-  --cream-soft: #cfc6b4;
-  --mist: #8b93a7;
-  --tint: rgba(58, 8, 34, 0.66);
-  --tint-strong: rgba(46, 6, 28, 0.86);
-  --accent: var(--gold);
-  --input-bg: rgba(74, 12, 44, 0.72);
-  --option-bg: #4a0c2c;
-  --footer-fade: rgba(46, 6, 28, 0.96);
-  --kinara: clamp(24px, 5.2vw, 76px);
+  --cream-soft: #d6cdb9;
+  --mist: #c0a8ab;
+  --tint: rgba(84, 12, 21, 0.66);
+  --tint-strong: rgba(66, 9, 17, 0.86);
+  --accent: #e08a95;
+  --input-bg: rgba(110, 18, 30, 0.72);
+  --btn-fg: #0a0d16;
+  --option-bg: #5a0c16;
+  --footer-fade: rgba(66, 9, 17, 0.96);
+  --kinara: clamp(16px, 2.6vw, 30px);
+  --picker-h: 78px;
 
   --display: "Cinzel", "Trajan Pro", serif;
   --script: "Great Vibes", cursive;
   --body-font: "Jost", "Futura", sans-serif;
 
-  --zari-jaal: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><g id='b'><path d='M0 46 C3 26 -4 10 0 -4' fill='none' stroke='%23d4af37' stroke-width='2'/><path d='M0 46 C-9 50 -16 46 -14 39 M0 46 C9 50 16 46 14 39' fill='none' stroke='%23d4af37' stroke-width='1.4'/><g fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.5'><path d='M-1 30 C-14 27 -22 16 -18 6 C-8 10 -3 20 -1 30 Z'/><path d='M1 22 C14 19 22 8 18 -2 C8 2 3 12 1 22 Z'/><path d='M-2 12 C-11 10 -15 3 -13 -3 C-6 -1 -3 5 -2 12 Z'/><path d='M-17 0 C-22 -6 -21 -14 -17 -17 C-13 -14 -12 -6 -17 0 Z' transform='rotate(-30 -17 -8)'/><path d='M17 4 C22 -2 21 -10 17 -13 C13 -10 12 -2 17 4 Z' transform='rotate(30 17 -4)'/></g><g transform='translate(0 -20)' fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.7'><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(0)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(45)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(90)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(135)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(180)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(225)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(270)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(315)'/><circle r='4.5' fill='%23f6e3a1' stroke='none'/><g fill='%23f6e3a1' stroke='none'><circle cx='9.0' cy='0.0' r='1.2'/><circle cx='6.4' cy='6.4' r='1.2'/><circle cx='0.0' cy='9.0' r='1.2'/><circle cx='-6.4' cy='6.4' r='1.2'/><circle cx='-9.0' cy='0.0' r='1.2'/><circle cx='-6.4' cy='-6.4' r='1.2'/><circle cx='-0.0' cy='-9.0' r='1.2'/><circle cx='6.4' cy='-6.4' r='1.2'/></g></g></g><g id='s'><path d='M0 22 C1 10 -6 2 -2 -12' fill='none' stroke='%23d4af37' stroke-width='1.6'/><g fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.5'><path d='M-1 16 C-9 14 -13 8 -11 2 C-5 4 -2 10 -1 16 Z'/><path d='M1 10 C9 8 13 2 11 -4 C5 -2 2 4 1 10 Z'/><path d='M-2 -12 C-7 -17 -6 -25 -2 -28 C2 -25 3 -17 -2 -12 Z'/><path d='M-9 -6 C-13 -10 -13 -16 -10 -18 C-7 -16 -6 -10 -9 -6 Z'/><path d='M6 -8 C10 -12 10 -18 7 -20 C4 -18 3 -12 6 -8 Z'/></g><circle cx='-2' cy='-30' r='1.8' fill='%23f6e3a1'/></g><g id='k'><path d='M0 -22 C13 -20 18 -5 12 8 C8 17 -3 23 -11 17 C-19 11 -15 -3 -6 -11 C-3 -14 -1 -18 0 -22 Z' fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.7'/><path d='M-1 -13 C8 -10 10 1 4 9' fill='none' stroke='%23f6e3a1' stroke-width='1'/><path d='M-5 -6 C1 -4 3 3 -1 8' fill='none' stroke='%23f6e3a1' stroke-width='0.7' stroke-dasharray='1.5 2'/><path d='M-11 17 C-14 22 -20 22 -20 17' fill='none' stroke='%23d4af37' stroke-width='1.4'/></g></defs><use href='%23b' transform='translate(60 60) rotate(-8)'/><use href='%23b' transform='translate(180 180) rotate(8)'/><use href='%23s' transform='translate(180 62) rotate(24)'/><use href='%23s' transform='translate(60 182) rotate(-24)'/><use href='%23k' transform='translate(120 120) rotate(35)'/><use href='%23k' transform='translate(0 0) rotate(-145)'/><use href='%23k' transform='translate(240 0) rotate(-145)'/><use href='%23k' transform='translate(0 240) rotate(-145)'/><use href='%23k' transform='translate(240 240) rotate(-145)'/><g fill='%23f6e3a1'><circle cx='120' cy='10' r='1.6'/><circle cx='10' cy='120' r='1.6'/><circle cx='230' cy='120' r='1.6'/><circle cx='120' cy='230' r='1.6'/><circle cx='100' cy='70' r='1.1'/><circle cx='140' cy='170' r='1.1'/><circle cx='30' cy='30' r='1.1'/><circle cx='210' cy='210' r='1.1'/></g></svg>");
-  --zari-kinara: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='160' viewBox='0 0 80 160'><defs><g id='fl' fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.5'><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(0)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(60)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(120)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(180)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(240)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(300)'/><circle r='2.6' fill='%23f6e3a1' stroke='none'/></g><path id='lf' d='M0 0 C-9 -3 -15 -11 -13 -19 C-5 -16 -1 -8 0 0 Z' fill='%23d4af37' stroke='%23f6e3a1' stroke-width='0.5'/></defs><rect x='0' y='0' width='4' height='160' fill='%23d4af37'/><rect x='76' y='0' width='4' height='160' fill='%23d4af37'/><g fill='none' stroke='%23d4af37'><path d='M8 0 V160 M72 0 V160' stroke-width='1'/><path d='M20 0 V160 M60 0 V160' stroke-width='0.6' stroke-dasharray='1 3'/></g><g fill='%23d4af37'><path d='M13 4 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 4 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 20 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 20 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 36 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 36 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 52 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 52 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 68 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 68 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 84 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 84 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 100 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 100 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 116 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 116 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 132 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 132 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 148 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 148 l3 4 l-3 4 l-3 -4 Z'/></g><path d='M40 0 C62 20 18 60 40 80 C62 100 18 140 40 160' fill='none' stroke='%23d4af37' stroke-width='2.2'/><path d='M40 0 C62 20 18 60 40 80 C62 100 18 140 40 160' fill='none' stroke='%23f6e3a1' stroke-width='0.6'/><use href='%23lf' transform='translate(52 22) rotate(40)'/><use href='%23lf' transform='translate(28 62) rotate(-140)'/><use href='%23lf' transform='translate(52 102) rotate(40)'/><use href='%23lf' transform='translate(28 142) rotate(-140)'/><use href='%23lf' transform='translate(30 38) rotate(-60)'/><use href='%23lf' transform='translate(50 118) rotate(120)'/><use href='%23fl' transform='translate(29 24)'/><use href='%23fl' transform='translate(51 64)'/><use href='%23fl' transform='translate(29 104)'/><use href='%23fl' transform='translate(51 144)'/><g fill='%23f6e3a1'><circle cx='40' cy='40' r='1.5'/><circle cx='40' cy='120' r='1.5'/><circle cx='26' cy='80' r='1.2'/><circle cx='54' cy='0' r='1.2'/><circle cx='54' cy='160' r='1.2'/></g></svg>");
   --embroidery: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><g fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='5 4'><path d='M70 26 C104 30 122 62 112 96 C104 124 72 136 50 118 C28 100 34 64 56 44 C60 40 65 37 70 26 Z'/><path d='M74 48 C94 54 102 74 92 92'/><path d='M210 156 C176 152 158 184 168 218 C176 246 208 258 230 240 C252 222 246 186 224 166 C220 162 215 159 210 156 Z'/><path d='M206 178 C186 184 178 204 188 222'/><path d='M0 210 C36 192 62 232 104 214 S176 192 210 214 S262 232 280 210'/></g><g fill='%23d4af37'><circle cx='140' cy='70' r='2.4'/><circle cx='40' cy='170' r='2.4'/><circle cx='244' cy='96' r='2.4'/><circle cx='96' cy='252' r='2.4'/></g><g fill='none' stroke='%23d4af37' stroke-width='1.3'><g transform='translate(206,64)'><circle r='4'/><path d='M0 -14 C4 -9 4 -5 0 -4 C-4 -5 -4 -9 0 -14 Z'/><path d='M0 14 C4 9 4 5 0 4 C-4 5 -4 9 0 14 Z'/><path d='M-14 0 C-9 -4 -5 -4 -4 0 C-5 4 -9 4 -14 0 Z'/><path d='M14 0 C9 -4 5 -4 4 0 C5 4 9 4 14 0 Z'/></g><g transform='translate(64,206)'><circle r='4'/><path d='M0 -14 C4 -9 4 -5 0 -4 C-4 -5 -4 -9 0 -14 Z'/><path d='M0 14 C4 9 4 5 0 4 C-4 5 -4 9 0 14 Z'/><path d='M-14 0 C-9 -4 -5 -4 -4 0 C-5 4 -9 4 -14 0 Z'/><path d='M14 0 C9 -4 5 -4 4 0 C5 4 9 4 14 0 Z'/></g></g></svg>");
 }
-
-/* --- day mode: blush silk, antique-gold zari, violet ink --- */
 :root[data-mode="day"] {
-  --bg: #fbeef0;
-  --silk-1: #fff6f6;
-  --silk-2: #f6dde3;
-  --silk-3: #fbe6ee;
-  --silk-glow: rgba(255, 255, 255, 0.96);
-  --gold: #9d76cf;
-  --gold-2: #7d54b5;
-  --gold-dim: rgba(157, 118, 207, 0.4);
-  --rani: #c94f7c;
-  --cream: #32254a;
-  --cream-soft: #41365e;
-  --mist: #64587e;
-  --tint: rgba(255, 250, 250, 0.8);
-  --tint-strong: rgba(255, 250, 250, 0.95);
-  --accent: var(--gold);
-  --input-bg: rgba(255, 255, 255, 0.88);
-  --btn-fg: #ffffff;
-  --option-bg: #ffffff;
-  --footer-fade: rgba(251, 238, 240, 0.96);
-  --zari-jaal: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><g id='b'><path d='M0 46 C3 26 -4 10 0 -4' fill='none' stroke='%23b8933f' stroke-width='2'/><path d='M0 46 C-9 50 -16 46 -14 39 M0 46 C9 50 16 46 14 39' fill='none' stroke='%23b8933f' stroke-width='1.4'/><g fill='%23b8933f' stroke='%23e2c877' stroke-width='0.5'><path d='M-1 30 C-14 27 -22 16 -18 6 C-8 10 -3 20 -1 30 Z'/><path d='M1 22 C14 19 22 8 18 -2 C8 2 3 12 1 22 Z'/><path d='M-2 12 C-11 10 -15 3 -13 -3 C-6 -1 -3 5 -2 12 Z'/><path d='M-17 0 C-22 -6 -21 -14 -17 -17 C-13 -14 -12 -6 -17 0 Z' transform='rotate(-30 -17 -8)'/><path d='M17 4 C22 -2 21 -10 17 -13 C13 -10 12 -2 17 4 Z' transform='rotate(30 17 -4)'/></g><g transform='translate(0 -20)' fill='%23b8933f' stroke='%23e2c877' stroke-width='0.7'><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(0)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(45)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(90)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(135)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(180)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(225)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(270)'/><path d='M0 -4 C6 -12 6 -24 0 -30 C-6 -24 -6 -12 0 -4 Z' transform='rotate(315)'/><circle r='4.5' fill='%23e2c877' stroke='none'/><g fill='%23e2c877' stroke='none'><circle cx='9.0' cy='0.0' r='1.2'/><circle cx='6.4' cy='6.4' r='1.2'/><circle cx='0.0' cy='9.0' r='1.2'/><circle cx='-6.4' cy='6.4' r='1.2'/><circle cx='-9.0' cy='0.0' r='1.2'/><circle cx='-6.4' cy='-6.4' r='1.2'/><circle cx='-0.0' cy='-9.0' r='1.2'/><circle cx='6.4' cy='-6.4' r='1.2'/></g></g></g><g id='s'><path d='M0 22 C1 10 -6 2 -2 -12' fill='none' stroke='%23b8933f' stroke-width='1.6'/><g fill='%23b8933f' stroke='%23e2c877' stroke-width='0.5'><path d='M-1 16 C-9 14 -13 8 -11 2 C-5 4 -2 10 -1 16 Z'/><path d='M1 10 C9 8 13 2 11 -4 C5 -2 2 4 1 10 Z'/><path d='M-2 -12 C-7 -17 -6 -25 -2 -28 C2 -25 3 -17 -2 -12 Z'/><path d='M-9 -6 C-13 -10 -13 -16 -10 -18 C-7 -16 -6 -10 -9 -6 Z'/><path d='M6 -8 C10 -12 10 -18 7 -20 C4 -18 3 -12 6 -8 Z'/></g><circle cx='-2' cy='-30' r='1.8' fill='%23e2c877'/></g><g id='k'><path d='M0 -22 C13 -20 18 -5 12 8 C8 17 -3 23 -11 17 C-19 11 -15 -3 -6 -11 C-3 -14 -1 -18 0 -22 Z' fill='%23b8933f' stroke='%23e2c877' stroke-width='0.7'/><path d='M-1 -13 C8 -10 10 1 4 9' fill='none' stroke='%23e2c877' stroke-width='1'/><path d='M-5 -6 C1 -4 3 3 -1 8' fill='none' stroke='%23e2c877' stroke-width='0.7' stroke-dasharray='1.5 2'/><path d='M-11 17 C-14 22 -20 22 -20 17' fill='none' stroke='%23b8933f' stroke-width='1.4'/></g></defs><use href='%23b' transform='translate(60 60) rotate(-8)'/><use href='%23b' transform='translate(180 180) rotate(8)'/><use href='%23s' transform='translate(180 62) rotate(24)'/><use href='%23s' transform='translate(60 182) rotate(-24)'/><use href='%23k' transform='translate(120 120) rotate(35)'/><use href='%23k' transform='translate(0 0) rotate(-145)'/><use href='%23k' transform='translate(240 0) rotate(-145)'/><use href='%23k' transform='translate(0 240) rotate(-145)'/><use href='%23k' transform='translate(240 240) rotate(-145)'/><g fill='%23e2c877'><circle cx='120' cy='10' r='1.6'/><circle cx='10' cy='120' r='1.6'/><circle cx='230' cy='120' r='1.6'/><circle cx='120' cy='230' r='1.6'/><circle cx='100' cy='70' r='1.1'/><circle cx='140' cy='170' r='1.1'/><circle cx='30' cy='30' r='1.1'/><circle cx='210' cy='210' r='1.1'/></g></svg>");
-  --zari-kinara: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='160' viewBox='0 0 80 160'><defs><g id='fl' fill='%23b8933f' stroke='%23e2c877' stroke-width='0.5'><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(0)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(60)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(120)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(180)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(240)'/><path d='M0 -2 C3 -6 3 -12 0 -15 C-3 -12 -3 -6 0 -2 Z' transform='rotate(300)'/><circle r='2.6' fill='%23e2c877' stroke='none'/></g><path id='lf' d='M0 0 C-9 -3 -15 -11 -13 -19 C-5 -16 -1 -8 0 0 Z' fill='%23b8933f' stroke='%23e2c877' stroke-width='0.5'/></defs><rect x='0' y='0' width='4' height='160' fill='%23b8933f'/><rect x='76' y='0' width='4' height='160' fill='%23b8933f'/><g fill='none' stroke='%23b8933f'><path d='M8 0 V160 M72 0 V160' stroke-width='1'/><path d='M20 0 V160 M60 0 V160' stroke-width='0.6' stroke-dasharray='1 3'/></g><g fill='%23b8933f'><path d='M13 4 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 4 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 20 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 20 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 36 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 36 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 52 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 52 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 68 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 68 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 84 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 84 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 100 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 100 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 116 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 116 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 132 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 132 l3 4 l-3 4 l-3 -4 Z'/><path d='M13 148 l3 4 l-3 4 l-3 -4 Z'/><path d='M67 148 l3 4 l-3 4 l-3 -4 Z'/></g><path d='M40 0 C62 20 18 60 40 80 C62 100 18 140 40 160' fill='none' stroke='%23b8933f' stroke-width='2.2'/><path d='M40 0 C62 20 18 60 40 80 C62 100 18 140 40 160' fill='none' stroke='%23e2c877' stroke-width='0.6'/><use href='%23lf' transform='translate(52 22) rotate(40)'/><use href='%23lf' transform='translate(28 62) rotate(-140)'/><use href='%23lf' transform='translate(52 102) rotate(40)'/><use href='%23lf' transform='translate(28 142) rotate(-140)'/><use href='%23lf' transform='translate(30 38) rotate(-60)'/><use href='%23lf' transform='translate(50 118) rotate(120)'/><use href='%23fl' transform='translate(29 24)'/><use href='%23fl' transform='translate(51 64)'/><use href='%23fl' transform='translate(29 104)'/><use href='%23fl' transform='translate(51 144)'/><g fill='%23e2c877'><circle cx='40' cy='40' r='1.5'/><circle cx='40' cy='120' r='1.5'/><circle cx='26' cy='80' r='1.2'/><circle cx='54' cy='0' r='1.2'/><circle cx='54' cy='160' r='1.2'/></g></svg>");
   --embroidery: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><g fill='none' stroke='%239d76cf' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='5 4'><path d='M70 26 C104 30 122 62 112 96 C104 124 72 136 50 118 C28 100 34 64 56 44 C60 40 65 37 70 26 Z'/><path d='M74 48 C94 54 102 74 92 92'/><path d='M210 156 C176 152 158 184 168 218 C176 246 208 258 230 240 C252 222 246 186 224 166 C220 162 215 159 210 156 Z'/><path d='M206 178 C186 184 178 204 188 222'/><path d='M0 210 C36 192 62 232 104 214 S176 192 210 214 S262 232 280 210'/></g><g fill='%239d76cf'><circle cx='140' cy='70' r='2.4'/><circle cx='40' cy='170' r='2.4'/><circle cx='244' cy='96' r='2.4'/><circle cx='96' cy='252' r='2.4'/></g><g fill='none' stroke='%239d76cf' stroke-width='1.3'><g transform='translate(206,64)'><circle r='4'/><path d='M0 -14 C4 -9 4 -5 0 -4 C-4 -5 -4 -9 0 -14 Z'/><path d='M0 14 C4 9 4 5 0 4 C-4 5 -4 9 0 14 Z'/><path d='M-14 0 C-9 -4 -5 -4 -4 0 C-5 4 -9 4 -14 0 Z'/><path d='M14 0 C9 -4 5 -4 4 0 C5 4 9 4 14 0 Z'/></g><g transform='translate(64,206)'><circle r='4'/><path d='M0 -14 C4 -9 4 -5 0 -4 C-4 -5 -4 -9 0 -14 Z'/><path d='M0 14 C4 9 4 5 0 4 C-4 5 -4 9 0 14 Z'/><path d='M-14 0 C-9 -4 -5 -4 -4 0 C-5 4 -9 4 -14 0 Z'/><path d='M14 0 C9 -4 5 -4 4 0 C5 4 9 4 14 0 Z'/></g></g></svg>");
 }
 :root[data-mode="day"] .info-card {
@@ -75,111 +52,6 @@
 :root[data-mode="day"] .music-btn:hover,
 :root[data-mode="day"] .mode-btn:hover { box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--gold) 50%, transparent); }
 :root[data-mode="day"] .btn:hover { box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--gold) 55%, transparent); }
-
-/* --- the celebrations: each look re-dyes the silk --- */
-/* Cocktail Dinner — bottle green silk, antique gold */
-:root[data-theme="cocktail"] {
-  --bg: #0a2e22;
-  --silk-1: #145c42;
-  --silk-2: #06231a;
-  --silk-3: #1e6a52;
-  --silk-glow: rgba(10, 52, 36, 0.92);
-  --accent: #58b58a;
-  --rani: #bfe8cf;
-  --tint: rgba(10, 44, 32, 0.66);
-  --tint-strong: rgba(8, 36, 26, 0.86);
-  --input-bg: rgba(16, 56, 40, 0.72);
-  --option-bg: #0f3a2a;
-  --footer-fade: rgba(8, 36, 26, 0.96);
-}
-/* Sundowner Wedding — sunset silk */
-:root[data-theme="wedding"] {
-  --bg: #4a1c08;
-  --silk-1: #9a3e12;
-  --silk-2: #3a1408;
-  --silk-3: #b2521a;
-  --silk-glow: rgba(80, 28, 8, 0.92);
-  --accent: #f0a25f;
-  --rani: #ffd0a8;
-  --tint: rgba(70, 26, 10, 0.66);
-  --tint-strong: rgba(56, 20, 8, 0.86);
-  --input-bg: rgba(90, 34, 14, 0.72);
-  --option-bg: #4a1c0c;
-  --footer-fade: rgba(56, 20, 8, 0.96);
-}
-/* Pyjama Party — midnight blue silk, blush */
-:root[data-theme="pyjama"] {
-  --bg: #0f1440;
-  --silk-1: #232c6e;
-  --silk-2: #0a0e30;
-  --silk-3: #2f2a78;
-  --silk-glow: rgba(16, 20, 64, 0.92);
-  --accent: #e8a0b8;
-  --rani: #f2c1cf;
-  --tint: rgba(18, 22, 66, 0.66);
-  --tint-strong: rgba(12, 16, 52, 0.86);
-  --input-bg: rgba(28, 34, 90, 0.72);
-  --option-bg: #141a4c;
-  --footer-fade: rgba(12, 16, 52, 0.96);
-}
-/* the looks by day: pale silks with matching ink */
-:root[data-mode="day"][data-theme="cocktail"] {
-  --silk-glow: rgba(255, 255, 255, 0.96);
-  --bg: #eef7f1;
-  --silk-1: #f7fcf8;
-  --silk-2: #d9ecdf;
-  --silk-3: #e6f3ea;
-  --gold: #2f7a55;
-  --gold-2: #245f43;
-  --gold-dim: rgba(47, 122, 85, 0.4);
-  --accent: #2f9a68;
-  --rani: #c94f7c;
-  --cream: #1d3a2c;
-  --cream-soft: #2f4d3f;
-  --mist: #557a67;
-  --tint: rgba(246, 252, 248, 0.8);
-  --tint-strong: rgba(246, 252, 248, 0.95);
-  --input-bg: rgba(255, 255, 255, 0.88);
-  --footer-fade: rgba(238, 247, 241, 0.96);
-}
-:root[data-mode="day"][data-theme="wedding"] {
-  --silk-glow: rgba(255, 255, 255, 0.96);
-  --bg: #fff4ea;
-  --silk-1: #fffaf4;
-  --silk-2: #f8e1cb;
-  --silk-3: #fdeee0;
-  --gold: #c4762f;
-  --gold-2: #a15d20;
-  --gold-dim: rgba(196, 118, 47, 0.4);
-  --accent: #e0813f;
-  --rani: #d4638f;
-  --cream: #3c2412;
-  --cream-soft: #513522;
-  --mist: #8a6a50;
-  --tint: rgba(255, 250, 244, 0.8);
-  --tint-strong: rgba(255, 250, 244, 0.95);
-  --input-bg: rgba(255, 255, 255, 0.88);
-  --footer-fade: rgba(255, 244, 234, 0.96);
-}
-:root[data-mode="day"][data-theme="pyjama"] {
-  --silk-glow: rgba(255, 255, 255, 0.96);
-  --bg: #f3eff9;
-  --silk-1: #faf7fd;
-  --silk-2: #e6dcf0;
-  --silk-3: #efe8f6;
-  --gold: #7d54b5;
-  --gold-2: #5f3d92;
-  --gold-dim: rgba(125, 84, 181, 0.4);
-  --accent: #d4638f;
-  --rani: #d4638f;
-  --cream: #2a1f45;
-  --cream-soft: #3f3260;
-  --mist: #6c5f88;
-  --tint: rgba(250, 247, 253, 0.8);
-  --tint-strong: rgba(250, 247, 253, 0.95);
-  --input-bg: rgba(255, 255, 255, 0.88);
-  --footer-fade: rgba(243, 239, 249, 0.96);
-}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; background: var(--bg); }
@@ -745,92 +617,79 @@ footer .tag { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; c
 }
 
 
+
 /* ==================================================================
-   The silk
+   The satin
    ================================================================== */
-/* base colour, broad diagonal sheen, fine weave, zari jaal */
+/* base colour, broad soft folds, a fine sheen */
 .silk {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 4px),
     linear-gradient(
       112deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.08) 22%,
-      transparent 38%,
-      rgba(255, 255, 255, 0.05) 58%,
-      transparent 72%,
-      rgba(255, 255, 255, 0.07) 90%,
+      rgba(255, 255, 255, 0.11) 16%,
+      transparent 28%,
+      rgba(0, 0, 0, 0.2) 40%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.08) 63%,
+      transparent 74%,
+      rgba(0, 0, 0, 0.16) 88%,
       transparent 100%
     ),
     radial-gradient(90% 70% at 50% 0%, var(--silk-1), transparent 70%),
     radial-gradient(70% 60% at 100% 100%, var(--silk-3), transparent 70%),
     linear-gradient(180deg, var(--silk-1), var(--silk-2));
 }
+/* the soft, slanting highlights of draped satin */
 .silk::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background-image: var(--zari-jaal);
-  background-size: 240px;
-  opacity: 0.62;
-}
-:root[data-mode="day"] .silk::after { opacity: 0.55; }
-
-/* zari kinara down both edges: a gold-tinted band with the bel on top */
-.silk span {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: var(--kinara);
+  inset: -30%;
   background:
-    linear-gradient(180deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.16)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.38));
-  box-shadow: 0 0 28px rgba(0, 0, 0, 0.4);
+    radial-gradient(28% 70% at 22% 30%, rgba(255, 255, 255, 0.13), transparent 70%),
+    radial-gradient(22% 60% at 68% 72%, rgba(255, 255, 255, 0.09), transparent 70%),
+    radial-gradient(18% 55% at 46% 48%, rgba(0, 0, 0, 0.22), transparent 70%),
+    radial-gradient(20% 60% at 88% 20%, rgba(255, 255, 255, 0.07), transparent 70%);
+  transform: rotate(-20deg);
 }
-.silk span:first-child { left: 0; }
-.silk span:last-child { right: 0; }
+:root[data-mode="day"] .silk::after { opacity: 0.6; }
+/* a thin double gold rule framing the page */
 .silk::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: calc(var(--kinara) - 6px);
   z-index: 1;
-  background:
-    var(--zari-kinara) left top / var(--kinara) auto repeat-y,
-    var(--zari-kinara) right top / var(--kinara) auto repeat-y;
-}
-:root[data-mode="day"] .silk span {
-  background: linear-gradient(180deg, rgba(184, 147, 63, 0.14), rgba(184, 147, 63, 0.2));
-  box-shadow: none;
+  border: 1px solid var(--gold-dim);
+  outline: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  outline-offset: 4px;
+  pointer-events: none;
 }
 
-/* keep content and fixed controls clear of the borders */
-.chapter { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kinara) + 14px); }
-.rail { left: calc(var(--kinara) + 20px); }
-.mode-btn, .music-btn { right: calc(var(--kinara) + 14px); }
+/* keep content and fixed controls clear of the frame */
+.chapter { padding-left: calc(var(--kinara) + 16px); padding-right: calc(var(--kinara) + 16px); }
+.rail { left: calc(var(--kinara) + 16px); }
+.mode-btn, .music-btn { right: calc(var(--kinara) + 10px); }
+.mode-btn { top: calc(var(--kinara) + 8px); }
+.music-btn { bottom: calc(var(--picker-h) + 16px); }
 .ch-num { right: calc(var(--kinara) + 4vw); }
 .chapter.flip .ch-num { right: auto; left: calc(var(--kinara) + 4vw); }
-footer { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kinara) + 14px); }
-/* the panels' backdrop blur softens the brocade under the text */
+footer {
+  padding-left: calc(var(--kinara) + 16px);
+  padding-right: calc(var(--kinara) + 16px);
+  padding-bottom: calc(var(--picker-h) + 60px);
+}
 .panel { background: var(--tint-strong); }
 
-/* hero: the pallu — denser jaal, the silk pooled behind the names */
+/* hero: the names pooled in light */
 .hero {
   justify-content: center;
   overflow: hidden;
-  padding: 80px calc(var(--kinara) + 20px) 120px;
-}
-.hero-pallu {
-  position: absolute;
-  inset: 0;
-  background-image: var(--zari-jaal);
-  background-size: 170px;
-  opacity: 0.5;
-  -webkit-mask-image: radial-gradient(80% 75% at 50% 45%, #000 25%, transparent 100%);
-  mask-image: radial-gradient(80% 75% at 50% 45%, #000 25%, transparent 100%);
+  padding: 80px calc(var(--kinara) + 20px) 110px;
 }
 .hero-glow {
   position: absolute;
@@ -842,28 +701,17 @@ footer { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kin
   background: radial-gradient(closest-side, var(--silk-glow) 0%, color-mix(in srgb, var(--silk-glow) 65%, transparent) 45%, transparent 100%);
   filter: blur(6px);
 }
-/* pallu edge: striped zari bands under the hero */
+/* a double gold rule under the hero */
 .hero::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 46px;
-  background: repeating-linear-gradient(
-    180deg,
-    var(--gold) 0 2px,
-    transparent 2px 8px,
-    color-mix(in srgb, var(--gold) 55%, transparent) 8px 9px,
-    transparent 9px 15px,
-    color-mix(in srgb, var(--gold) 40%, transparent) 15px 27px,
-    transparent 27px 33px,
-    color-mix(in srgb, var(--gold) 55%, transparent) 33px 34px,
-    transparent 34px 40px,
-    var(--gold) 40px 42px,
-    transparent 42px 46px
-  );
-  opacity: 0.85;
+  left: 12%;
+  right: 12%;
+  bottom: 30px;
+  height: 7px;
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold-dim);
+  opacity: 0.8;
 }
 .hero-body {
   position: relative;
@@ -880,17 +728,67 @@ footer { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kin
 :root[data-mode="day"] .hero .hero-script { text-shadow: none; }
 .hero .hero-scroll { bottom: 56px; }
 
-/* colour changes (look / day) ease rather than snap */
-.silk, .silk span, .panel, .info-card, .tab, .btn, .field input, .field textarea, .dd-btn, .mode-btn, .music-btn, body {
+/* ---------- the colourway chooser (bottom strip) ---------- */
+.picker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  height: var(--picker-h);
+  padding: 8px calc(var(--kinara) + 8px) 10px;
+  background: var(--tint-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--gold-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.picker-label {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+.picker-label b { font-weight: 500; color: var(--gold-2); }
+.picker-label span { margin-left: 10px; opacity: 0.7; }
+.picker-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 3px 2px 6px;
+  scrollbar-width: none;
+}
+.picker-row::-webkit-scrollbar { display: none; }
+.picker .chip {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-dim);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 60%, white) 0%, var(--c) 45%, color-mix(in srgb, var(--c) 70%, black) 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.picker .chip:hover { transform: translateY(-2px); border-color: var(--gold); }
+.picker .chip.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--tint-strong), 0 0 0 3px var(--gold);
+  transform: scale(1.12);
+}
+
+/* colour changes (theme / day) ease rather than snap */
+.silk, .panel, .info-card, .tab, .btn, .field input, .field textarea, .dd-btn, .mode-btn, .music-btn, .picker, body {
   transition-property: background-color, border-color, color, box-shadow;
   transition-duration: 0.8s;
   transition-timing-function: ease;
 }
 
 @media (max-width: 640px) {
-  .hero { padding: 64px calc(var(--kinara) + 12px) 104px; }
+  :root { --picker-h: 74px; }
+  .hero { padding: 64px calc(var(--kinara) + 12px) 96px; }
   .hero .hero-script { font-size: 26px; }
   .hero .hero-names { font-size: 44px; letter-spacing: 5px; }
-  .hero-pallu { background-size: 140px; }
-  .silk::after { background-size: 190px; }
+  .picker .chip { width: 28px; height: 28px; }
 }

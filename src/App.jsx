@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
-import { CONTENT, LOOKS } from './Content.jsx'
+import { CONTENT } from './Content.jsx'
+import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor } from './themes.js'
 
 /* ------------------------------------------------------------------
-   The invitation is draped in a Banarasi silk (CSS + inline SVG
-   zari). The names sit on the pallu; the five chapters are glass
-   panels down the page. Picking a celebration in "What to Wear"
-   re-dyes the whole silk in that evening's colours.
+   The invitation is set on dark satin with gold: the names pooled in
+   light at the top, the five chapters as glass panels down the page.
+   A chooser strip at the bottom cycles the satin through the
+   colourways in themes.js (for picking the final one).
 ------------------------------------------------------------------- */
 const CHAPTERS = [
   ['celebrations', 'Celebrations'],
@@ -49,7 +50,6 @@ function Rail({ active }) {
 function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero-pallu" aria-hidden="true" />
       <div className="hero-glow" aria-hidden="true" />
       <div className="hero-body">
         <p className="hero-script">with love, we invite you to the wedding of</p>
@@ -66,8 +66,35 @@ function Hero() {
   )
 }
 
+function ThemePicker({ theme, setTheme }) {
+  const i = THEMES.findIndex((t) => t.id === theme)
+  const active = THEMES[i] || THEMES[0]
+  return (
+    <div className="picker" role="radiogroup" aria-label="Satin colour">
+      <div className="picker-label">
+        <b>{active.name}</b> + gold <span>{i + 1} / {THEMES.length}</span>
+      </div>
+      <div className="picker-row">
+        {THEMES.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="radio"
+            aria-checked={t.id === theme}
+            aria-label={`${t.name} + gold`}
+            title={`${t.name} + gold`}
+            className={`chip ${t.id === theme ? 'active' : ''}`}
+            style={{ '--c': t.hex }}
+            onClick={() => setTheme(t.id)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
-  const [look, setLook] = useState(() => readPref('rr-look', Object.keys(LOOKS), null))
+  const [theme, setTheme] = useState(() => readPref('rr-theme', THEMES.map((t) => t.id), DEFAULT_THEME))
   const [mode, setMode] = useState(() => readPref('rr-mode', ['day', 'night'], 'night'))
   const [activeChapter, setActiveChapter] = useState('')
 
@@ -77,12 +104,15 @@ export default function App() {
     writePref('rr-mode', mode)
   }, [mode])
 
-  // the chosen celebration dyes the whole site, and is remembered
+  // the satin colourway (× day/night) becomes the page's tokens
   useEffect(() => {
-    if (look) document.documentElement.dataset.theme = look
-    else delete document.documentElement.dataset.theme
-    writePref('rr-look', look)
-  }, [look])
+    const t = THEMES.find((x) => x.id === theme) || THEMES[0]
+    const vars = paletteFor(t.hex, mode)
+    const root = document.documentElement.style
+    for (const [k, v] of Object.entries(vars)) root.setProperty(k, v)
+    document.documentElement.dataset.theme = t.id
+    writePref('rr-theme', theme)
+  }, [theme, mode])
 
   // top progress bar
   useEffect(() => {
@@ -138,11 +168,9 @@ export default function App() {
       >
         {mode === 'night' ? '☀' : '☾'}
       </button>
-      <div className="silk" aria-hidden="true">
-        <span />
-        <span />
-      </div>
+      <div className="silk" aria-hidden="true" />
       <Rail active={activeChapter} />
+      {SHOW_PICKER && <ThemePicker theme={theme} setTheme={setTheme} />}
       <main>
         <Hero />
         {CHAPTERS.map(([id], i) => {
@@ -152,7 +180,7 @@ export default function App() {
               <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>
               <div className={`panel reveal ${id === 'rsvp' ? 'wide' : ''}`}>
                 <div className="stitch" aria-hidden="true" />
-                <Content look={look} setLook={setLook} />
+                <Content />
               </div>
             </section>
           )
