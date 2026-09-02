@@ -113,7 +113,8 @@ body {
 .rail a:hover span { opacity: 1; transform: none; }
 .rail a.active .dot { background: var(--accent); border-color: var(--accent); transform: scale(1.5); }
 .rail a.active span { opacity: 1; transform: none; color: var(--cream); }
-@media (max-width: 1023px) { .rail { display: none; } }
+/* the rail lives in the gutter beside the 1120px panels — only shown when that gutter exists */
+@media (max-width: 1439px) { .rail { display: none; } }
 
 /* ---------- content flow ---------- */
 main { position: relative; z-index: 1; }
