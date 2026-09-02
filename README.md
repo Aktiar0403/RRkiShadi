@@ -17,6 +17,17 @@ The content chapters are interactive boards standing **inside** the 3D world;
 the camera stops in front of each and auto-frames it to fill ~92% of the
 viewport (measured per device, rebuilt on rotate/resize).
 
+## Static edition
+
+A no-3D twin of the site lives at **https://rrkishadi.pages.dev/static** —
+no canvas, no camera walk. The hero shows the names over a veiled photo of
+the resort and the five chapters sit as glass panels down the page. It is a
+second Vite entry (`static.html` → `src/static.jsx` → `src/StaticApp.jsx`)
+and reuses the exact same chapter content (`src/Content.jsx`), styles,
+day/night toggle, event looks, music and RSVP API. Loads ~160 kB gzipped vs
+~430 kB for the 3D walk. To make it the main site, swap the two `input`
+entries in `vite.config.js` (or rename the html files).
+
 ## Stack
 
 | Layer | Tech |
@@ -48,6 +59,8 @@ public/
   models/                 DROP stardom.glb HERE to swap in a photogrammetry scan
 src/
   App.jsx                 shell: hero, scroll spacers, rail, progress bar, day/night
+  StaticApp.jsx           static edition shell (no 3D) — served at /static
+  Content.jsx             the 5 chapters' content + LOOKS, shared by both editions
   Music.jsx               background-music toggle (starts on first tap, remembered)
   Tilt.jsx                pointer/touch 3D-tilt wrapper for cards
   styles.css              design tokens, day/night + per-event themes, panel CSS
@@ -70,6 +83,8 @@ size (`panelWorld` in Panels.jsx) so the card fills the screen at any aspect.
 Pointer hover and Android device-tilt add gentle parallax.
 
 ### In-world boards (`Panels.jsx`)
+Chapter content itself comes from `src/Content.jsx`; Panels.jsx only wraps
+it in drei `Html` boards.
 drei `<Html transform distanceFactor={400}>` — `distanceFactor={400}`
 neutralises drei's internal divisor so **1 CSS px × scale = 1 world unit**.
 Boards fade in only on arrival; on phones they cap at 820px height with
