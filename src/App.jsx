@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
 import { CONTENT } from './Content.jsx'
-import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, describe, styleFor, fontsFor, STYLE_KEYS } from './themes.js'
+import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, styleFor, fontsFor, STYLE_KEYS } from './themes.js'
+import ThemePicker, { ThemeTrigger } from './ThemePicker.jsx'
 
 /* ------------------------------------------------------------------
    The invitation is set on dark satin with gold: the names pooled in
    light at the top, the five chapters as glass panels down the page.
-   A chooser strip at the bottom cycles the satin through the
-   colourways in themes.js (for picking the final one).
+   A floating pill opens the look gallery (ThemePicker.jsx) to choose
+   among the colourways in themes.js; ?theme=<id> in the URL preselects
+   one so a look can be shared.
 ------------------------------------------------------------------- */
 const CHAPTERS = [
   ['celebrations', 'Celebrations'],
@@ -66,41 +68,22 @@ function Hero() {
   )
 }
 
-function ThemePicker({ theme, setTheme }) {
-  const i = THEMES.findIndex((t) => t.id === theme)
-  const active = THEMES[i] || THEMES[0]
-  return (
-    <div className="picker" role="radiogroup" aria-label="Satin colour">
-      <div className="picker-label">
-        <b>{active.name}</b> {describe(active)}
-        {active.style && <i> · {active.style.display}</i>}
-        <span>{i + 1} / {THEMES.length}</span>
-      </div>
-      <div className="picker-row">
-        {THEMES.map((t, k) => {
-          const prev = THEMES[k - 1]
-          const groupStart = prev && (!!prev.mono !== !!t.mono || !!prev.flat !== !!t.flat || !!prev.brand !== !!t.brand)
-          return (
-          <button
-            key={t.id}
-            type="button"
-            role="radio"
-            aria-checked={t.id === theme}
-            aria-label={`${t.name}, ${describe(t)}`}
-            title={`${t.name} · ${describe(t)}`}
-            className={`chip ${t.mono ? 'mono' : ''} ${t.flat ? 'matte' : ''} ${t.brand ? 'brand' : ''} ${groupStart ? 'group-start' : ''} ${t.id === theme ? 'active' : ''}`}
-            style={{ '--c': t.hex || t.light, '--a': t.accent || 'transparent' }}
-            onClick={() => setTheme(t.id)}
-          />
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
 export default function App() {
-  const [theme, setTheme] = useState(() => readPref('rr-theme', THEMES.map((t) => t.id), DEFAULT_THEME))
+  const [theme, setTheme] = useState(() => {
+    const ids = THEMES.map((t) => t.id)
+    try {
+      const fromUrl = new URLSearchParams(location.search).get('theme')
+      if (fromUrl && ids.includes(fromUrl)) return fromUrl
+    } catch {
+      /* ignore */
+    }
+    return readPref('rr-theme', ids, DEFAULT_THEME)
+  })
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const stepTheme = (d) => {
+    const i = THEMES.findIndex((t) => t.id === theme)
+    setTheme(THEMES[(i + d + THEMES.length) % THEMES.length].id)
+  }
   const [mode, setMode] = useState(() => readPref('rr-mode', ['day', 'night'], 'night'))
   const [activeChapter, setActiveChapter] = useState('')
 
@@ -200,7 +183,10 @@ export default function App() {
       </button>
       <div className="silk" aria-hidden="true" />
       <Rail active={activeChapter} />
-      {SHOW_PICKER && <ThemePicker theme={theme} setTheme={setTheme} />}
+      {SHOW_PICKER && <ThemeTrigger theme={theme} onOpen={() => setPickerOpen(true)} onStep={stepTheme} />}
+      {SHOW_PICKER && pickerOpen && (
+        <ThemePicker theme={theme} setTheme={setTheme} mode={mode} setMode={setMode} onClose={() => setPickerOpen(false)} />
+      )}
       <main>
         <Hero />
         {CHAPTERS.map(([id], i) => {
