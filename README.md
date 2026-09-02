@@ -28,7 +28,14 @@ Sage) that drop the satin sheen for a flat colour with a soft vignette.
 by `scripts/extract_brands.py` from the `awesome-design-md` collection
 (gitignored; canvas + primary of each brand's DESIGN.md, colour inspiration
 only) — matte, with the brand's own accent in the gold role and its light
-canvas by day. A **chooser strip at the bottom of the page** cycles
+canvas by day. Brand themes also carry the brand's **typography and design
+style** from the same file: display and body faces (proprietary fonts get a
+Google Fonts stand-in, e.g. SF Pro → Inter, Circular → DM Sans, Copernicus
+→ Lora, Futura → Outfit, IBM Plex stays IBM Plex), display weight, tracking
+and case, and the corner radii of buttons, inputs and cards. On a brand
+theme the classic invitation styling (Cinzel caps, script kicker, gold
+brackets and frame) steps aside for the brand's own. A **chooser strip at
+the bottom of the page** cycles
 through them so the couple can pick; the choice is remembered per browser
 (`localStorage rr-theme`).
 
@@ -97,8 +104,13 @@ content, rail and buttons are inset by the same token.
 takes the gold role) and
 writes every `--token` as an inline custom property on `<html>`, so the
 CSS `:root` block is only the pre-JS fallback. `data-mode` (day/night),
-`data-theme` (colourway id) and `data-finish` (satin/matte) are also set
-on `<html>`; matte hides the sheen layers of `.silk`. Colour properties
+`data-theme` (colourway id), `data-finish` (satin/matte) and `data-style`
+(classic/brand) are also set on `<html>`; matte hides the sheen layers of
+`.silk`, and `data-style="brand"` activates the override block at the end
+of `styles.css` that consumes `styleFor()`'s tokens (`--display`,
+`--body-font`, `--names-weight/-tracking/-transform`, `--r-btn/-input/-card`).
+`fontsFor()` gives the Google Fonts URL, which App injects as
+`<link id="brand-fonts">`. Colour properties
 ease over 0.8s.
 
 ### RSVP

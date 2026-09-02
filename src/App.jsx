@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
 import { CONTENT } from './Content.jsx'
-import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, describe } from './themes.js'
+import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, describe, styleFor, fontsFor, STYLE_KEYS } from './themes.js'
 
 /* ------------------------------------------------------------------
    The invitation is set on dark satin with gold: the names pooled in
@@ -72,7 +72,9 @@ function ThemePicker({ theme, setTheme }) {
   return (
     <div className="picker" role="radiogroup" aria-label="Satin colour">
       <div className="picker-label">
-        <b>{active.name}</b> {describe(active)} <span>{i + 1} / {THEMES.length}</span>
+        <b>{active.name}</b> {describe(active)}
+        {active.style && <i> · {active.style.display}</i>}
+        <span>{i + 1} / {THEMES.length}</span>
       </div>
       <div className="picker-row">
         {THEMES.map((t, k) => {
@@ -118,6 +120,29 @@ export default function App() {
     document.documentElement.dataset.finish = t.flat ? 'matte' : 'satin'
     writePref('rr-theme', theme)
   }, [theme, mode])
+
+  // brand themes also bring their typography and shapes (+ the Google Fonts stand-ins)
+  useEffect(() => {
+    const t = THEMES.find((x) => x.id === theme) || THEMES[0]
+    const root = document.documentElement.style
+    const st = styleFor(t)
+    if (st) for (const [k, v] of Object.entries(st)) root.setProperty(k, v)
+    else for (const k of STYLE_KEYS) root.removeProperty(k)
+    document.documentElement.dataset.style = st ? 'brand' : 'classic'
+    const href = fontsFor(t)
+    let link = document.getElementById('brand-fonts')
+    if (href) {
+      if (!link) {
+        link = document.createElement('link')
+        link.id = 'brand-fonts'
+        link.rel = 'stylesheet'
+        document.head.appendChild(link)
+      }
+      if (link.href !== href) link.href = href
+    } else if (link) {
+      link.remove()
+    }
+  }, [theme])
 
   // top progress bar
   useEffect(() => {

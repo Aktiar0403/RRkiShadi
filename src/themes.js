@@ -194,3 +194,52 @@ export function paletteFor(t, mode) {
     '--footer-fade': hsl(bh, bs, Math.max(2, bl - 8), 0.96),
   }
 }
+
+/* ------------------------------------------------------------------
+   Design style. Brand themes carry `style` (faces, weight, tracking,
+   case, radii) extracted from their DESIGN.md; the site's own
+   colourways use the classic invitation styling (Cinzel caps, script
+   kicker, gold brackets) and return null here.
+------------------------------------------------------------------- */
+const SERIF = new Set(['Lora', 'Fraunces', 'Times New Roman'])
+const MONO = new Set(['JetBrains Mono', 'Geist Mono', 'IBM Plex Mono'])
+const SYSTEM = new Set(['Times New Roman'])
+// weights each Google family actually ships (a request for a missing weight fails the whole stylesheet)
+const WEIGHTS = {
+  'Titillium Web': '400;600;700', 'Cal Sans': '400', 'Archivo Black': '400', 'Lora': '400;500;600;700',
+  'JetBrains Mono': '400;500;700', 'Geist Mono': '400;500;700', 'IBM Plex Mono': '400;500;600;700',
+  'Barlow Condensed': '400;500;600;700', 'Space Grotesk': '400;500;600;700',
+}
+const stack = (google, original) => {
+  const generic = SERIF.has(google) ? 'serif' : MONO.has(google) ? 'monospace' : 'sans-serif'
+  const own = original && original !== google ? `, "${original}"` : ''
+  return `"${google}"${own}, ${generic}`
+}
+
+export const STYLE_KEYS = ['--display', '--body-font', '--names-weight', '--names-tracking', '--names-transform', '--r-btn', '--r-input', '--r-card']
+
+export function styleFor(t) {
+  const st = t.style
+  if (!t.brand || !st) return null
+  const r = (v, cap) => `${Math.min(v, cap)}px`
+  return {
+    '--display': stack(st.displayGoogle, st.display),
+    '--body-font': stack(st.bodyGoogle, st.body),
+    '--names-weight': String(Math.max(300, Math.min(900, st.weight || 600))),
+    '--names-tracking': `${st.tracking ?? -0.02}em`,
+    '--names-transform': st.upper ? 'uppercase' : 'none',
+    '--r-btn': st.btn >= 100 ? '9999px' : r(st.btn, 32),
+    '--r-input': st.input >= 100 ? '9999px' : r(st.input, 20),
+    '--r-card': r(st.card, 28),
+  }
+}
+
+/** Google Fonts stylesheet URL for a brand theme's faces (null if none needed). */
+export function fontsFor(t) {
+  const st = t.style
+  if (!t.brand || !st) return null
+  const fams = [...new Set([st.displayGoogle, st.bodyGoogle])].filter((f) => f && !SYSTEM.has(f))
+  if (!fams.length) return null
+  const q = fams.map((f) => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@${WEIGHTS[f] || '400;500;600;700'}`).join('&')
+  return `https://fonts.googleapis.com/css2?${q}&display=swap`
+}
