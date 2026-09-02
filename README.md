@@ -21,8 +21,9 @@ viewport (measured per device, rebuilt on rotate/resize).
 
 A no-3D twin of the site lives at **https://rrkishadi.pages.dev/static** —
 no canvas, no camera walk. The page is draped in a CSS/SVG Banarasi silk
-(wine silk with woven sheen, gold zari paisley jaal, zari borders down both
-edges; blush silk in day mode) and the five chapters sit as glass panels
+(rani-pink silk with woven sheen, a dense gold zari jaal of flowering butas,
+looping-bel zari borders down both edges, a striped pallu band under the
+hero; blush silk in day mode) and the five chapters sit as glass panels
 down the page. It is a
 second Vite entry (`static.html` → `src/static.jsx` → `src/StaticApp.jsx`)
 and reuses the exact same chapter content (`src/Content.jsx`), styles,
