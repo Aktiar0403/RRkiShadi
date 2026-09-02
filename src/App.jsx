@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
-import { CONTENT } from './Content.jsx'
+import { CONTENT, VENUE } from './Content.jsx'
 import { THEMES, DEFAULT_THEME, SHOW_PICKER, paletteFor, styleFor, fontsFor, STYLE_KEYS } from './themes.js'
 import ThemePicker, { ThemeTrigger } from './ThemePicker.jsx'
 
@@ -61,7 +61,12 @@ function Hero() {
           Rahul
         </h1>
         <div className="hero-rule" aria-hidden="true" />
-        <p className="hero-meta">16 · 17 December 2026 — Stardom Resort, Jaipur</p>
+        <p className="hero-meta">
+          16 · 17 December 2026 —{' '}
+          <a href={VENUE.maps} target="_blank" rel="noreferrer" title="Open in Google Maps">
+            Stardom Resort, Jaipur
+          </a>
+        </p>
       </div>
       <div className="hero-scroll" aria-hidden="true" />
     </section>
@@ -206,6 +211,9 @@ export default function App() {
         <span className="f-script">see you in Jaipur</span>
         <p className="f-names">Ruchi &amp; Rahul</p>
         <p className="tag">#RaRu · 16–17 December 2026</p>
+        <p className="f-venue">
+          <a href={VENUE.maps} target="_blank" rel="noreferrer">{VENUE.name}</a> · {VENUE.address}
+        </p>
       </footer>
     </>
   )

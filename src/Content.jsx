@@ -5,6 +5,13 @@ import Figures from './Figures.jsx'
 /* ------------------------------------------------------------------
    The five chapters of the invitation (rendered by App.jsx).
 ------------------------------------------------------------------- */
+export const VENUE = {
+  name: 'Stardom Resort, Jaipur',
+  address: 'Jaisinghpura Road, Bhankrota, Ajmer Road, Jaipur 302026',
+  maps: 'https://www.google.com/maps/search/?api=1&query=Stardom+Resort+Jaisinghpura+Road+Bhankrota+Jaipur',
+  site: 'https://stardomresortjaipur.in/',
+}
+
 
 export const LOOKS = {
   cocktail: {
@@ -86,6 +93,20 @@ function Stay() {
       <p className="kicker">your stay &amp; getting there</p>
       <h2 className="section-title">Room to Be Together</h2>
       <p className="lede">A calm resort off Ajmer Road — open lawns, a glittering pool and room to simply be together.</p>
+      <div className="venue-address">
+        <div>
+          <h4>{VENUE.name}</h4>
+          <p>{VENUE.address}</p>
+        </div>
+        <div className="venue-links">
+          <a className="link-btn" href={VENUE.maps} target="_blank" rel="noreferrer">
+            Open in Google Maps →
+          </a>
+          <a className="link-btn ghost" href={VENUE.site} target="_blank" rel="noreferrer">
+            Resort website
+          </a>
+        </div>
+      </div>
       <div className="venue-strip">
         {[
           ['/venue/pool.jpg', 'The resort pool'],
