@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Tilt from './Tilt.jsx'
 
 /* ------------------------------------------------------------------
-   The five chapters of the invitation. Shared by the 3D boards
-   (scene/Panels.jsx) and the static page (StaticApp.jsx) — no
-   three.js imports here so the static build stays lightweight.
+   The five chapters of the invitation (rendered by App.jsx).
 ------------------------------------------------------------------- */
 
 export const LOOKS = {
@@ -110,12 +108,12 @@ function Stay() {
 }
 
 function WhatToWear({ look, setLook }) {
-  const active = LOOKS[look]
+  const active = look ? LOOKS[look] : null
   return (
     <>
       <p className="kicker">what to wear</p>
       <h2 className="section-title">Dress the Evening</h2>
-      <p className="lede">Pick a celebration — the whole night re-tints itself around you.</p>
+      <p className="lede">Pick a celebration — the whole invitation dresses itself in its colours.</p>
       <div className="tabs" role="tablist" aria-label="Choose an event look">
         {Object.entries(LOOKS).map(([key, l]) => (
           <button
@@ -129,16 +127,22 @@ function WhatToWear({ look, setLook }) {
           </button>
         ))}
       </div>
-      <div className="swatches">
-        {active.swatches.map(([name, hex]) => (
-          <div className="swatch" key={name}>
-            <div className="chip" style={{ background: hex }} />
-            <span>{name}</span>
+      {active ? (
+        <>
+          <div className="swatches">
+            {active.swatches.map(([name, hex]) => (
+              <div className="swatch" key={name}>
+                <div className="chip" style={{ background: hex }} />
+                <span>{name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <p className="dress-note">“{active.note}”</p>
-      <p className="dress-sub">{active.title} — {active.sub}</p>
+          <p className="dress-note">“{active.note}”</p>
+          <p className="dress-sub">{active.title} — {active.sub}</p>
+        </>
+      ) : (
+        <p className="dress-hint">Three evenings, three palettes. Tap one to see its colours and swatches.</p>
+      )}
     </>
   )
 }

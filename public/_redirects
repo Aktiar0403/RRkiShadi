@@ -1,0 +1,3 @@
+# the lite edition used to live at /static — keep shared links working
+/static / 301
+/static.html / 301

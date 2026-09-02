@@ -1,6 +1,6 @@
 # RRkiShadi — Ruchi Weds Rahul
 
-An immersive 3D wedding-invitation website for the wedding of **Ruchi & Rahul**,
+A wedding-invitation website for the wedding of **Ruchi & Rahul**,
 16–17 December 2026 at **Stardom Resort, Jaipur**.
 
 - **Live:** https://rrkishadi.pages.dev (Cloudflare Pages)
@@ -9,34 +9,33 @@ An immersive 3D wedding-invitation website for the wedding of **Ruchi & Rahul**,
 
 ## Concept
 
-The whole site is one 3D walk into the resort. Scrolling dollies the camera
-through the grounds — arrive at the entrance gates (with *RUCHI WEDS RAHUL*
-floating in the arch), pass under it, follow the lantern-lined tiled walkway
-past the pool, and end standing beneath the wedding mandap's chandelier.
-The content chapters are interactive boards standing **inside** the 3D world;
-the camera stops in front of each and auto-frames it to fill ~92% of the
-viewport (measured per device, rebuilt on rotate/resize).
+The invitation is draped in a **Banarasi silk**, drawn entirely in CSS and
+inline SVG: deep rani-pink silk with a woven sheen, a dense gold zari jaal
+of flowering butas, zari *kinara* (borders) of smoothly looping creeper down
+both edges, and the couple's names on the *pallu* with striped zari bands
+beneath. The five chapters sit as glass panels down the page.
 
-## Static edition
+**Picking a celebration in "What to Wear" re-dyes the whole silk** — and the
+choice is remembered:
 
-A no-3D twin of the site lives at **https://rrkishadi.pages.dev/static** —
-no canvas, no camera walk. The page is draped in a CSS/SVG Banarasi silk
-(rani-pink silk with woven sheen, a dense gold zari jaal of flowering butas,
-looping-bel zari borders down both edges, a striped pallu band under the
-hero; blush silk in day mode) and the five chapters sit as glass panels
-down the page. It is a
-second Vite entry (`static.html` → `src/static.jsx` → `src/StaticApp.jsx`)
-and reuses the exact same chapter content (`src/Content.jsx`), styles,
-day/night toggle, event looks, music and RSVP API. Loads ~160 kB gzipped vs
-~430 kB for the 3D walk. To make it the main site, swap the two `input`
-entries in `vite.config.js` (or rename the html files).
+| Look | Night silk | Day silk |
+|---|---|---|
+| (none yet) | rani pink | blush |
+| Cocktail Dinner | bottle green | mint |
+| Sundowner Wedding | sunset / terracotta | ivory-peach |
+| Pyjama Party | midnight blue | pearl-violet |
+
+A **day / night** toggle (top-right) swaps the silk between the deep and the
+pale palettes.
+
+> An earlier 3D "walk into the resort" edition was removed in September 2026;
+> `/static` (its lite twin's old URL) now redirects here.
 
 ## Stack
 
 | Layer | Tech |
 |---|---|
-| Build | Vite 5 + React 18 |
-| 3D | three.js + @react-three/fiber + drei + postprocessing (bloom, vignette) |
+| Build | Vite 5 + React 18 — ~51 kB JS gzipped, no runtime deps beyond React |
 | Hosting | Cloudflare Pages (`wrangler pages deploy dist`) |
 | RSVP backend | Cloudflare Pages Function + D1 (SQLite) |
 | Fonts | Cinzel (display) · Great Vibes (script) · Jost (body) — Google Fonts |
@@ -56,97 +55,57 @@ npx wrangler pages deploy dist --project-name rrkishadi --branch master
 functions/api/rsvp.js     RSVP API (POST store, GET list/CSV with admin key)
 wrangler.toml             Pages config + D1 binding (DB → rrkishadi-rsvp)
 public/
+  _redirects              /static → /
   music/raabta.mp3        background track (128kbps; toggle hides if absent)
   jaipur/*.jpg            Explore-Jaipur photos (Wikimedia Commons)
   venue/*.jpg             real resort photos (stardomresortjaipur.in)
-  models/                 DROP stardom.glb HERE to swap in a photogrammetry scan
+  og.png                  share card
 src/
-  App.jsx                 shell: hero, scroll spacers, rail, progress bar, day/night
-  StaticApp.jsx           static edition shell (no 3D) — served at /static
-  Content.jsx             the 5 chapters' content + LOOKS, shared by both editions
+  App.jsx                 shell: hero (pallu), chapters, rail, progress bar,
+                          day/night + look state (localStorage rr-mode / rr-look)
+  Content.jsx             the 5 chapters + LOOKS (per-event palettes & notes)
   Music.jsx               background-music toggle (starts on first tap, remembered)
-  Tilt.jsx                pointer/touch 3D-tilt wrapper for cards
-  styles.css              design tokens, day/night + per-event themes, panel CSS
-  scene/
-    Scene.jsx             Canvas, palettes, sky/clouds/birds/cityscape, ScrollCamera
-    Panels.jsx            the 5 chapter boards (drei Html) + camera-stop data
-    Mandap.jsx            the real Stardom mandap (gold frame, canopy, chandelier…)
-    Resort.jsx            gate, walkway, jaali screens, pool, buildings, palms,
-                          grass/turf, signage, photogrammetry slot
-    Petals.jsx            instanced falling rose petals
-    Lanterns.jsx          floating glow orbs
+  Tilt.jsx                pointer/touch tilt wrapper for cards
+  styles.css              tokens (silk palettes per mode × look), the silk,
+                          zari SVG tiles, panel CSS
 ```
 
 ## Key systems
 
-### Scroll → camera walk (`Scene.jsx` ScrollCamera)
-Page scroll progress (0–1) drives a Catmull-Rom path: gates → one stop per
-board → under the mandap. Stops are computed from each board's **measured**
-size (`panelWorld` in Panels.jsx) so the card fills the screen at any aspect.
-Pointer hover and Android device-tilt add gentle parallax.
+### The silk (`styles.css`, "The silk" section)
+`.silk` is a fixed full-page layer: base gradient from `--silk-1/2/3`, a
+broad diagonal sheen, a 3px weave, then `::after` tiles the zari jaal SVG
+(`--zari-jaal`) and `::before` tiles the kinara SVG (`--zari-kinara`) down
+both edges over two darker `<span>` bands of width `--kinara`. Content,
+rail, buttons and chapter numerals are inset by `--kinara`.
 
-### In-world boards (`Panels.jsx`)
-Chapter content itself comes from `src/Content.jsx`; Panels.jsx only wraps
-it in drei `Html` boards.
-drei `<Html transform distanceFactor={400}>` — `distanceFactor={400}`
-neutralises drei's internal divisor so **1 CSS px × scale = 1 world unit**.
-Boards fade in only on arrival; on phones they cap at 820px height with
-internal scrolling and larger scales (`mScale`).
+The two SVG tiles are inline data URIs generated from small path
+definitions (buta = stem + leaves + 8-petal blossom; kinara = a vine whose
+Bézier tangents match at the tile's top and bottom so the loops are
+seamless). Gold is `#d4af37` at night, antique `#b8933f` by day.
 
-### Theming (`styles.css` + App state)
-- **Day/night** toggle (top-right, localStorage): swaps CSS tokens AND the 3D
-  palette (sky, lighting, petals, lantern glow, stars).
-- **What to Wear** re-tints the whole page per event (cocktail / wedding /
-  pyjama) while that chapter is on screen.
+### Theming
+`data-mode` (day/night) and `data-theme` (cocktail/wedding/pyjama) on
+`<html>` select token blocks: `:root`, `:root[data-mode="day"]`,
+`:root[data-theme="…"]`, `:root[data-mode="day"][data-theme="…"]`. Each
+look overrides the silk colours, `--silk-glow` (the pool behind the hero
+names), panel tints, `--accent` and the kicker colour `--rani`; the day
+looks also re-ink `--gold`, `--cream`, `--mist`. Colour properties ease
+over 0.8s.
 
-### RSVP (`functions/api/rsvp.js` + D1)
-- `POST /api/rsvp` — stores to D1 table `rsvps` (validated, length-capped).
-- `GET /api/rsvp?key=ADMIN_KEY` — JSON list; `&format=csv` downloads a CSV.
-- `ADMIN_KEY` is a Pages secret; a local copy lives in `.admin-key.local`
-  (gitignored — keep private).
-- D1 database: `rrkishadi-rsvp` (id in wrangler.toml).
+### RSVP
+`Content.jsx` `Rsvp` posts JSON to `/api/rsvp`; the Pages Function stores
+it in D1. Admin listing: `/api/rsvp?key=<ADMIN_KEY>` (`&format=csv`). The
+key lives in gitignored `.admin-key.local` and as a Pages secret.
 
-### Photogrammetry slot (`Resort.jsx` SCAN)
-If `public/models/stardom.glb` exists (HEAD-checked, html-fallback aware),
-it replaces the stylized building — auto-scaled to 26 units, grounded,
-centred. Capture with Polycam/Luma AI; tune `SCAN.rotationY` if needed.
-
-### Performance
-- Instanced everything heavy: grass (~6.5k), petals, garland beads, flower
-  ring, light strands, road petals.
-- `PerformanceMonitor` adapts DPR (1.0–2.0) to the device's frame rate.
-- The 3D bundle is a lazy chunk; music preloads metadata only.
-- Mobile: fewer particles, no bloom, wider FOV.
+### Music
+`Music.jsx` fades in `/music/raabta.mp3` on the first tap unless the visitor
+previously switched it off (`localStorage rr-music`).
 
 ## Tuning knobs
 
-| What | Where |
-|---|---|
-| Camera stops / card fill (0.92) | `Scene.jsx` → buildCurves |
-| Board positions/angles/scales | `Panels.jsx` → `PANELS` |
-| Day/night 3D palettes | `Scene.jsx` → `PALETTES` |
-| Page colours & event themes | `styles.css` → `:root` blocks |
-| Mandap details | `Mandap.jsx` (HALF, TOP, per-component) |
-| Resort layout | `Resort.jsx` (Gate at z21, building at z-16, pool at [-7.5,10]) |
-| RSVP deadline / copy | `Panels.jsx` |
-
-## Content facts
-
-- Events: Cocktail Dinner (Wed 16 Dec, 7 PM) · Sundowner Wedding (Thu 17 Dec,
-  5 PM) · Pyjama Party (Thu 17 Dec night, poolside).
-- RSVP deadline: 1 November 2026. Hashtag: **#RRkiShadi**.
-- Dress palettes: deep green/dusk/antique gold · tea green/ivory/sunset ·
-  midnight/blush/pearl.
-
-## Asset licences
-
-- Jaipur landmark photos: Wikimedia Commons (credited in the Explore board).
-- Venue photos & building likeness: from stardomresortjaipur.in — confirm
-  with the resort (standard courtesy; it promotes their venue).
-- Raabta instrumental: client-provided; ensure the client holds usage rights.
-
-## Ideas not yet built
-
-Loading fade-in monogram · guest-name personalization via `?guest=` ·
-iOS motion-permission prompt for tilt · WEBP conversion of photos ·
-reduced-motion stop-jump navigation · real photogrammetry scan.
+- Silk colours per look/mode: token blocks at the top of `styles.css`.
+- Zari density: `.silk::after { opacity, background-size }`,
+  `.hero-pallu { background-size }`.
+- Border width: `--kinara`.
+- Event copy, swatches, notes: `LOOKS` in `src/Content.jsx`.

@@ -1,10 +1,13 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Music from './Music.jsx'
+import { CONTENT, LOOKS } from './Content.jsx'
 
-const Scene = lazy(() => import('./scene/Scene.jsx'))
-
-/* The chapter content lives INSIDE the 3D world (src/scene/Panels.jsx);
-   these sections are scroll spacers that pace the camera's walk. */
+/* ------------------------------------------------------------------
+   The invitation is draped in a Banarasi silk (CSS + inline SVG
+   zari). The names sit on the pallu; the five chapters are glass
+   panels down the page. Picking a celebration in "What to Wear"
+   re-dyes the whole silk in that evening's colours.
+------------------------------------------------------------------- */
 const CHAPTERS = [
   ['celebrations', 'Celebrations'],
   ['stay', 'Stay & Travel'],
@@ -12,6 +15,23 @@ const CHAPTERS = [
   ['jaipur', 'Jaipur'],
   ['rsvp', 'RSVP'],
 ]
+
+function readPref(key, allowed, fallback) {
+  try {
+    const v = localStorage.getItem(key)
+    return allowed.includes(v) ? v : fallback
+  } catch {
+    return fallback
+  }
+}
+function writePref(key, value) {
+  try {
+    if (value == null) localStorage.removeItem(key)
+    else localStorage.setItem(key, value)
+  } catch {
+    /* private mode */
+  }
+}
 
 function Rail({ active }) {
   return (
@@ -29,46 +49,46 @@ function Rail({ active }) {
 function Hero() {
   return (
     <section className="hero" id="top">
-      {/* the gate in the 3D scene carries the names — this stays for screen readers */}
-      <h1 className="sr-only">With love, we invite you to the wedding of Ruchi and Rahul — 16–17 December 2026, Stardom Resort, Jaipur</h1>
-      <div className="hero-bottom">
+      <div className="hero-pallu" aria-hidden="true" />
+      <div className="hero-glow" aria-hidden="true" />
+      <div className="hero-body">
+        <p className="hero-script">with love, we invite you to the wedding of</p>
+        <h1 className="hero-names">
+          Ruchi
+          <em>weds</em>
+          Rahul
+        </h1>
         <div className="hero-rule" aria-hidden="true" />
         <p className="hero-meta">16 · 17 December 2026 — Stardom Resort, Jaipur</p>
-        <div className="hero-scroll" aria-hidden="true" />
       </div>
+      <div className="hero-scroll" aria-hidden="true" />
     </section>
   )
 }
 
 export default function App() {
-  const [look, setLook] = useState('cocktail')
-  const [inSection, setInSection] = useState(false)
+  const [look, setLook] = useState(() => readPref('rr-look', Object.keys(LOOKS), null))
+  const [mode, setMode] = useState(() => readPref('rr-mode', ['day', 'night'], 'night'))
   const [activeChapter, setActiveChapter] = useState('')
-  const [mode, setMode] = useState(() => {
-    try {
-      return localStorage.getItem('rr-mode') === 'day' ? 'day' : 'night'
-    } catch {
-      return 'night'
-    }
-  })
-  const scrollRef = useRef(0)
 
-  // day / night skin — page and 3D scene together
+  // day / night skin
   useEffect(() => {
     document.documentElement.dataset.mode = mode
-    try {
-      localStorage.setItem('rr-mode', mode)
-    } catch {
-      /* private mode */
-    }
+    writePref('rr-mode', mode)
   }, [mode])
 
-  // scroll progress: drives the top bar and the camera's walk
+  // the chosen celebration dyes the whole site, and is remembered
+  useEffect(() => {
+    if (look) document.documentElement.dataset.theme = look
+    else delete document.documentElement.dataset.theme
+    writePref('rr-look', look)
+  }, [look])
+
+  // top progress bar
   useEffect(() => {
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight
       const p = max > 0 ? window.scrollY / max : 0
-      scrollRef.current = p
       document.documentElement.style.setProperty('--progress', p.toFixed(4))
     }
     onScroll()
@@ -76,34 +96,35 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // rail highlight
+  // rail highlight + panel reveal
   useEffect(() => {
-    const io = new IntersectionObserver(
+    const rail = new IntersectionObserver(
       (entries) => {
         for (const e of entries) if (e.isIntersecting) setActiveChapter(e.target.id)
       },
       { threshold: 0.4 },
     )
+    const reveal = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible')
+            reveal.unobserve(e.target)
+          }
+        }
+      },
+      { threshold: 0.15 },
+    )
     for (const [id] of CHAPTERS) {
       const el = document.getElementById(id)
-      if (el) io.observe(el)
+      if (el) rail.observe(el)
     }
-    return () => io.disconnect()
+    document.querySelectorAll('.reveal').forEach((el) => reveal.observe(el))
+    return () => {
+      rail.disconnect()
+      reveal.disconnect()
+    }
   }, [])
-
-  // While the What-to-Wear stop is on screen, the night wears the look.
-  useEffect(() => {
-    const el = document.getElementById('what-to-wear')
-    if (!el) return
-    const io = new IntersectionObserver(([entry]) => setInSection(entry.isIntersecting), { threshold: 0.25 })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (inSection) document.documentElement.dataset.theme = look
-    else delete document.documentElement.dataset.theme
-  }, [look, inSection])
 
   return (
     <>
@@ -117,25 +138,30 @@ export default function App() {
       >
         {mode === 'night' ? '☀' : '☾'}
       </button>
-      <div className="stage">
-        <Suspense fallback={null}>
-          <Scene scrollRef={scrollRef} mode={mode} look={look} setLook={setLook} />
-        </Suspense>
+      <div className="silk" aria-hidden="true">
+        <span />
+        <span />
       </div>
       <Rail active={activeChapter} />
       <main>
         <Hero />
-        {CHAPTERS.map(([id], i) => (
-          <section key={id} className="chapter" id={id}>
-            <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>
-          </section>
-        ))}
+        {CHAPTERS.map(([id], i) => {
+          const Content = CONTENT[id]
+          return (
+            <section key={id} className={`chapter ${i % 2 ? 'flip' : ''}`} id={id}>
+              <span className="ch-num" aria-hidden="true">{`0${i + 1}`}</span>
+              <div className={`panel reveal ${id === 'rsvp' ? 'wide' : ''}`}>
+                <div className="stitch" aria-hidden="true" />
+                <Content look={look} setLook={setLook} />
+              </div>
+            </section>
+          )
+        })}
       </main>
       <footer>
         <span className="f-script">see you in Jaipur</span>
         <p className="f-names">Ruchi &amp; Rahul</p>
         <p className="tag">#RRkiShadi · 16–17 December 2026</p>
-        <a className="f-switch" href="/static">Lite version · no 3D</a>
       </footer>
     </>
   )
