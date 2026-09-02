@@ -20,8 +20,10 @@ viewport (measured per device, rebuilt on rotate/resize).
 ## Static edition
 
 A no-3D twin of the site lives at **https://rrkishadi.pages.dev/static** —
-no canvas, no camera walk. The hero shows the names over a veiled photo of
-the resort and the five chapters sit as glass panels down the page. It is a
+no canvas, no camera walk. The page is draped in a CSS/SVG Banarasi silk
+(wine silk with woven sheen, gold zari paisley jaal, zari borders down both
+edges; blush silk in day mode) and the five chapters sit as glass panels
+down the page. It is a
 second Vite entry (`static.html` → `src/static.jsx` → `src/StaticApp.jsx`)
 and reuses the exact same chapter content (`src/Content.jsx`), styles,
 day/night toggle, event looks, music and RSVP API. Loads ~160 kB gzipped vs

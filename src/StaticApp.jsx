@@ -4,8 +4,9 @@ import { CONTENT } from './Content.jsx'
 
 /* ------------------------------------------------------------------
    Static edition — the same invitation without the 3D walk. No
-   camera, no canvas: a photo-and-gradient backdrop, the names in the
-   hero, and the five chapters as glass panels down the page.
+   camera, no canvas: the page is draped in a Banarasi silk (CSS +
+   SVG zari), the names sit on the pallu, and the five chapters are
+   glass panels down the page.
 ------------------------------------------------------------------- */
 const CHAPTERS = [
   ['celebrations', 'Celebrations'],
@@ -31,7 +32,8 @@ function Rail({ active }) {
 function Hero() {
   return (
     <section className="hero static-hero" id="top">
-      <div className="static-hero-photo" aria-hidden="true" />
+      <div className="static-hero-pallu" aria-hidden="true" />
+      <div className="static-hero-glow" aria-hidden="true" />
       <div className="static-hero-body">
         <p className="hero-script">with love, we invite you to the wedding of</p>
         <h1 className="hero-names">
@@ -58,6 +60,11 @@ export default function StaticApp() {
       return 'night'
     }
   })
+
+  // marks the page as the lite edition so the silk tokens apply
+  useEffect(() => {
+    document.documentElement.dataset.edition = 'lite'
+  }, [])
 
   useEffect(() => {
     document.documentElement.dataset.mode = mode
@@ -136,7 +143,10 @@ export default function StaticApp() {
       >
         {mode === 'night' ? '☀' : '☾'}
       </button>
-      <div className="static-bg" aria-hidden="true" />
+      <div className="static-bg" aria-hidden="true">
+        <span />
+        <span />
+      </div>
       <Rail active={activeChapter} />
       <main className="static-main">
         <Hero />

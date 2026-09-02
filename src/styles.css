@@ -749,52 +749,150 @@ footer .f-switch:hover { color: var(--cream); border-color: var(--gold); transfo
 
 /* ==================================================================
    Static edition (static.html → /static): no canvas, no camera.
-   A quiet gradient + embroidery backdrop, the resort photo veiled
-   behind the hero, and the chapters as glass panels down the page.
+   The page is draped in a Banarasi silk — deep wine silk with a woven
+   sheen, a gold zari jaal of paisleys and butis, and zari kinara
+   (borders) running down both edges. The hero sits on a denser
+   pallu-like band. Day mode: blush silk with antique-gold zari.
    ================================================================== */
+:root[data-edition="lite"] {
+  --bg: #24070f;
+  --silk-1: #3a0c1c;
+  --silk-2: #1f0610;
+  --silk-3: #2c0f2a;
+  --tint: rgba(34, 7, 16, 0.6);
+  --tint-strong: rgba(28, 6, 13, 0.82);
+  --input-bg: rgba(48, 12, 26, 0.7);
+  --option-bg: #2e0c1a;
+  --footer-fade: rgba(28, 6, 13, 0.96);
+  --kinara: clamp(16px, 3.6vw, 56px);
+  --zari-jaal: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><defs><g id='p'><path d='M0 -36 C24 -32 33 -8 24 13 C15 32 -13 41 -26 24 C-39 7 -30 -19 -11 -30 C-7 -33 -3 -35 0 -36 Z' fill='%23f0d98c' fill-opacity='0.10' stroke='%23d4af37' stroke-width='1.6'/><path d='M-4 -22 C11 -15 15 1 6 15' fill='none' stroke='%23d4af37' stroke-width='1'/><path d='M-14 -14 C-2 -12 3 -2 -2 8' fill='none' stroke='%23d4af37' stroke-width='0.7' stroke-dasharray='2 3'/><circle cx='0' cy='-42' r='1.8' fill='%23d4af37'/><circle cx='30' cy='-2' r='1.5' fill='%23d4af37'/><circle cx='18' cy='28' r='1.5' fill='%23d4af37'/><circle cx='-30' cy='30' r='1.5' fill='%23d4af37'/><circle cx='-36' cy='-4' r='1.5' fill='%23d4af37'/></g><g id='f'><circle r='3.2' fill='%23d4af37'/><g fill='%23f0d98c' fill-opacity='0.14' stroke='%23d4af37' stroke-width='1.2'><path d='M0 -15 C4 -10 4 -5 0 -4 C-4 -5 -4 -10 0 -15 Z'/><path d='M0 15 C4 10 4 5 0 4 C-4 5 -4 10 0 15 Z'/><path d='M-15 0 C-10 -4 -5 -4 -4 0 C-5 4 -10 4 -15 0 Z'/><path d='M15 0 C10 -4 5 -4 4 0 C5 4 10 4 15 0 Z'/><g transform='rotate(45)'><path d='M0 -12 C3 -8 3 -5 0 -4 C-3 -5 -3 -8 0 -12 Z'/><path d='M0 12 C3 8 3 5 0 4 C-3 5 -3 8 0 12 Z'/><path d='M-12 0 C-8 -3 -5 -3 -4 0 C-5 3 -8 3 -12 0 Z'/><path d='M12 0 C8 -3 5 -3 4 0 C5 3 8 3 12 0 Z'/></g></g></g></defs><use href='%23p' transform='translate(55 60) rotate(-18)'/><use href='%23p' transform='translate(165 170) rotate(162)'/><use href='%23f' transform='translate(165 55)'/><use href='%23f' transform='translate(55 165)'/><g fill='%23d4af37'><circle cx='110' cy='110' r='1.6'/><circle cx='0' cy='0' r='1.6'/><circle cx='110' cy='0' r='1.1'/><circle cx='0' cy='110' r='1.1'/></g></svg>");
+  --zari-kinara: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='112' viewBox='0 0 56 112'><g fill='none' stroke='%23d4af37'><path d='M5 0 V112 M9 0 V112 M47 0 V112 M51 0 V112' stroke-width='1'/><path d='M28 0 C44 18 12 38 28 56 C44 74 12 94 28 112' stroke-width='1.5'/><path d='M28 14 C36 6 42 8 44 16 C36 20 30 20 28 14 Z M28 42 C20 34 14 36 12 44 C20 48 26 48 28 42 Z M28 70 C36 62 42 64 44 72 C36 76 30 76 28 70 Z M28 98 C20 90 14 92 12 100 C20 104 26 104 28 98 Z' stroke-width='1.1' fill='%23f0d98c' fill-opacity='0.14'/></g><g fill='%23d4af37'><path d='M28 22 l5 6 l-5 6 l-5 -6 Z'/><path d='M28 78 l5 6 l-5 6 l-5 -6 Z'/><circle cx='7' cy='28' r='1.4'/><circle cx='7' cy='84' r='1.4'/><circle cx='49' cy='28' r='1.4'/><circle cx='49' cy='84' r='1.4'/></g></svg>");
+}
+:root[data-edition="lite"][data-mode="day"] {
+  --bg: #f9ece9;
+  --silk-1: #fdf3ef;
+  --silk-2: #f3dcd6;
+  --silk-3: #f7e6ea;
+  --tint: rgba(255, 250, 248, 0.78);
+  --tint-strong: rgba(255, 250, 248, 0.94);
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --footer-fade: rgba(249, 236, 233, 0.96);
+  --zari-jaal: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><defs><g id='p'><path d='M0 -36 C24 -32 33 -8 24 13 C15 32 -13 41 -26 24 C-39 7 -30 -19 -11 -30 C-7 -33 -3 -35 0 -36 Z' fill='%23d9bf6f' fill-opacity='0.10' stroke='%23b08d3f' stroke-width='1.6'/><path d='M-4 -22 C11 -15 15 1 6 15' fill='none' stroke='%23b08d3f' stroke-width='1'/><path d='M-14 -14 C-2 -12 3 -2 -2 8' fill='none' stroke='%23b08d3f' stroke-width='0.7' stroke-dasharray='2 3'/><circle cx='0' cy='-42' r='1.8' fill='%23b08d3f'/><circle cx='30' cy='-2' r='1.5' fill='%23b08d3f'/><circle cx='18' cy='28' r='1.5' fill='%23b08d3f'/><circle cx='-30' cy='30' r='1.5' fill='%23b08d3f'/><circle cx='-36' cy='-4' r='1.5' fill='%23b08d3f'/></g><g id='f'><circle r='3.2' fill='%23b08d3f'/><g fill='%23d9bf6f' fill-opacity='0.14' stroke='%23b08d3f' stroke-width='1.2'><path d='M0 -15 C4 -10 4 -5 0 -4 C-4 -5 -4 -10 0 -15 Z'/><path d='M0 15 C4 10 4 5 0 4 C-4 5 -4 10 0 15 Z'/><path d='M-15 0 C-10 -4 -5 -4 -4 0 C-5 4 -10 4 -15 0 Z'/><path d='M15 0 C10 -4 5 -4 4 0 C5 4 10 4 15 0 Z'/><g transform='rotate(45)'><path d='M0 -12 C3 -8 3 -5 0 -4 C-3 -5 -3 -8 0 -12 Z'/><path d='M0 12 C3 8 3 5 0 4 C-3 5 -3 8 0 12 Z'/><path d='M-12 0 C-8 -3 -5 -3 -4 0 C-5 3 -8 3 -12 0 Z'/><path d='M12 0 C8 -3 5 -3 4 0 C5 3 8 3 12 0 Z'/></g></g></g></defs><use href='%23p' transform='translate(55 60) rotate(-18)'/><use href='%23p' transform='translate(165 170) rotate(162)'/><use href='%23f' transform='translate(165 55)'/><use href='%23f' transform='translate(55 165)'/><g fill='%23b08d3f'><circle cx='110' cy='110' r='1.6'/><circle cx='0' cy='0' r='1.6'/><circle cx='110' cy='0' r='1.1'/><circle cx='0' cy='110' r='1.1'/></g></svg>");
+  --zari-kinara: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='112' viewBox='0 0 56 112'><g fill='none' stroke='%23b08d3f'><path d='M5 0 V112 M9 0 V112 M47 0 V112 M51 0 V112' stroke-width='1'/><path d='M28 0 C44 18 12 38 28 56 C44 74 12 94 28 112' stroke-width='1.5'/><path d='M28 14 C36 6 42 8 44 16 C36 20 30 20 28 14 Z M28 42 C20 34 14 36 12 44 C20 48 26 48 28 42 Z M28 70 C36 62 42 64 44 72 C36 76 30 76 28 70 Z M28 98 C20 90 14 92 12 100 C20 104 26 104 28 98 Z' stroke-width='1.1' fill='%23d9bf6f' fill-opacity='0.14'/></g><g fill='%23b08d3f'><path d='M28 22 l5 6 l-5 6 l-5 -6 Z'/><path d='M28 78 l5 6 l-5 6 l-5 -6 Z'/><circle cx='7' cy='28' r='1.4'/><circle cx='7' cy='84' r='1.4'/><circle cx='49' cy='28' r='1.4'/><circle cx='49' cy='84' r='1.4'/></g></svg>");
+}
+
+/* the silk: base colour, broad diagonal sheen, fine weave, zari jaal */
 .static-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(60% 50% at 18% 8%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%),
-    radial-gradient(55% 45% at 85% 92%, color-mix(in srgb, var(--rani) 14%, transparent), transparent 70%),
-    var(--bg);
+    repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 3px),
+    linear-gradient(
+      112deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.07) 22%,
+      transparent 38%,
+      rgba(255, 255, 255, 0.045) 58%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.06) 90%,
+      transparent 100%
+    ),
+    radial-gradient(90% 70% at 50% 0%, var(--silk-1), transparent 70%),
+    radial-gradient(70% 60% at 100% 100%, var(--silk-3), transparent 70%),
+    linear-gradient(180deg, var(--silk-1), var(--silk-2));
   transition: background 0.8s ease;
 }
 .static-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: var(--embroidery);
-  background-size: 280px;
-  opacity: 0.045;
+  background-image: var(--zari-jaal);
+  background-size: 220px;
+  opacity: 0.32;
+  mix-blend-mode: screen;
 }
-.static-main { pointer-events: auto; }
+:root[data-edition="lite"][data-mode="day"] .static-bg::after { mix-blend-mode: normal; opacity: 0.34; }
 
-.static-hero {
-  justify-content: center;
-  overflow: hidden;
-  padding: 80px 20px 96px;
-}
-.static-hero-photo {
-  position: absolute;
-  inset: -24px;
-  background: url("/venue/facade.jpg") center 62% / cover no-repeat;
-  filter: blur(4px) saturate(0.85);
-}
-.static-hero-photo::after {
+/* zari kinara down both edges */
+.static-bg::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--bg) 78%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 62%, transparent) 45%,
-      var(--bg) 100%
-    );
+    var(--zari-kinara) left top / var(--kinara) auto repeat-y,
+    var(--zari-kinara) right top / var(--kinara) auto repeat-y;
+  opacity: 0.9;
+}
+/* deeper silk under the borders so the zari reads */
+.static-bg span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--kinara);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.32));
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 0 24px rgba(0, 0, 0, 0.35);
+}
+.static-bg span:first-child { left: 0; }
+.static-bg span:last-child { right: 0; }
+:root[data-edition="lite"][data-mode="day"] .static-bg span {
+  background: linear-gradient(180deg, rgba(176, 141, 63, 0.10), rgba(176, 141, 63, 0.16));
+  box-shadow: 0 0 0 1px rgba(176, 141, 63, 0.45);
+}
+
+.static-main { pointer-events: auto; }
+/* keep content and fixed controls clear of the borders */
+.static-main .chapter { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kinara) + 14px); }
+:root[data-edition="lite"] .rail { left: calc(var(--kinara) + 20px); }
+:root[data-edition="lite"] .mode-btn,
+:root[data-edition="lite"] .music-btn { right: calc(var(--kinara) + 14px); }
+:root[data-edition="lite"] .ch-num { right: calc(var(--kinara) + 4vw); }
+:root[data-edition="lite"] .chapter.flip .ch-num { right: auto; left: calc(var(--kinara) + 4vw); }
+:root[data-edition="lite"] footer { padding-left: calc(var(--kinara) + 14px); padding-right: calc(var(--kinara) + 14px); }
+
+/* hero: the pallu — denser jaal, a gold glow behind the names */
+.static-hero {
+  justify-content: center;
+  overflow: hidden;
+  padding: 80px calc(var(--kinara) + 20px) 96px;
+}
+.static-hero-pallu {
+  position: absolute;
+  inset: 0;
+  background-image: var(--zari-jaal);
+  background-size: 150px;
+  opacity: 0.34;
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(75% 70% at 50% 45%, #000 20%, transparent 100%);
+  mask-image: radial-gradient(75% 70% at 50% 45%, #000 20%, transparent 100%);
+}
+:root[data-edition="lite"][data-mode="day"] .static-hero-pallu { mix-blend-mode: normal; opacity: 0.3; }
+.static-hero-glow {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(900px, 120vw);
+  aspect-ratio: 1.4;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--gold) 26%, transparent), transparent 100%);
+  filter: blur(10px);
+}
+:root[data-edition="lite"][data-mode="day"] .static-hero-glow {
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.85), transparent 100%);
+}
+/* pallu edge: two zari lines under the hero */
+.static-hero::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 22px;
+  height: 7px;
+  border-top: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  opacity: 0.8;
 }
 .static-hero-body {
   position: relative;
@@ -803,13 +901,15 @@ footer .f-switch:hover { color: var(--cream); border-color: var(--gold); transfo
   flex-direction: column;
   align-items: center;
 }
-.static-hero .hero-names { margin: 22px 0 14px; }
+.static-hero .hero-names { margin: 22px 0 14px; text-shadow: 0 0 60px rgba(212, 175, 55, 0.35), 0 2px 12px rgba(0, 0, 0, 0.45); }
 .static-hero .hero-rule { margin-bottom: 18px; }
-.static-hero .hero-meta { text-shadow: 0 2px 14px color-mix(in srgb, var(--bg) 80%, transparent); }
-:root[data-mode="day"] .static-hero-photo { filter: blur(4px) saturate(0.9) brightness(1.05); }
+.static-hero .hero-meta { color: var(--cream-soft); }
+:root[data-edition="lite"][data-mode="day"] .static-hero .hero-names { text-shadow: 0 0 40px rgba(176, 141, 63, 0.35); }
+.static-hero .hero-scroll { bottom: 42px; }
 
 @media (max-width: 640px) {
-  .static-hero { padding: 64px 16px 88px; }
+  .static-hero { padding: 64px calc(var(--kinara) + 12px) 88px; }
   .static-hero .hero-script { font-size: 26px; }
-  .static-hero .hero-names { font-size: 46px; letter-spacing: 5px; }
+  .static-hero .hero-names { font-size: 44px; letter-spacing: 5px; }
+  .static-hero-pallu { background-size: 120px; }
 }
