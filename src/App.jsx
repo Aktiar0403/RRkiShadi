@@ -205,7 +205,7 @@ export default function App() {
       <footer>
         <span className="f-script">see you in Jaipur</span>
         <p className="f-names">Ruchi &amp; Rahul</p>
-        <p className="tag">#RRkiShadi · 16–17 December 2026</p>
+        <p className="tag">#RaRu · 16–17 December 2026</p>
       </footer>
     </>
   )

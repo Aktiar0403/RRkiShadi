@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Tilt from './Tilt.jsx'
+import Figures from './Figures.jsx'
 
 /* ------------------------------------------------------------------
    The five chapters of the invitation (rendered by App.jsx).
@@ -31,8 +32,8 @@ export const LOOKS = {
   pyjama: {
     label: 'Pyjama Party',
     title: 'Pyjama Party',
-    sub: 'Thursday 17 Dec · after the wedding, till late',
-    note: 'Silk and satin pyjama sets in midnight blue, blush and pearl. Slippers very welcome.',
+    sub: 'Thursday 17 Dec · after the pheras, till the sun comes up',
+    note: 'Pyjamas, or whatever you wore to the wedding — nobody is checking. Slippers very welcome.',
     swatches: [
       ['Midnight', '#1c2340'],
       ['Blush', '#e8b4c0'],
@@ -45,14 +46,15 @@ function Celebrations() {
   const rows = [
     ['16', 'Dec · Wed', 'Cocktail Dinner', '7:00 PM onwards · Stardom Resort, Jaipur', 'Elegant cocktail · Indo-western'],
     ['17', 'Dec · Thu', 'Sundowner Wedding', '5:00 PM onwards · Stardom Resort, Jaipur', 'Indian festive attire'],
-    ['17', 'Dec · Night', 'Pyjama Party', 'After the wedding, till late · poolside lawns', 'Silk & satin pyjamas · slippers welcome'],
+    ['17', 'Dec · Night', 'Pyjama Party', 'After the pheras · till the sun comes up', 'Pyjamas, or whatever you wore to the wedding'],
   ]
   return (
     <>
       <p className="kicker">the celebrations</p>
       <h2 className="section-title">Two Days · Three Parties</h2>
       <p className="lede">
-        A cocktail evening, a sundowner wedding, and once the pheras are done, pyjamas by the pool.
+        A cocktail evening, a sundowner wedding — and once the pheras are done, a pyjama party that
+        carries on until the sun is up again.
       </p>
       <div className="event-list">
         {rows.map(([day, mon, name, time, attire], i) => (
@@ -108,36 +110,56 @@ function Stay() {
 }
 
 function WhatToWear() {
-  const [look, setLook] = useState('cocktail')
+  const [look, setLookState] = useState('cocktail')
+  const [shade, setShade] = useState(0)
   const active = LOOKS[look]
+  const setLook = (key) => {
+    setLookState(key)
+    setShade(0)
+  }
+  const color = active.swatches[Math.min(shade, active.swatches.length - 1)][1]
   return (
     <>
       <p className="kicker">what to wear</p>
       <h2 className="section-title">Dress the Evening</h2>
-      <p className="lede">Three evenings, three palettes — pick one to see its colours.</p>
-      <div className="tabs" role="tablist" aria-label="Choose an event look">
-        {Object.entries(LOOKS).map(([key, l]) => (
-          <button
-            key={key}
-            role="tab"
-            aria-selected={look === key}
-            className={`tab ${look === key ? 'active' : ''}`}
-            onClick={() => setLook(key)}
-          >
-            {l.label}
-          </button>
-        ))}
-      </div>
-      <div className="swatches">
-        {active.swatches.map(([name, hex]) => (
-          <div className="swatch" key={name}>
-            <div className="chip" style={{ background: hex }} />
-            <span>{name}</span>
+      <p className="lede">Three evenings, three palettes — pick an evening, then tap a colour to dress them.</p>
+      <div className="wear">
+        <div className="wear-stage">
+          <Figures look={look} color={color} />
+        </div>
+        <div className="wear-controls">
+          <div className="tabs" role="tablist" aria-label="Choose an event look">
+            {Object.entries(LOOKS).map(([key, l]) => (
+              <button
+                key={key}
+                role="tab"
+                aria-selected={look === key}
+                className={`tab ${look === key ? 'active' : ''}`}
+                onClick={() => setLook(key)}
+              >
+                {l.label}
+              </button>
+            ))}
           </div>
-        ))}
+          <div className="swatches" role="radiogroup" aria-label="Dress them in">
+            {active.swatches.map(([name, hex], i) => (
+              <button
+                type="button"
+                role="radio"
+                aria-checked={i === shade}
+                className={`swatch ${i === shade ? 'active' : ''}`}
+                key={name}
+                onClick={() => setShade(i)}
+              >
+                <span className="chip" style={{ background: hex }} />
+                <span>{name}</span>
+              </button>
+            ))}
+          </div>
+          <p className="dress-note">“{active.note}”</p>
+          <p className="dress-sub">{active.title} — {active.sub}</p>
+        </div>
       </div>
-      <p className="dress-note">“{active.note}”</p>
-      <p className="dress-sub">{active.title} — {active.sub}</p>
     </>
   )
 }
@@ -247,10 +269,8 @@ function Rsvp() {
     e.preventDefault()
     setStatus('sending')
     const form = new FormData(e.target)
-    const events = form.getAll('events').join(', ')
     const payload = Object.fromEntries(form.entries())
-    delete payload.events
-    payload.events = events
+    payload.events = 'All celebrations'
     if (!payload.attending) {
       setStatus('incomplete')
       return
@@ -294,19 +314,16 @@ function Rsvp() {
             <label htmlFor="party_size">Guests in your party</label>
             <input id="party_size" name="party_size" type="number" min="1" max="12" defaultValue="1" />
           </div>
-          <div className="field full">
-            <label>Which celebrations?</label>
-            <div className="checks">
-              <label className="check"><input type="checkbox" name="events" value="Cocktail Dinner" defaultChecked /> Cocktail</label>
-              <label className="check"><input type="checkbox" name="events" value="Sundowner Wedding" defaultChecked /> Wedding</label>
-              <label className="check"><input type="checkbox" name="events" value="Pyjama Party" defaultChecked /> Pyjama Party</label>
-            </div>
-          </div>
           <div className="field">
             <label htmlFor="rooms">Rooms needed</label>
             <input id="rooms" name="rooms" type="text" placeholder="e.g. 1 double" />
           </div>
-          <Dropdown id="travel_mode" name="travel_mode" label="Travelling by" options={['Car', 'Flight', 'Train', 'Other']} />
+          <Dropdown
+            id="travel_mode"
+            name="travel_mode"
+            label="Travelling by"
+            options={['Car', 'Flight', 'Train', 'I need help arranging transport', 'Other']}
+          />
           <div className="field">
             <label htmlFor="arrival">Arrival</label>
             <input id="arrival" name="arrival" type="text" placeholder="16 Dec, 2 PM" />
@@ -315,7 +332,7 @@ function Rsvp() {
             <label htmlFor="departure">Departure</label>
             <input id="departure" name="departure" type="text" placeholder="18 Dec, 11 AM" />
           </div>
-          <Dropdown id="dietary" name="dietary" label="Dietary preference" options={['Vegetarian', 'Non-vegetarian', 'Jain', 'Vegan']} />
+          <Dropdown id="dietary" name="dietary" label="Dietary preference" options={['Vegetarian', 'Non-vegetarian']} />
           <div className="field">
             <label htmlFor="song">A song that gets you dancing</label>
             <input id="song" name="song" type="text" placeholder="Optional" />

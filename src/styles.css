@@ -1085,3 +1085,54 @@ footer {
   .tp-foot { justify-content: flex-end; }
   .tp-cta { display: none; }
 }
+
+/* ==================================================================
+   Wide panels — the chapters span the page on desktop
+   ================================================================== */
+.chapter { justify-content: center; }
+.panel, .panel.wide { width: min(1120px, 100%); }
+.chapter.flip .panel { margin-left: 0; }
+@media (min-width: 900px) {
+  .panel { padding: clamp(40px, 5vw, 64px) clamp(40px, 5vw, 72px); }
+  .lede { max-width: 64ch; }
+  .event-list { margin-top: 34px; }
+  .event-row { grid-template-columns: 110px 1fr; padding: 28px 10px; }
+  .venue-strip img { aspect-ratio: 16 / 10; }
+  .info-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .explore-grid { grid-template-columns: repeat(4, 1fr); }
+  .rsvp-form { grid-template-columns: repeat(3, 1fr); gap: 18px 20px; }
+  .rsvp-form .field.full { grid-column: 1 / -1; }
+}
+
+/* ---------- what to wear: the two guests + controls ---------- */
+.wear { display: grid; grid-template-columns: minmax(240px, 1fr) 1.4fr; gap: 32px; align-items: center; margin-top: 26px; }
+.wear-stage {
+  border: 1px solid var(--gold-dim);
+  background: color-mix(in srgb, var(--tint) 60%, transparent);
+  padding: 18px 12px 8px;
+  border-radius: var(--r-card, 0);
+}
+.figures { display: block; width: 100%; height: auto; max-height: 300px; margin: 0 auto; }
+.figures {
+  --c2: color-mix(in srgb, var(--c) 62%, black);
+  --c3: color-mix(in srgb, var(--c) 72%, white);
+}
+.wear-controls .tabs { margin-top: 0; }
+.wear-controls .swatches { margin-top: 22px; }
+.swatch {
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.25s ease;
+}
+.swatch .chip { display: block; }
+.swatch.active { border-color: var(--gold); }
+.swatch.active .chip { box-shadow: 0 0 0 2px var(--tint-strong), 0 0 0 3px var(--gold), inset 0 -14px 22px rgba(0, 0, 0, 0.25), inset 0 12px 18px rgba(255, 255, 255, 0.14); }
+.swatch.active span { color: var(--cream); }
+.dress-note { margin-top: 22px; }
+@media (max-width: 720px) {
+  .wear { grid-template-columns: 1fr; gap: 20px; }
+  .figures { max-height: 220px; }
+}
